@@ -255,7 +255,7 @@ textarea.inp{min-height:80px;resize:vertical;line-height:1.5}
 <div id="root"></div>
 <script type="text/babel">
 const {useState,useEffect,useRef,useContext,createContext}=React;
-const VERSION="v6";
+const VERSION="v7";
 const PHOTO="data:image/jpeg;base64,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";
 
 /* ══════════ GEMINI (Árbitro IA) ══════════ */
@@ -331,8 +331,8 @@ let REAL=HAS_FB&&!demoFlag();
 function setDemo(on){try{on?sessionStorage.setItem("gs_demo","1"):sessionStorage.removeItem("gs_demo")}catch(e){}REAL=HAS_FB&&!on}
 let FS=null,AUTH=null,PENDING=null;
 if(HAS_FB){try{firebase.initializeApp(FIREBASE_CONFIG);AUTH=firebase.auth();FS=firebase.firestore()}catch(e){console.error(e)}}
-const COLS=["users","events","contracts","chats","disputes"];
-const CACHE={users:[],events:[],contracts:[],chats:[],disputes:[]};
+const COLS=["users","events","contracts","chats","disputes","reviews"];
+const CACHE={users:[],events:[],contracts:[],chats:[],disputes:[],reviews:[]};
 let onData=()=>{};
 const clean=o=>JSON.parse(JSON.stringify(o));
 function writeCol(col,arr){
@@ -350,7 +350,8 @@ function startSync(me){
   const Q={users:FS.collection("users"),events:FS.collection("events"),
     contracts:FS.collection("contracts").where("parties","array-contains",me),
     chats:FS.collection("chats").where("participants","array-contains",me),
-    disputes:FS.collection("disputes").where("parties","array-contains",me)};
+    disputes:FS.collection("disputes").where("parties","array-contains",me),
+    reviews:FS.collection("reviews")};
   return new Promise(res=>{
     const pending=new Set(COLS);const done=c=>{if(pending.has(c)){pending.delete(c);if(!pending.size)res()}};
     COLS.forEach(col=>unsubs.push(Q[col].onSnapshot(snap=>{CACHE[col]=snap.docs.map(d=>d.data());done(col);onData()},err=>{console.error(err);done(col)})));
@@ -374,6 +375,7 @@ const DB={
   contracts:()=>readCol("contracts"),setContracts:v=>writeCol("contracts",v),
   chats:()=>readCol("chats"),setChats:v=>writeCol("chats",v),
   disputes:()=>readCol("disputes"),setDisputes:v=>writeCol("disputes",v),
+  reviews:()=>readCol("reviews"),setReviews:v=>writeCol("reviews",v),
   api:()=>{try{return localStorage.getItem("gs_api")||""}catch(e){return ""}},
   setApi:k=>{try{k?localStorage.setItem("gs_api",k):localStorage.removeItem("gs_api")}catch(e){}},
   sess:()=>{const s=load("gs_sess",null);return s&&typeof s==="object"?s.id:s},
@@ -394,41 +396,54 @@ const daysLeft=d=>Math.max(0,Math.ceil((new Date(d.deadline).getTime()-Date.now(
 const ROLE={patrocinado:{l:"Patrocinado",i:"🎯",d:"Evento, club o creador"},patrocinador:{l:"Patrocinador",i:"🏢",d:"Marca o empresa"},inversor:{l:"Inversor",i:"💼",d:"Quiero invertir"}};
 
 /* ══════════ DATOS DE EJEMPLO ══════════ */
-const SEED_VER="4";
+const SEED_VER="5";
 function makeSeeds(){
   const T=Date.now();
   const users=[
     {id:"u1",name:"Cristóbal Torretti",email:"cristobal@demo.com",pass:"demo123",role:"patrocinado",photo:"founder",bio:"Organizo eventos deportivos en Chile: fútbol amateur y trail running.",loc:"Santiago, Chile",demo:true},
-    {id:"u2",name:"María González",email:"maria@demo.com",pass:"demo123",role:"patrocinador",company:"Marca Deportiva Chile",sector:"Retail deportivo",budget:"€5.000 – €20.000",bio:"Buscamos visibilidad en eventos deportivos y comunidades activas.",loc:"Santiago, Chile",demo:true},
+    {id:"u2",name:"María González",email:"maria@demo.com",pass:"demo123",role:"patrocinador",company:"Marca Deportiva Chile",cats:["Deporte","Running"],sector:"Retail deportivo",budget:"€5.000 – €20.000",bio:"Buscamos visibilidad en eventos deportivos y comunidades activas.",loc:"Santiago, Chile",demo:true},
     {id:"u3",name:"Pablo Rodríguez",email:"pablo@demo.com",pass:"demo123",role:"inversor",company:"VC Chile Capital",bio:"Invierto en marketplaces y SaaS en etapa temprana.",loc:"Santiago, Chile",demo:true},
-    {id:"u4",name:"Andrea Soto",email:"andrea@demo.com",pass:"demo123",role:"patrocinador",company:"Banco Futuro",sector:"Finanzas",budget:"€10.000 – €50.000",bio:"Apoyamos el deporte y la vida sana en comunidades jóvenes.",loc:"Santiago, Chile"},
-    {id:"u5",name:"Tomás Vidal",email:"tomas@demo.com",pass:"demo123",role:"patrocinador",company:"Energía Verde SpA",sector:"Energía",budget:"€3.000 – €15.000",bio:"Marca de energía renovable. Nos interesan festivales y eventos al aire libre.",loc:"Valparaíso, Chile"},
+    {id:"u4",name:"Andrea Soto",email:"andrea@demo.com",pass:"demo123",role:"patrocinador",company:"Banco Futuro",cats:["Deporte","Running","eSports"],sector:"Finanzas",budget:"€10.000 – €50.000",bio:"Apoyamos el deporte y la vida sana en comunidades jóvenes.",loc:"Santiago, Chile"},
+    {id:"u5",name:"Tomás Vidal",email:"tomas@demo.com",pass:"demo123",role:"patrocinador",company:"Energía Verde SpA",cats:["Música","Cultura","Social"],sector:"Energía",budget:"€3.000 – €15.000",bio:"Marca de energía renovable. Nos interesan festivales y eventos al aire libre.",loc:"Valparaíso, Chile"},
     {id:"u6",name:"Camila Rojas",email:"camila@demo.com",pass:"demo123",role:"patrocinado",bio:"Productora de festivales de música independiente.",loc:"Valparaíso, Chile"},
     {id:"u7",name:"Diego Pérez",email:"diego@demo.com",pass:"demo123",role:"patrocinado",bio:"Creador de contenido: podcast de negocios y torneos gamer.",loc:"Remoto · LATAM"},
   ];
   const events=[
-    {id:"e1",ownerId:"u1",name:"Club Deportivo Andes",cat:"Deporte",icon:"⚽",loc:"Santiago, Chile",date:"",budgetMin:4000,budgetMax:8000,audience:"Familias de 25 a 45 años · 12.000 asistentes por temporada",desc:"Club de fútbol amateur. Buscamos patrocinador principal para camiseta y vallas del estadio.",trust:96,badge:"top",created:iso(T-60*DAY)},
-    {id:"e2",ownerId:"u1",name:"Trail Running Cordillera",cat:"Deporte",icon:"🏃",loc:"Farellones, Chile",date:iso(T+45*DAY).slice(0,10),budgetMin:3000,budgetMax:6000,audience:"Deportistas de 25 a 40 años · 3.000 corredores",desc:"Carrera de montaña anual. Comunidad fitness de alto poder adquisitivo.",trust:88,badge:"new",created:iso(T-30*DAY)},
-    {id:"e3",ownerId:"u6",name:"Festival Sonidos del Sur",cat:"Música",icon:"🎵",loc:"Valparaíso, Chile",date:iso(T+90*DAY).slice(0,10),budgetMin:10000,budgetMax:18000,audience:"Jóvenes de 18 a 30 años · 25.000 asistentes",desc:"Festival de música independiente con fuerte presencia en redes sociales.",trust:91,badge:"verified",created:iso(T-20*DAY)},
-    {id:"e4",ownerId:"u7",name:"Podcast Mente Emprendedora",cat:"Podcast",icon:"🎙️",loc:"Remoto · LATAM",date:"",budgetMin:1500,budgetMax:3500,audience:"Profesionales de 28 a 45 años · 40.000 oyentes por episodio",desc:"Podcast de negocios top 3 en Chile. Audiencia con alto poder adquisitivo.",trust:89,badge:"verified",created:iso(T-15*DAY)},
-    {id:"e5",ownerId:"u7",name:"Torneo eSports Universitario",cat:"eSports",icon:"🎮",loc:"Santiago, Chile",date:iso(T+30*DAY).slice(0,10),budgetMin:2000,budgetMax:5000,audience:"Universitarios de 18 a 25 años · 8.000 espectadores en streaming",desc:"Torneo de videojuegos entre 16 universidades, transmitido en vivo.",trust:84,badge:"new",created:iso(T-5*DAY)},
+    {id:"e1",social:{ig:"8.500",tt:"",web:"clubandes.cl",attendees:"12.000 por temporada"},confirm:{date:true,venue:true,happens:true},packages:[{name:"Bronce",price:2500,items:["Logo en camiseta de entrenamiento","2 posts en redes sociales"]},{name:"Plata",price:5000,items:["Logo en camiseta oficial","6 posts en redes sociales","2 vallas en el estadio"]},{name:"Oro",price:8000,items:["Logo principal en camiseta oficial","12 posts en redes sociales","4 vallas en el estadio","Nombre en la tribuna"]}],ownerId:"u1",name:"Club Deportivo Andes",cat:"Deporte",icon:"⚽",loc:"Santiago, Chile",date:"",budgetMin:4000,budgetMax:8000,audience:"Familias de 25 a 45 años · 12.000 asistentes por temporada",desc:"Club de fútbol amateur. Buscamos patrocinador principal para camiseta y vallas del estadio.",trust:96,badge:"top",created:iso(T-60*DAY)},
+    {id:"e2",social:{ig:"4.200",tt:"1.800",web:"trailcordillera.cl",attendees:"3.000 corredores"},confirm:{date:true,venue:true,happens:true},packages:[{name:"Bronce",price:1500,items:["Logo en los dorsales"]},{name:"Plata",price:3500,items:["Logo en los dorsales","Stand de marca en la meta"]},{name:"Oro",price:6000,items:["Nombre de la carrera","Logo en los dorsales","Stand de marca en la meta","Informe de resultados"]}],ownerId:"u1",name:"Trail Running Cordillera",cat:"Deporte",icon:"🏃",loc:"Farellones, Chile",date:iso(T+45*DAY).slice(0,10),budgetMin:3000,budgetMax:6000,audience:"Deportistas de 25 a 40 años · 3.000 corredores",desc:"Carrera de montaña anual. Comunidad fitness de alto poder adquisitivo.",trust:88,badge:"new",created:iso(T-30*DAY)},
+    {id:"e3",social:{ig:"32.000",tt:"18.000",web:"sonidosdelsur.cl",attendees:"25.000"},confirm:{date:true,venue:true,happens:true},packages:[{name:"Plata",price:10000,items:["Stand de marca","Logo en escenario secundario","10 posts en redes"]},{name:"Oro",price:18000,items:["Escenario con nombre de la marca","Stand premium","20 posts en redes","Menciones en vivo"]}],ownerId:"u6",name:"Festival Sonidos del Sur",cat:"Música",icon:"🎵",loc:"Valparaíso, Chile",date:iso(T+90*DAY).slice(0,10),budgetMin:10000,budgetMax:18000,audience:"Jóvenes de 18 a 30 años · 25.000 asistentes",desc:"Festival de música independiente con fuerte presencia en redes sociales.",trust:91,badge:"verified",created:iso(T-20*DAY)},
+    {id:"e4",social:{ig:"15.000",tt:"",web:"",attendees:"40.000 oyentes por episodio"},confirm:{date:true,venue:true,happens:true},packages:[{name:"Bronce",price:1500,items:["Mención en 2 episodios"]},{name:"Oro",price:3500,items:["Mención en 6 episodios","Entrevista patrocinada","Logo en la portada"]}],ownerId:"u7",name:"Podcast Mente Emprendedora",cat:"Podcast",icon:"🎙️",loc:"Remoto · LATAM",date:"",budgetMin:1500,budgetMax:3500,audience:"Profesionales de 28 a 45 años · 40.000 oyentes por episodio",desc:"Podcast de negocios top 3 en Chile. Audiencia con alto poder adquisitivo.",trust:89,badge:"verified",created:iso(T-15*DAY)},
+    {id:"e5",social:{ig:"6.000",tt:"9.500",web:"",attendees:"8.000 en streaming"},confirm:{date:true,venue:false,happens:true},packages:[{name:"Plata",price:2500,items:["Logo en la transmisión","Mención del locutor"]},{name:"Oro",price:5000,items:["Nombre del torneo","Logo en la transmisión","Premio entregado por la marca"]}],ownerId:"u7",name:"Torneo eSports Universitario",cat:"eSports",icon:"🎮",loc:"Santiago, Chile",date:iso(T+30*DAY).slice(0,10),budgetMin:2000,budgetMax:5000,audience:"Universitarios de 18 a 25 años · 8.000 espectadores en streaming",desc:"Torneo de videojuegos entre 16 universidades, transmitido en vivo.",trust:84,badge:"new",created:iso(T-5*DAY)},
   ];
   const contracts=[
-    {id:"c1",eventId:"e1",eventName:"Club Deportivo Andes",sponsorId:"u2",sponsorName:"Marca Deportiva Chile",sponsoredId:"u1",sponsoredName:"Cristóbal Torretti",amount:6000,aiClause:true,created:iso(T-40*DAY),
+    {id:"c1",parties:["u2","u1"],status:"active",feePct:8,signed:{u2:iso(T-40*DAY),u1:iso(T-40*DAY)},eventId:"e1",eventName:"Club Deportivo Andes",sponsorId:"u2",sponsorName:"Marca Deportiva Chile",sponsoredId:"u1",sponsoredName:"Cristóbal Torretti",amount:6000,aiClause:true,created:iso(T-40*DAY),
      milestones:[
       {id:1,title:"Logo en camisetas oficiales",amount:2000,status:"approved",evidence:"Fotos del equipo con las camisetas y el logo.",due:iso(T-30*DAY).slice(0,10)},
       {id:2,title:"10 posts en redes sociales",amount:2000,status:"approved",evidence:"Capturas de los 10 posts publicados en Instagram.",due:iso(T-15*DAY).slice(0,10)},
       {id:3,title:"4 vallas publicitarias en el estadio",amount:2000,status:"disputed",evidence:"",due:iso(T-4*DAY).slice(0,10)},
      ]},
-    {id:"c2",eventId:"e2",eventName:"Trail Running Cordillera",sponsorId:"u2",sponsorName:"Marca Deportiva Chile",sponsoredId:"u1",sponsoredName:"Cristóbal Torretti",amount:4500,aiClause:true,created:iso(T-10*DAY),
+    {id:"c2",parties:["u2","u1"],status:"active",feePct:8,signed:{u2:iso(T-10*DAY),u1:iso(T-10*DAY)},eventId:"e2",eventName:"Trail Running Cordillera",sponsorId:"u2",sponsorName:"Marca Deportiva Chile",sponsoredId:"u1",sponsoredName:"Cristóbal Torretti",amount:4500,aiClause:true,created:iso(T-10*DAY),
      milestones:[
       {id:1,title:"Logo en los dorsales",amount:1500,status:"submitted",evidence:"Foto del dorsal impreso con el logo de la marca.",due:iso(T+5*DAY).slice(0,10)},
       {id:2,title:"Stand de marca en la meta",amount:2000,status:"pending",evidence:"",due:iso(T+45*DAY).slice(0,10)},
       {id:3,title:"Informe de resultados",amount:1000,status:"pending",evidence:"",due:iso(T+55*DAY).slice(0,10)},
      ]},
   ];
+  contracts.push(
+    {id:"c3",parties:["u4","u1"],status:"pending",feePct:8,createdBy:"u4",signed:{u4:iso(T-3600000)},eventId:"e2",eventName:"Trail Running Cordillera",sponsorId:"u4",sponsorName:"Banco Futuro",sponsoredId:"u1",sponsoredName:"Cristóbal Torretti",amount:3500,aiClause:true,created:iso(T-3600000),
+     milestones:[{id:1,title:"Logo en los dorsales",amount:1500,status:"pending",evidence:"",due:iso(T+30*DAY).slice(0,10)},{id:2,title:"Stand de marca en la meta",amount:2000,status:"pending",evidence:"",due:iso(T+45*DAY).slice(0,10)}]},
+    {id:"c0",parties:["u2","u1"],status:"active",feePct:8,signed:{u2:iso(T-300*DAY),u1:iso(T-300*DAY)},eventId:"e1",eventName:"Club Deportivo Andes (temporada 2025)",sponsorId:"u2",sponsorName:"Marca Deportiva Chile",sponsoredId:"u1",sponsoredName:"Cristóbal Torretti",amount:3000,aiClause:true,created:iso(T-300*DAY),
+     milestones:[{id:1,title:"Logo en camiseta",amount:1500,status:"approved",evidence:"Fotos del equipo con camiseta.",due:""},{id:2,title:"Posts en redes sociales",amount:1500,status:"approved",evidence:"Capturas de 8 posts.",due:""}]},
+    {id:"c4",parties:["u5","u6"],status:"active",feePct:8,signed:{u5:iso(T-200*DAY),u6:iso(T-200*DAY)},eventId:"e3",eventName:"Festival Sonidos del Sur 2025",sponsorId:"u5",sponsorName:"Energía Verde SpA",sponsoredId:"u6",sponsoredName:"Camila Rojas",amount:9000,aiClause:true,created:iso(T-200*DAY),
+     milestones:[{id:1,title:"Stand de marca",amount:9000,status:"approved",evidence:"Fotos del stand.",due:""}]}
+  );
+  const reviews=[
+    {id:"c0_u2",contractId:"c0",fromId:"u2",toId:"u1",stars:5,text:"Cumplieron todo a tiempo y con muy buena visibilidad.",ts:iso(T-250*DAY)},
+    {id:"c0_u1",contractId:"c0",fromId:"u1",toId:"u2",stars:5,text:"Pagaron rápido y fueron muy claros.",ts:iso(T-250*DAY)},
+    {id:"c4_u5",contractId:"c4",fromId:"u5",toId:"u6",stars:4,text:"Buen festival, el stand quedó algo escondido.",ts:iso(T-150*DAY)},
+  ];
   const disputes=[
-    {id:"d1",contractId:"c1",milestoneId:3,title:"4 vallas publicitarias en el estadio",amount:2000,openedById:"u2",openedByName:"Marca Deportiva Chile",openerRole:"patrocinador",againstId:"u1",againstName:"Cristóbal Torretti",
+    {id:"d1",parties:["u2","u1"],contractId:"c1",milestoneId:3,title:"4 vallas publicitarias en el estadio",amount:2000,openedById:"u2",openedByName:"Marca Deportiva Chile",openerRole:"patrocinador",againstId:"u1",againstName:"Cristóbal Torretti",
      reason:"Entrega incompleta",description:"El acuerdo decía 4 vallas antes de la fecha. Solo se instalaron 2 y en un lugar con poca visibilidad.",claimantEvidence:"Fotos del estadio mostrando solo 2 vallas.",priorEvidence:"",
      defense:"",defenseSent:false,status:"open",created:iso(T-2*DAY),deadline:iso(T+5*DAY)},
   ];
@@ -446,7 +461,7 @@ function makeSeeds(){
       {id:2,from:"u1",text:"¡Hola Andrea! Sí, te preparo una propuesta con entregas y te la envío hoy.",ts:iso(T-1*DAY+900000)},
      ]},
   ];
-  return {users,events,contracts,disputes,chats};
+  return {users,events,contracts,disputes,chats,reviews};
 }
 const mergeById=(cur,seed)=>{const ids=new Set(seed.map(x=>x.id));return [...seed,...cur.filter(x=>!ids.has(x.id))]};
 function initData(){
@@ -459,6 +474,7 @@ function initData(){
     DB.setContracts(mergeById(DB.contracts().filter(c=>c.milestones&&c.eventName),s.contracts));
     DB.setDisputes(mergeById(DB.disputes().filter(d=>d.deadline),s.disputes));
     DB.setChats(mergeById(DB.chats().filter(c=>c.unread),s.chats));
+    DB.setReviews(mergeById(DB.reviews(),s.reviews));
     try{localStorage.setItem("gs_ver",SEED_VER)}catch(e){}
   }
 }
@@ -481,16 +497,37 @@ const TEMPLATES=["Logo en camiseta","Posts en redes sociales","Vallas publicitar
 const myContracts=id=>DB.contracts().filter(c=>c.sponsorId===id||c.sponsoredId===id).sort((a,b)=>b.created.localeCompare(a.created));
 const msPaid=m=>m.status==="approved"?m.amount:m.status==="resolved"?m.amount*(m.paidPct||0)/100:0;
 const msDone=m=>m.status==="approved"||m.status==="resolved";
-const cStatus=c=>c.milestones.every(msDone)?"done":c.milestones.some(m=>m.status==="disputed")?"disputed":"active";
+const cStatus=c=>c.status==="pending"?"pending":c.status==="rejected"?"rejected":c.milestones.every(msDone)?"done":c.milestones.some(m=>m.status==="disputed")?"disputed":"active";
 const cPaid=c=>c.milestones.reduce((s,m)=>s+msPaid(m),0);
 function nextStep(c,u){
-  const isS=c.sponsorId===u.id;
+  const isS=c.sponsorId===u.id,other=isS?c.sponsoredName:c.sponsorName;
+  if(c.status==="rejected")return {t:"✖ Propuesta rechazada",c:"var(--muted)"};
+  if(c.status==="pending")return (c.signed||{})[u.id]?{t:"⏳ Esperando la firma de "+other,c:"var(--muted)"}:{t:"✍️ Te toca revisar y firmar",c:"var(--warn)",me:true};
   const m=c.milestones.find(x=>x.status==="disputed")||c.milestones.find(x=>x.status==="submitted")||c.milestones.find(x=>x.status==="pending");
   if(!m)return {t:"✅ Acuerdo completado",c:"var(--ok)"};
   if(m.status==="disputed")return {t:"⚖️ En disputa: "+m.title,c:"var(--err)"};
   if(m.status==="submitted")return isS?{t:"👀 Te toca revisar: "+m.title,c:"var(--warn)",me:true}:{t:"⏳ Esperando que la marca apruebe: "+m.title,c:"var(--muted)"};
   return isS?{t:"⏳ Esperando la entrega: "+m.title,c:"var(--muted)"}:{t:"📤 Te toca subir evidencia: "+m.title,c:"var(--teal)",me:true};
 }
+const FEE=8;
+const repOf=id=>{const rs=DB.reviews().filter(r=>r.toId===id);if(!rs.length)return null;return {avg:rs.reduce((a,r)=>a+Number(r.stars||0),0)/rs.length,n:rs.length}};
+const repTxt=id=>{const r=repOf(id);return r?`⭐ ${r.avg.toFixed(1).replace(".",",")} (${r.n})`:"🆕 Sin reseñas aún"};
+const parseRange=s=>{if(!s)return null;const n=(String(s).match(/\d[\d.]*/g)||[]).map(x=>Number(x.replace(/\./g,"")));if(!n.length)return null;return /más de/i.test(s)?[n[0],1e9]:[n[0],n[1]||n[0]]};
+const overlap=(a,b)=>!!(a&&b&&a[0]<=b[1]&&b[0]<=a[1]);
+const cityOf=s=>(s||"").split(",")[0].trim().toLowerCase(),countryOf=s=>(s||"").split(",").pop().trim().toLowerCase();
+const evConfirmed=e=>!!(e&&e.confirm&&e.confirm.date&&e.confirm.venue&&e.confirm.happens);
+function matchScore(brand,ev){
+  let s=0;const cats=brand.cats||[];
+  s+=cats.length?(cats.includes(ev.cat)?30:6):15;
+  const br=parseRange(brand.budget);s+=br?(overlap(br,[ev.budgetMin||0,ev.budgetMax||0])?30:8):15;
+  s+=brand.loc&&ev.loc?(cityOf(brand.loc)===cityOf(ev.loc)?20:countryOf(brand.loc)===countryOf(ev.loc)?14:4):10;
+  const r=repOf(ev.ownerId);s+=r?Math.round(r.avg/5*12):6;
+  s+=(ev.packages&&ev.packages.length?4:0)+(ev.social&&(ev.social.ig||ev.social.tt||ev.social.attendees)?2:0)+(evConfirmed(ev)?2:0);
+  return Math.max(5,Math.min(99,s));
+}
+const brandScore=(b,evs)=>evs.length?Math.max(...evs.map(e=>matchScore(b,e))):matchScore(b,{});
+const MatchPill=({v})=><span className="pill" style={{background:v>=75?"rgba(23,212,160,.14)":v>=50?"var(--wbg)":"rgba(255,255,255,.06)",color:v>=75?"var(--teal)":v>=50?"var(--warn)":"var(--muted)"}}>{v}% compatible</span>;
+function addReport(r){const x={...r,ts:new Date().toISOString()};if(REAL)FS.collection("reports").add(x).catch(e=>console.error(e));else{const l=load("gs_reports",[]);l.push(x);save("gs_reports",l)}}
 const unreadCount=id=>DB.chats().filter(c=>c.participants.includes(id)).reduce((s,c)=>s+((c.unread||{})[id]||0),0);
 function getTasks(u){
   if(!u||u.role==="inversor")return [];
@@ -498,6 +535,10 @@ function getTasks(u){
   ds.filter(d=>d.status==="open"&&d.againstId===u.id&&!d.defenseSent&&daysLeft(d)>0).forEach(d=>T.push({icon:"⚖️",c:"var(--err)",bg:"var(--ebg)",t:"Responde una disputa",s:`${d.title} · te quedan ${daysLeft(d)} días`,go:["acuerdos",{did:d.id}]}));
   ds.filter(d=>d.status==="open"&&(d.openedById===u.id||d.againstId===u.id)&&(d.defenseSent||daysLeft(d)<=0)).forEach(d=>T.push({icon:"🤖",c:"var(--pur)",bg:"var(--pbg)",t:"Pide el veredicto de la IA",s:d.title,go:["acuerdos",{did:d.id}]}));
   myContracts(u.id).forEach(c=>{
+    const st=cStatus(c),other=c.sponsorId===u.id?c.sponsoredName:c.sponsorName,oid=c.sponsorId===u.id?c.sponsoredId:c.sponsorId;
+    if(st==="pending"&&!(c.signed||{})[u.id])T.push({icon:"✍️",c:"var(--warn)",bg:"var(--wbg)",t:"Revisa y firma una propuesta",s:`${other} · ${money(c.amount)} · ${c.eventName}`,go:["acuerdos",{cid:c.id}]});
+    if(st==="done"&&!DB.reviews().some(r=>r.id===c.id+"_"+u.id))T.push({icon:"⭐",c:"var(--warn)",bg:"var(--wbg)",t:"Califica a "+other,s:"Tu opinión construye la reputación de la comunidad",go:["acuerdos",{cid:c.id,act:"rev"}]});
+    if(st==="pending"||st==="rejected")return;
     if(c.sponsoredId===u.id){const m=c.milestones.find(x=>x.status==="pending");if(m)T.push({icon:"📤",c:"var(--teal)",bg:"rgba(23,212,160,.1)",t:"Sube la evidencia de una entrega",s:`${m.title} · ${c.eventName}`,go:["acuerdos",{cid:c.id,act:"ev",mid:m.id}]})}
     if(c.sponsorId===u.id)c.milestones.filter(x=>x.status==="submitted").forEach(m=>T.push({icon:"👀",c:"var(--warn)",bg:"var(--wbg)",t:"Revisa y aprueba una entrega",s:`${m.title} · ${money(m.amount)}`,go:["acuerdos",{cid:c.id}]}));
   });
@@ -641,7 +682,7 @@ function Landing({onLogin,onRegister,user,onPanel}){
             <button onClick={onLogin} style={{color:"var(--teal)",fontSize:14,fontWeight:600,textDecoration:"underline"}}>👀 Prueba la demo sin crear cuenta</button>
           </div>
           <div style={{display:"flex",gap:"clamp(18px,5vw,52px)",justifyContent:"center",marginTop:46,flexWrap:"wrap"}}>
-            {[["€1.967M","Mercado España"],["+19%","Crecimiento anual"],["€445M","Mercado Chile"],["0","Competidores Chile"]].map(([n,l],i)=>(
+            {[["€1.967M","Mercado España"],["+19%","Crecimiento anual"],["€445M","Mercado Chile"],["7 días","Para resolver disputas"]].map(([n,l],i)=>(
               <div key={i} style={{textAlign:"center"}}>
                 <div style={{fontFamily:"'Sora',sans-serif",fontSize:"clamp(21px,3.6vw,32px)",fontWeight:800,color:"var(--teal)"}}>{n}</div>
                 <div style={{fontSize:11.5,color:"var(--muted)",marginTop:3,maxWidth:95}}>{l}</div>
@@ -778,6 +819,13 @@ function Auth({mode,setMode,onLogin,onBack,onDemo}){
   const [step,setStep]=useState(0);
   const [err,setErr]=useState("");
   const [busy,setBusy]=useState(false);
+  const [terms,setTerms]=useState(false),[showTerms,setShowTerms]=useState(false),[info,setInfo]=useState("");
+  const forgot=async()=>{
+    setErr("");setInfo("");
+    if(!/^\S+@\S+\.\S+$/.test(f.email.trim()))return setErr("Escribe tu correo arriba y vuelve a tocar “¿Olvidaste tu contraseña?”.");
+    if(!REAL)return setInfo("En la demo no se envían correos. En la plataforma real te llegará un enlace para crear una contraseña nueva.");
+    try{await AUTH.sendPasswordResetEmail(f.email.trim());setInfo("Listo. Si ese correo tiene cuenta, te llegará un enlace para crear una contraseña nueva. Revisa también la carpeta de spam.")}catch(e){setErr(fbErr(e))}
+  };
   const set=(k,v)=>{setF(p=>({...p,[k]:v}));setErr("")};
   const login=async()=>{
     if(REAL){
@@ -794,10 +842,11 @@ function Auth({mode,setMode,onLogin,onBack,onDemo}){
     if(!f.name.trim())return setErr("Escribe tu nombre.");
     if(role==="patrocinador"&&!f.company.trim())return setErr("Escribe el nombre de tu marca o empresa.");
     if(!/^\S+@\S+\.\S+$/.test(f.email.trim()))return setErr("Ese correo no parece válido.");
-    if(f.pass.length<6)return setErr("La contraseña debe tener al menos 6 caracteres.");
+    if(f.pass.length<8||!/\d/.test(f.pass)||!/[a-zA-Z]/.test(f.pass))return setErr("La contraseña debe tener al menos 8 caracteres, con letras y números.");
+    if(!terms)return setErr("Debes aceptar los términos y la política de privacidad.");
     if(REAL){
       setBusy(true);PENDING={name:f.name.trim(),role,company:f.company.trim()};
-      try{await AUTH.createUserWithEmailAndPassword(f.email.trim(),f.pass)}catch(e){PENDING=null;setErr(fbErr(e));setBusy(false)}
+      try{const cr=await AUTH.createUserWithEmailAndPassword(f.email.trim(),f.pass);try{await cr.user.sendEmailVerification()}catch(e){}}catch(e){PENDING=null;setErr(fbErr(e));setBusy(false)}
       return;
     }
     const users=DB.users();
@@ -822,6 +871,8 @@ function Auth({mode,setMode,onLogin,onBack,onDemo}){
           <Field label="Correo"><input className="inp" type="email" autoComplete="email" value={f.email} onChange={e=>set("email",e.target.value)} placeholder="tu@correo.com"/></Field>
           <Field label="Contraseña"><input className="inp" type="password" autoComplete="current-password" value={f.pass} onChange={e=>set("pass",e.target.value)} onKeyDown={e=>e.key==="Enter"&&login()} placeholder="••••••"/></Field>
           {err&&<div className="hint e mb12">⚠️ {err}</div>}
+          {info&&<div className="hint mb12">✉️ {info}</div>}
+          <button className="tsm cte mb12" style={{textDecoration:"underline"}} onClick={forgot}>¿Olvidaste tu contraseña?</button>
           <button className="btn btn-p" style={{width:"100%"}} disabled={busy} onClick={login}>{busy?"Entrando…":"Entrar"}</button>
           <div className="card mt20" style={{background:"rgba(245,200,66,.05)",borderColor:"rgba(245,200,66,.3)"}}>
             <div className="fw7 mb8">👀 ¿Solo quieres mirar? Prueba la demo sin cuenta</div>
@@ -858,14 +909,31 @@ function Auth({mode,setMode,onLogin,onBack,onDemo}){
           {role==="patrocinador"&&<Field label="Nombre de tu marca o empresa"><input className="inp" value={f.company} onChange={e=>set("company",e.target.value)} placeholder="Ej: Café del Sur"/></Field>}
           {role==="inversor"&&<Field label="Fondo o empresa (opcional)"><input className="inp" value={f.company} onChange={e=>set("company",e.target.value)} placeholder="Ej: Ángel inversor"/></Field>}
           <Field label="Correo"><input className="inp" type="email" autoComplete="email" value={f.email} onChange={e=>set("email",e.target.value)} placeholder="tu@correo.com"/></Field>
-          <Field label="Crea una contraseña" hint="Mínimo 6 caracteres"><input className="inp" type="password" autoComplete="new-password" value={f.pass} onChange={e=>set("pass",e.target.value)} onKeyDown={e=>e.key==="Enter"&&register()} placeholder="••••••"/></Field>
+          <Field label="Crea una contraseña" hint="Mínimo 8 caracteres, con letras y números"><input className="inp" type="password" autoComplete="new-password" value={f.pass} onChange={e=>set("pass",e.target.value)} onKeyDown={e=>e.key==="Enter"&&register()} placeholder="••••••"/></Field>
+          <label className="row mb12" style={{cursor:"pointer",gap:10,alignItems:"flex-start"}}><input type="checkbox" checked={terms} onChange={e=>{setTerms(e.target.checked);setErr("")}} style={{width:20,height:20,accentColor:"#17d4a0",appearance:"auto",flexShrink:0,marginTop:2}}/><span className="tsm">Acepto los <button className="cte" style={{textDecoration:"underline"}} onClick={e=>{e.preventDefault();setShowTerms(true)}}>términos y la política de privacidad</button>, incluida la cláusula de arbitraje con IA.</span></label>
           {err&&<div className="hint e mb12">⚠️ {err}</div>}
           <button className="btn btn-p" style={{width:"100%"}} disabled={busy} onClick={register}>{busy?"Creando tu cuenta…":"Crear mi cuenta ✓"}</button>
-          <p className="txs cmu tc-c mt12">Gratis. Sin tarjeta de crédito.</p>
+          <p className="txs cmu tc-c mt12">Gratis. Sin tarjeta de crédito. Te enviaremos un correo para verificar tu cuenta.</p>
         </div>}
+        {showTerms&&<TermsSheet onClose={()=>setShowTerms(false)}/>}
       </div>
     </div>
   );
+}
+
+/* ══════════ TÉRMINOS (resumen) ══════════ */
+function TermsSheet({onClose}){
+  return <Sheet title="Términos y privacidad" icon="📜" onClose={onClose} footer={<button className="btn btn-p" onClick={onClose}>Entendido</button>}>
+    <div className="hint w mb16">⚖️ <div>Versión piloto en lenguaje simple. El texto legal final será revisado por un abogado antes del lanzamiento.</div></div>
+    {[["1. Qué es GetSponzo","Una plataforma que conecta marcas con eventos, clubes y creadores, y protege el pago de cada acuerdo."],
+      ["2. Pago protegido","La marca deposita el monto del acuerdo. GetSponzo lo guarda y lo libera por cada entrega aprobada."],
+      ["3. Comisión",`GetSponzo cobra ${FEE}% sobre cada acuerdo, pagado por la marca. Crear cuenta y publicar eventos es gratis.`],
+      ["4. Disputas y árbitro IA","Si hay un desacuerdo, la otra parte tiene 7 días para defenderse. Luego una IA decide qué % se paga (0, 25, 50, 75 o 100%). Al firmar un acuerdo con esta cláusula, aceptas esa decisión."],
+      ["5. Honestidad","Los datos de tu evento y tu audiencia deben ser reales. Mentir o intentar cerrar acuerdos fuera de la plataforma puede suspender tu cuenta."],
+      ["6. Reseñas","Al terminar un acuerdo cada parte puede calificar a la otra. Las reseñas son públicas y no se pueden borrar."],
+      ["7. Privacidad","Guardamos tu nombre, correo, eventos, acuerdos y mensajes para que la plataforma funcione. No vendemos tus datos. Tu correo no se muestra a otros usuarios."],
+      ["8. Reportes","Puedes reportar a cualquier usuario sospechoso. El equipo de GetSponzo revisa cada reporte."]].map(([t,d])=><div key={t} className="mb12"><div className="fw7 tmd">{t}</div><div className="tsm cmu" style={{lineHeight:1.55}}>{d}</div></div>)}
+  </Sheet>;
 }
 
 /* ══════════ BIENVENIDA Y AYUDA ══════════ */
@@ -874,7 +942,7 @@ const GUIDE={
   patrocinador:[["🔍","Busca eventos","En “Buscar” filtras por categoría y encuentras eventos que calzan con tu marca."],["💬","Conversa","Escríbele al organizador o haz una videollamada, todo dentro de GetSponzo."],["🤝","Crea el acuerdo","Divides el pago en entregas. Tu dinero queda protegido: no se paga nada hasta que apruebes."],["✅","Aprueba y paga","Cuando el evento sube la evidencia, la revisas y apruebas con un toque."]],
   inversor:[["📈","Resumen","La oportunidad, el problema y la tracción del piloto en tiempo real."],["💰","Números","Modelo financiero a 5 años con 3 escenarios."],["🌎","Mercado","Por qué partimos en Chile y luego España."],["📩","Contacto","Escríbele directo al fundador. En Perfil puedes ver la app como marca o como evento."]],
 };
-const GLOSSARY=[["🔒","Pago protegido","La marca deposita el dinero y GetSponzo lo guarda. Solo se entrega al evento cuando la marca aprueba cada entrega."],["📦","Entrega","Cada cosa que el evento se compromete a hacer (ej: logo en camiseta). Cada entrega tiene su propio pago."],["⚖️","Disputa","Si alguien no está conforme con una entrega, abre una disputa. La otra parte tiene 7 días para defenderse."],["🤖","Árbitro IA","Después de los 7 días, la inteligencia artificial revisa todo y decide qué % se paga: 0, 25, 50, 75 o 100%."]];
+const GLOSSARY=[["🔒","Pago protegido","La marca deposita el dinero y GetSponzo lo guarda. Solo se entrega al evento cuando la marca aprueba cada entrega."],["📦","Entrega","Cada cosa que el evento se compromete a hacer (ej: logo en camiseta). Cada entrega tiene su propio pago."],["⚖️","Disputa","Si alguien no está conforme con una entrega, abre una disputa. La otra parte tiene 7 días para defenderse."],["📦","Paquetes","Opciones con precio fijo que arma el evento (ej: Bronce, Plata, Oro). La marca elige uno y el acuerdo se arma solo."],["✍️","Firma de ambos","Quien crea el acuerdo lo firma al enviarlo. Se activa cuando la otra parte también lo firma."],["⭐","Reseñas","Al terminar un acuerdo, cada uno califica al otro. Así se construye la reputación."],["🤖","Árbitro IA","Después de los 7 días, la inteligencia artificial revisa todo y decide qué % se paga: 0, 25, 50, 75 o 100%."]];
 function GuideList({role}){
   return <div>{GUIDE[role].map(([i,t,d],k)=>(
     <div key={k} style={{display:"flex",gap:12,marginBottom:14}}>
@@ -937,11 +1005,18 @@ function firstSteps(u){
     {t:"Crea tu primer acuerdo",s:"Tu dinero queda protegido",ok:deals,go:["nuevo",{}]},
   ];
 }
+function VerifyBanner(){
+  const {toast,bump}=useApp();
+  const resend=async()=>{try{await AUTH.currentUser.sendEmailVerification();toast("Correo enviado","✉️","Revisa también spam")}catch(e){toast("Espera un momento antes de reenviar","⏳")}};
+  const check=async()=>{try{await AUTH.currentUser.reload();if(AUTH.currentUser.emailVerified){toast("¡Correo verificado!","✅");bump()}else toast("Aún no aparece verificado","✉️","Abre el enlace del correo y vuelve a tocar")}catch(e){}};
+  return <div className="hint w mt16">✉️ <div style={{flex:1}}><b>Verifica tu correo.</b> Te enviamos un enlace. Las cuentas verificadas generan más confianza.
+    <div className="rowb mt8" style={{gap:8}}><button className="btn btn-g btn-sm" onClick={resend}>Reenviar</button><button className="btn btn-p btn-sm" onClick={check}>Ya lo verifiqué</button></div></div></div>;
+}
 function HomeView(){
   const {user,go}=useApp();
   const isP=user.role==="patrocinado";
   const tasks=getTasks(user);
-  const cs=myContracts(user.id);
+  const cs=myContracts(user.id).filter(c=>c.status!=="pending"&&c.status!=="rejected");
   const steps=firstSteps(user);const done=steps.filter(s=>s.ok).length;
   const total=cs.reduce((s,c)=>s+c.amount,0),paid=cs.reduce((s,c)=>s+cPaid(c),0);
   const pendingAmt=cs.reduce((s,c)=>s+c.milestones.filter(m=>!msDone(m)).reduce((a,m)=>a+m.amount,0),0);
@@ -957,6 +1032,7 @@ function HomeView(){
       <p className="cmu tmd">{isP?"Aquí ves lo que tienes que hacer para conseguir y cobrar tus patrocinios.":"Aquí ves todo para patrocinar con tu dinero protegido."}</p>
     </div>
 
+    {REAL&&AUTH&&AUTH.currentUser&&!AUTH.currentUser.emailVerified&&<VerifyBanner/>}
     {done<steps.length&&<div className="card fu1 mt16" style={{borderColor:"var(--border)"}}>
       <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:8}}><div className="fw7">🚀 Primeros pasos</div><div className="tsm cte fw7">{done} de {steps.length}</div></div>
       <Bar v={done/steps.length*100}/>
@@ -992,13 +1068,20 @@ function HomeView(){
 const BUDGETS=[[1000,3000],[3000,6000],[6000,12000],[12000,25000]];
 function EventSheet({ev,onClose,onSaved}){
   const {user,toast}=useApp();
-  const [f,setF]=useState(ev||{name:"",cat:"Deporte",icon:"⚽",loc:user.loc||"",date:"",budgetMin:3000,budgetMax:6000,audience:"",desc:""});
+  const [f,setF]=useState(()=>{const b={name:"",cat:"Deporte",icon:"⚽",loc:user.loc||"",date:"",budgetMin:3000,budgetMax:6000,audience:"",desc:"",social:{ig:"",tt:"",web:"",attendees:""},confirm:{date:false,venue:false,happens:false},packages:[]};return ev?{...b,...ev,social:{...b.social,...(ev.social||{})},confirm:{...b.confirm,...(ev.confirm||{})},packages:ev.packages||[]}:b});
   const [err,setErr]=useState("");
   const set=(k,v)=>{setF(p=>({...p,[k]:v}));setErr("")};
+  const setS=(k,v)=>setF(p=>({...p,social:{...p.social,[k]:v}}));
+  const setP=(i,k,v)=>setF(p=>({...p,packages:p.packages.map((x,j)=>j===i?{...x,[k]:v}:x)}));
+  const r100=n=>Math.max(100,Math.round(n/100)*100);
+  const suggest=()=>set("packages",[{name:"Bronce",price:r100(f.budgetMin*0.5),items:["Logo en redes sociales del evento","2 posts dedicados"]},{name:"Plata",price:r100((f.budgetMin+f.budgetMax)/2),items:["Logo en el material del evento","Stand o espacio de marca","5 posts dedicados"]},{name:"Oro",price:r100(f.budgetMax),items:["Marca principal del evento","Stand premium","10 posts dedicados","Informe de resultados"]}]);
   const saveEv=()=>{
     const bad=m=>{setErr(m);toast(m,"⚠️")};
     if(!f.name.trim())return bad("Ponle un nombre a tu evento.");
     if(!f.loc.trim())return bad("Escribe dónde es (ciudad u 'Online').");
+    const pk=f.packages.map(p=>({name:(p.name||"").trim(),price:Number(p.price)||0,items:(p.items||[]).map(x=>x.trim()).filter(Boolean)})).filter(p=>p.name||p.items.length);
+    if(pk.some(p=>!p.name||!p.price||!p.items.length))return bad("Cada paquete necesita nombre, precio y al menos una cosa incluida.");
+    f.packages=pk;
     const all=DB.events();
     if(ev){DB.setEvents(all.map(e=>e.id===ev.id?{...e,...f}:e));toast("Evento actualizado","✏️")}
     else{DB.setEvents([...all,{...f,id:uid("e"),ownerId:user.id,trust:80,badge:"new",created:new Date().toISOString()}]);toast("¡Evento creado!","🎉","Ya aparece para las marcas")}
@@ -1014,10 +1097,35 @@ function EventSheet({ev,onClose,onSaved}){
     <Field label="5. ¿Cuánto buscas de patrocinio?"><div className="chips" style={{flexWrap:"wrap"}}>{BUDGETS.map(([a,b])=><button key={a} className={"chip"+(f.budgetMin===a&&f.budgetMax===b?" on":"")} onClick={()=>{set("budgetMin",a);set("budgetMax",b)}}>{money(a)} – {money(b)}</button>)}</div></Field>
     <Field label="6. ¿Quién es tu público?" hint="Edad, tipo de personas y cuántas son"><input className="inp" value={f.audience} onChange={e=>set("audience",e.target.value)} placeholder="Ej: Familias de 30-45 años · 2.000 asistentes"/></Field>
     <Field label="7. Descríbelo en pocas palabras"><textarea className="inp" value={f.desc} onChange={e=>set("desc",e.target.value)} placeholder="¿Qué es? ¿Qué le ofreces a la marca?"/></Field>
+    <div className="sec-t" style={{marginTop:6}}>📊 8. Tu audiencia (opcional, ayuda mucho)</div>
+    <div className="g2" style={{gap:10}}>
+      <Field label="Seguidores en Instagram"><input className="inp" inputMode="numeric" value={f.social.ig} onChange={e=>setS("ig",e.target.value)} placeholder="Ej: 5.000"/></Field>
+      <Field label="Seguidores en TikTok"><input className="inp" inputMode="numeric" value={f.social.tt} onChange={e=>setS("tt",e.target.value)} placeholder="Ej: 2.000"/></Field>
+      <Field label="Asistentes o alcance"><input className="inp" value={f.social.attendees} onChange={e=>setS("attendees",e.target.value)} placeholder="Ej: 3.000 corredores"/></Field>
+      <Field label="Sitio web"><input className="inp" value={f.social.web} onChange={e=>setS("web",e.target.value)} placeholder="Ej: micorrida.cl"/></Field>
+    </div>
+    <div className="sec-t" style={{marginTop:6}}>📦 9. Paquetes de patrocinio</div>
+    <div className="tsm cmu mb12" style={{lineHeight:1.5}}>Las marcas eligen un paquete con un toque y el acuerdo se arma solo. Puedes usar los sugeridos y editarlos.</div>
+    {f.packages.map((p,i)=><div key={i} className="mcard">
+      <div style={{display:"flex",gap:8,marginBottom:8}}>
+        <input className="inp" style={{flex:1}} value={p.name} onChange={e=>setP(i,"name",e.target.value)} placeholder="Nombre (Ej: Oro)"/>
+        <input className="inp" style={{width:120}} type="number" inputMode="numeric" value={p.price} onChange={e=>setP(i,"price",Number(e.target.value))} placeholder="€"/>
+        <button className="ibtn" onClick={()=>set("packages",f.packages.filter((_,j)=>j!==i))} aria-label="Quitar">🗑️</button>
+      </div>
+      <textarea className="inp" style={{minHeight:64}} value={p.items.join("\n")} onChange={e=>setP(i,"items",e.target.value.split("\n"))} placeholder="Qué incluye (una cosa por línea)"/>
+    </div>)}
+    <div style={{display:"flex",gap:8}} className="mb16">
+      {f.packages.length===0&&<button className="btn btn-p btn-sm" style={{flex:1}} onClick={suggest}>✨ Usar paquetes sugeridos</button>}
+      {f.packages.length<4&&<button className="btn btn-g btn-sm" style={{flex:1}} onClick={()=>set("packages",[...f.packages,{name:"",price:"",items:[]}])}>➕ Agregar paquete</button>}
+    </div>
+    <div className="sec-t" style={{marginTop:6}}>✅ 10. Confirmaciones (dan confianza a las marcas)</div>
+    {[["date","La fecha del evento está confirmada"],["venue","El lugar está confirmado o reservado"],["happens","El evento se hace igual, con o sin patrocinio"]].map(([k,l])=>
+      <label key={k} className="row mb8" style={{cursor:"pointer",gap:10}}><input type="checkbox" checked={!!f.confirm[k]} onChange={e=>set("confirm",{...f.confirm,[k]:e.target.checked})} style={{width:20,height:20,accentColor:"#17d4a0",appearance:"auto",flexShrink:0}}/><span className="tsm">{l}</span></label>)}
+    <div className="txs cmu mb12">Con las 3 marcadas tu evento muestra la insignia “✔ Datos confirmados”. Mentir aquí puede significar la suspensión de la cuenta.</div>
     {err&&<div className="hint e">⚠️ {err}</div>}
   </Sheet>;
 }
-function EventCard({e,children,onClick}){
+function EventCard({e,children,onClick,score}){
   const b=BDG[e.badge];
   return <div className={"card"+(onClick?" card-i":"")} onClick={onClick}>
     <div style={{display:"flex",gap:12,alignItems:"flex-start",marginBottom:10}}>
@@ -1029,6 +1137,12 @@ function EventCard({e,children,onClick}){
       {b&&<span className="pill" style={{background:b.bg,color:b.c}}>{b.l}</span>}
     </div>
     {e.audience&&<div className="tsm cmu mb8">👥 {e.audience}</div>}
+    <div className="rowb mb8" style={{gap:6}}>
+      {score!=null&&<MatchPill v={score}/>}
+      <span className="pill" style={{background:"rgba(255,255,255,.06)",color:"var(--white)"}}>{repTxt(e.ownerId)}</span>
+      {evConfirmed(e)&&<span className="pill" style={{background:"var(--obg)",color:"var(--ok)"}}>✔ Datos confirmados</span>}
+      {e.packages&&e.packages.length>0&&<span className="pill" style={{background:"rgba(255,255,255,.06)",color:"var(--muted)"}}>📦 {e.packages.length} paquete{e.packages.length>1?"s":""}</span>}
+    </div>
     <div className="tsm"><span className="cmu">Busca: </span><b className="cte">{money(e.budgetMin)} – {money(e.budgetMax)}</b></div>
     {children}
   </div>;
@@ -1060,16 +1174,19 @@ function EventsView(){
 /* ══════════ BUSCAR EVENTOS (patrocinador) ══════════ */
 function ExploreView(){
   const {user,go,chatWith}=useApp();
-  const [q,setQ]=useState(""),[cat,setCat]=useState("Todos"),[sel,setSel]=useState(null);
+  const [q,setQ]=useState(""),[cat,setCat]=useState("Todos"),[sel,setSel]=useState(null),[sort,setSort]=useState("match");
   useEffect(()=>{DB.setFlag("explored_"+user.id)},[]);
-  const evs=DB.events().filter(e=>e.ownerId!==user.id).filter(e=>cat==="Todos"||e.cat===cat).filter(e=>!q||(e.name+" "+e.loc+" "+e.desc+" "+e.audience).toLowerCase().includes(q.toLowerCase()));
+  const evs=DB.events().filter(e=>e.ownerId!==user.id).filter(e=>cat==="Todos"||e.cat===cat).filter(e=>!q||(e.name+" "+e.loc+" "+e.desc+" "+e.audience).toLowerCase().includes(q.toLowerCase()))
+    .map(e=>({e,s:matchScore(user,e)})).sort((a,b)=>sort==="match"?b.s-a.s:sort==="cheap"?a.e.budgetMin-b.e.budgetMin:(b.e.created||"").localeCompare(a.e.created||""));
   const owner=sel&&userById(sel.ownerId);
   return <div>
     <Head title="Buscar eventos" sub="Toca un evento para ver detalles, escribir o proponer un acuerdo"/>
     <input className="inp mb12" value={q} onChange={e=>setQ(e.target.value)} placeholder="🔍  Busca por nombre, ciudad o público…"/>
     <div className="chips">{["Todos",...CATS.map(c=>c.v)].map(c=><button key={c} className={"chip"+(cat===c?" on":"")} onClick={()=>setCat(c)}>{c==="Todos"?"✨ Todos":(CATS.find(x=>x.v===c).i+" "+c)}</button>)}</div>
+    <div className="seg">{[["match","⭐ Recomendados"],["new","🆕 Nuevos"],["cheap","💶 Menor presupuesto"]].map(([k,l])=><button key={k} className={sort===k?"on":""} onClick={()=>setSort(k)}>{l}</button>)}</div>
+    {!(user.cats&&user.cats.length)&&<div className="hint mb12">💡 <div>Para mejores recomendaciones, elige en <b>Perfil</b> las categorías que te interesan y tu presupuesto.</div></div>}
     {evs.length===0?<Empty icon="🔍" title="No encontramos eventos" text="Prueba con otra palabra o categoría." action="Ver todos" onAction={()=>{setQ("");setCat("Todos")}}/>
-    :<div className="g2">{evs.map(e=><EventCard key={e.id} e={e} onClick={()=>setSel(e)}><div className="tsm cte fw7 mt12">Ver detalles →</div></EventCard>)}</div>}
+    :<div className="g2">{evs.map(({e,s})=><EventCard key={e.id} e={e} score={s} onClick={()=>setSel(e)}><div className="tsm cte fw7 mt12">Ver detalles y paquetes →</div></EventCard>)}</div>}
     {sel&&<Sheet title={sel.name} icon={sel.icon} onClose={()=>setSel(null)} footer={<>
       <button className="btn btn-g" onClick={()=>{setSel(null);chatWith(sel.ownerId,sel.name)}}>💬 Escribir</button>
       <button className="btn btn-p" onClick={()=>{setSel(null);go("nuevo",{ev:sel.id})}}>🤝 Proponer acuerdo</button></>}>
@@ -1077,10 +1194,19 @@ function ExploreView(){
       <p className="tmd mb16" style={{lineHeight:1.6}}>{sel.desc}</p>
       <div className="g2" style={{gap:8}}>
         <div className="st"><div className="stv" style={{fontSize:16}}>{money(sel.budgetMin)}–{money(sel.budgetMax)}</div><div className="stl">Presupuesto que busca</div></div>
-        <div className="st"><div className="stv" style={{fontSize:16}}>{sel.trust||80}/100</div><div className="stl">Confianza (cumplimiento)</div></div>
+        <div className="st"><div className="stv" style={{fontSize:16}}>{matchScore(user,sel)}%</div><div className="stl">Compatible con tu marca</div></div>
       </div>
       {sel.audience&&<div className="mcard mt12"><div className="txs cmu fw7 mb8">👥 PÚBLICO</div><div className="tmd">{sel.audience}</div></div>}
-      {owner&&<div className="row mt12"><Av u={owner} size={40}/><div><div className="fw7 tmd">{owner.name}</div><div className="txs cmu">Organizador · {owner.loc}</div></div></div>}
+      {sel.social&&(sel.social.ig||sel.social.tt||sel.social.attendees||sel.social.web)&&<div className="mcard"><div className="txs cmu fw7 mb8">📊 AUDIENCIA (declarada por el organizador)</div>
+        <div className="rowb" style={{gap:14}}>{sel.social.ig&&<span className="tsm">📸 {sel.social.ig} en Instagram</span>}{sel.social.tt&&<span className="tsm">🎵 {sel.social.tt} en TikTok</span>}{sel.social.attendees&&<span className="tsm">👥 {sel.social.attendees}</span>}{sel.social.web&&<span className="tsm">🌐 {sel.social.web}</span>}</div></div>}
+      {evConfirmed(sel)&&<div className="hint mb12">✔ <div>El organizador confirmó <b>fecha, lugar</b> y que el evento <b>se hace igual</b>, con o sin patrocinio.</div></div>}
+      {sel.packages&&sel.packages.length>0&&<><div className="sec-t" style={{marginTop:8}}>📦 Paquetes disponibles</div>
+        {sel.packages.map((p,i)=><div key={i} className="mcard">
+          <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:6}}><b>{p.name}</b><b className="cte">{money(p.price)}</b></div>
+          {p.items.map((it,j)=><div key={j} className="tsm cmu">✓ {it}</div>)}
+          <button className="btn btn-p btn-sm mt12" style={{width:"100%"}} onClick={()=>{setSel(null);go("nuevo",{ev:sel.id,pkg:i})}}>Elegir {p.name} →</button>
+        </div>)}</>}
+      {owner&&<div className="row mt12"><Av u={owner} size={40}/><div><div className="fw7 tmd">{owner.name}</div><div className="txs cmu">Organizador · {repTxt(owner.id)}</div></div></div>}
       <div className="hint mt16">🔒 Si haces un acuerdo, tu dinero queda protegido y solo se paga cuando apruebes cada entrega.</div>
     </Sheet>}
   </div>;
@@ -1089,14 +1215,17 @@ function ExploreView(){
 /* ══════════ VER MARCAS (patrocinado) ══════════ */
 function BrandsView(){
   const {user,go,chatWith}=useApp();
-  const brands=DB.users().filter(u=>u.role==="patrocinador");
+  const mine=DB.events().filter(e=>e.ownerId===user.id);
+  const brands=DB.users().filter(u=>u.role==="patrocinador").map(b=>({b,s:brandScore(b,mine)})).sort((x,y)=>y.s-x.s);
   return <div>
     <Back onClick={()=>go("inicio",{})} label="Inicio"/>
-    <Head title="Marcas en GetSponzo" sub="Escríbeles para presentar tu evento o propón un acuerdo directo"/>
+    <Head title="Marcas en GetSponzo" sub="Ordenadas de más a menos compatibles con tus eventos"/>
     {brands.length===0?<Empty icon="🏢" title="Aún no hay marcas" text="Pronto se sumarán marcas a la plataforma."/>
-    :<div className="g2">{brands.map(b=>(
+    :<div className="g2">{brands.map(({b,s})=>(
       <div key={b.id} className="card">
         <div className="row mb12"><Av u={b} size={46}/><div style={{minWidth:0}}><div className="fw7" style={{fontSize:15.5}}>{dispName(b)}</div><div className="txs cmu">{b.sector||"Marca"}{b.loc?" · "+b.loc:""}</div></div></div>
+        <div className="rowb mb12" style={{gap:6}}>{mine.length>0&&<MatchPill v={s}/>}<span className="pill" style={{background:"rgba(255,255,255,.06)",color:"var(--white)"}}>{repTxt(b.id)}</span></div>
+        {b.cats&&b.cats.length>0&&<div className="txs cmu mb8">Le interesa: {b.cats.join(", ")}</div>}
         {b.bio&&<p className="tsm cmu mb12" style={{lineHeight:1.55}}>{b.bio}</p>}
         {b.budget&&<div className="tsm mb12"><span className="cmu">Presupuesto: </span><b className="cte">{b.budget}</b></div>}
         <div style={{display:"flex",gap:8}}>
@@ -1105,6 +1234,40 @@ function BrandsView(){
         </div>
       </div>))}</div>}
   </div>;
+}
+
+/* ══════════ CONTRATO E INFORME DESCARGABLES ══════════ */
+const esc=s=>String(s==null?"":s).replace(/[&<>"]/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[ch]));
+function openDoc(c,kind){
+  const fee=c.feePct||FEE,feeAmt=Math.round(c.amount*fee/100),sg=c.signed||{};
+  const dt=x=>x?new Date(x).toLocaleString("es",{day:"numeric",month:"long",year:"numeric",hour:"2-digit",minute:"2-digit"}):"Pendiente";
+  const ds=DB.disputes().filter(d=>d.contractId===c.id);
+  const rows=c.milestones.map((m,i)=>`<tr><td>${i+1}</td><td>${esc(m.title)}</td><td>${esc(m.due?fdate(m.due):"—")}</td><td style="text-align:right">${money(m.amount)}</td>${kind==="report"?`<td>${esc(MS[m.status].l)}${m.status==="resolved"?" ("+m.paidPct+"%)":""}</td><td style="text-align:right">${money(msPaid(m))}</td><td>${esc(m.evidence||"—")}</td>`:""}</tr>`).join("");
+  const head=kind==="report"?"<th>#</th><th>Entrega</th><th>Fecha límite</th><th>Monto</th><th>Estado</th><th>Pagado</th><th>Evidencia</th>":"<th>#</th><th>Entrega</th><th>Fecha límite</th><th>Monto</th>";
+  const revs=DB.reviews().filter(r=>r.contractId===c.id);
+  const body=kind==="report"?`
+<h1>Informe de resultados</h1><p class="sub">${esc(c.eventName)} · generado el ${dt(new Date())}</p>
+<div class="kpis"><div><b>${money(c.amount)}</b><span>Monto del acuerdo</span></div><div><b>${money(cPaid(c))}</b><span>Pagado al evento</span></div><div><b>${c.milestones.filter(msDone).length} de ${c.milestones.length}</b><span>Entregas cumplidas</span></div><div><b>${ds.length}</b><span>Disputas</span></div></div>
+<h2>Partes</h2><p>Marca: <b>${esc(c.sponsorName)}</b> · Evento: <b>${esc(c.sponsoredName)}</b></p>
+<h2>Detalle de entregas</h2><table><thead><tr>${head}</tr></thead><tbody>${rows}</tbody></table>
+${ds.length?`<h2>Disputas</h2>${ds.map(d=>`<p><b>${esc(d.title)}</b>: ${esc(d.reason)}. ${d.verdict?`Decisión IA: ${d.verdict.pct}% al evento.`:"En curso."}</p>`).join("")}`:""}
+${revs.length?`<h2>Reseñas</h2>${revs.map(r=>`<p>${"★".repeat(r.stars)}${"☆".repeat(5-r.stars)} — ${esc(r.text||"")} <i>(${esc(dispName(userById(r.fromId)))})</i></p>`).join("")}`:""}`:`
+<h1>Acuerdo de patrocinio</h1><p class="sub">N° ${esc(c.id)} · creado el ${dt(c.created)}</p>
+<h2>1. Partes</h2><p><b>Patrocinador:</b> ${esc(c.sponsorName)}.<br><b>Patrocinado:</b> ${esc(c.sponsoredName)}, organizador de “${esc(c.eventName)}”.</p>
+<h2>2. Objeto</h2><p>El Patrocinador apoya económicamente “${esc(c.eventName)}” y el Patrocinado se compromete a cumplir las entregas indicadas en la cláusula 3.</p>
+<h2>3. Entregas y pagos</h2><table><thead><tr>${head}</tr></thead><tbody>${rows}</tbody><tfoot><tr><td></td><td><b>Total</b></td><td></td><td style="text-align:right"><b>${money(c.amount)}</b></td></tr></tfoot></table>
+<h2>4. Pago protegido</h2><p>El Patrocinador deposita el monto total en GetSponzo. Cada pago se libera al Patrocinado solo cuando el Patrocinador aprueba la evidencia de la entrega correspondiente.</p>
+<h2>5. Comisión</h2><p>GetSponzo cobra una comisión de ${fee}% (${money(feeAmt)}), pagada por el Patrocinador además del monto del acuerdo. El Patrocinado recibe el 100% de cada entrega aprobada.</p>
+${c.aiClause?`<h2>6. Resolución de disputas con IA</h2><p>Si una parte no está conforme con una entrega, puede abrir una disputa en GetSponzo. La otra parte tiene 7 días corridos para presentar su defensa. Vencido ese plazo, un árbitro de inteligencia artificial analiza las pruebas de ambas partes y decide qué porcentaje del pago de esa entrega se libera al Patrocinado: 0%, 25%, 50%, 75% o 100%. Las partes aceptan esta decisión como definitiva para esa entrega.</p>`:""}
+<h2>${c.aiClause?7:6}. Datos de contacto</h2><p>Las partes se comunican a través de GetSponzo. Compartir datos de contacto para cerrar el acuerdo fuera de la plataforma deja sin efecto el pago protegido.</p>
+<h2>Firmas electrónicas</h2><table><tr><td>${esc(c.sponsorName)}</td><td>${sg[c.sponsorId]?"✔ Firmado el "+dt(sg[c.sponsorId]):"Pendiente"}</td></tr><tr><td>${esc(c.sponsoredName)}</td><td>${sg[c.sponsoredId]?"✔ Firmado el "+dt(sg[c.sponsoredId]):"Pendiente"}</td></tr></table>
+<p class="note">Borrador generado automáticamente por GetSponzo. No reemplaza la revisión de un abogado.</p>`;
+  const html=`<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${kind==="report"?"Informe":"Contrato"} — ${esc(c.eventName)}</title>
+<style>body{font-family:Georgia,serif;color:#111;max-width:760px;margin:0 auto;padding:28px 18px;line-height:1.55;background:#fff}h1{font-size:26px;margin:0}h2{font-size:16px;margin:22px 0 6px;font-family:Arial,sans-serif}.sub{color:#666;margin:4px 0 18px;font-family:Arial,sans-serif;font-size:13px}table{width:100%;border-collapse:collapse;font-size:13px;font-family:Arial,sans-serif}td,th{border:1px solid #ccc;padding:6px 8px;text-align:left;vertical-align:top}th{background:#f3f3f3}.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;font-family:Arial,sans-serif}.kpis div{border:1px solid #ddd;border-radius:8px;padding:10px}.kpis b{display:block;font-size:20px;color:#0a8f6c}.kpis span{font-size:12px;color:#666}.note{margin-top:26px;font-size:12px;color:#a33;font-family:Arial,sans-serif}.bar{display:flex;gap:8px;margin-bottom:18px}.bar button{padding:10px 16px;border-radius:8px;border:none;background:#17d4a0;font-weight:700;cursor:pointer}@media print{.bar{display:none}}</style></head>
+<body><div class="bar"><button onclick="window.print()">🖨️ Imprimir o guardar como PDF</button></div><div style="font-family:Arial,sans-serif;font-weight:800;color:#0a8f6c;margin-bottom:10px">GetSponzo</div>${body}</body></html>`;
+  const w=window.open("","_blank");
+  if(!w){alert("Tu navegador bloqueó la ventana. Permite ventanas emergentes para GetSponzo.");return}
+  w.document.open();w.document.write(html);w.document.close();
 }
 
 /* ══════════ ACUERDOS ══════════ */
@@ -1119,7 +1282,7 @@ function DealsList(){
   const [f,setF]=useState(route.f||"todos");
   const all=myContracts(user.id);
   const ds=DB.disputes().filter(d=>d.status==="open"&&(d.openedById===user.id||d.againstId===user.id));
-  const list=all.filter(c=>f==="todos"||(f==="activos"&&cStatus(c)==="active")||(f==="disputa"&&cStatus(c)==="disputed")||(f==="terminados"&&cStatus(c)==="done"));
+  const list=all.filter(c=>f==="todos"||(f==="firmar"&&cStatus(c)==="pending")||(f==="activos"&&cStatus(c)==="active")||(f==="disputa"&&cStatus(c)==="disputed")||(f==="terminados"&&(cStatus(c)==="done"||cStatus(c)==="rejected")));
   const cnt=k=>all.filter(c=>cStatus(c)===k).length;
   return <div>
     <Head title="Mis acuerdos" sub="Cada acuerdo se paga por entregas" right={<button className="btn btn-p btn-sm" onClick={()=>go("nuevo",{})}>➕ Nuevo</button>}/>
@@ -1127,7 +1290,7 @@ function DealsList(){
       <div className="ti" style={{background:"var(--ebg)"}}>⚖️</div>
       <div style={{flex:1,minWidth:0}}><div className="fw7 tmd">Disputa abierta</div><div className="tsm cmu ellip">{d.title} · {d.defenseSent||daysLeft(d)<=0?"lista para la IA":`quedan ${daysLeft(d)} días`}</div></div>
       <span className="fw7" style={{color:"var(--err)",fontSize:20}}>›</span></button>)}
-    <div className="seg">{[["todos","Todos",all.length],["activos","Activos",cnt("active")],["disputa","En disputa",cnt("disputed")],["terminados","Terminados",cnt("done")]].map(([k,l,n])=><button key={k} className={f===k?"on":""} onClick={()=>setF(k)}>{l} ({n})</button>)}</div>
+    <div className="seg">{[["todos","Todos",all.length],["firmar","Por firmar",cnt("pending")],["activos","Activos",cnt("active")],["disputa","En disputa",cnt("disputed")],["terminados","Terminados",cnt("done")+cnt("rejected")]].map(([k,l,n])=><button key={k} className={f===k?"on":""} onClick={()=>setF(k)}>{l} ({n})</button>)}</div>
     {all.length===0?<Empty icon="🤝" title="Aún no tienes acuerdos" text={user.role==="patrocinador"?"Busca un evento que te guste y propón un acuerdo. Tu dinero queda protegido.":"Cuando cierres un acuerdo con una marca aparecerá aquí."} action="➕ Crear acuerdo" onAction={()=>go("nuevo",{})}/>
     :list.length===0?<div className="hint">No tienes acuerdos en esta sección.</div>
     :<div style={{display:"grid",gap:10}}>{list.map(c=>{
@@ -1148,6 +1311,7 @@ function DealDetail({id}){
   const c=DB.contracts().find(x=>x.id===id);
   const [ev,setEv]=useState(route.act==="ev"?route.mid:null);
   const [disp,setDisp]=useState(null);
+  const [rv,setRv]=useState({stars:0,text:""});
   if(!c)return <div><Back onClick={()=>go("acuerdos",{})}/><Empty icon="🤷" title="No encontramos este acuerdo" text="Puede que se haya borrado."/></div>;
   const isS=c.sponsorId===user.id,otherId=isS?c.sponsoredId:c.sponsorId,other=userById(otherId);
   const paid=cPaid(c),st=cStatus(c);
@@ -1156,25 +1320,55 @@ function DealDetail({id}){
   const approve=m=>confirm({title:"¿Aprobar y pagar?",text:`Se pagarán ${money(m.amount)} a ${c.sponsoredName} por “${m.title}”. Esta acción no se puede deshacer.`,ok:"✅ Sí, aprobar y pagar",onOk:()=>{
     updMs(m.id,{status:"approved",approvedAt:new Date().toISOString()});sysMsg(user.id,otherId,`✅ ${c.sponsorName} aprobó “${m.title}” y se pagaron ${money(m.amount)}`,c.eventName);
     toast("¡Entrega aprobada!","💸",money(m.amount)+" pagados");bump()}});
-  const next=c.milestones.find(m=>!msDone(m)&&m.status!=="disputed");
+  const live=st!=="pending"&&st!=="rejected";
+  const next=live?c.milestones.find(m=>!msDone(m)&&m.status!=="disputed"):null;
+  const fee=c.feePct||FEE,feeAmt=Math.round(c.amount*fee/100);
+  const iSigned=!!(c.signed||{})[user.id];
+  const updC=patch=>DB.setContracts(DB.contracts().map(x=>x.id!==c.id?x:{...x,...patch}));
+  const sign=()=>confirm({title:"¿Firmar este acuerdo?",text:`Aceptas ${c.milestones.length} entrega${c.milestones.length>1?"s":""} por un total de ${money(c.amount)}${c.aiClause?" y la cláusula de arbitraje con IA":""}. Desde ahora el acuerdo queda activo.`,ok:"✍️ Sí, firmar",onOk:()=>{
+    updC({status:"active",signed:{...(c.signed||{}),[user.id]:new Date().toISOString()}});sysMsg(user.id,otherId,`✍️ ${dispName(user)} firmó el acuerdo de “${c.eventName}”. ¡Está activo!`,c.eventName);toast("¡Acuerdo firmado!","✍️","Ya está activo");bump()}});
+  const reject=()=>confirm({title:"¿Rechazar la propuesta?",text:"La otra parte verá que la rechazaste. Pueden conversar por chat y hacer una nueva propuesta.",ok:"Rechazar",danger:true,onOk:()=>{
+    updC({status:"rejected",rejectedBy:user.id});sysMsg(user.id,otherId,`✖ ${dispName(user)} rechazó la propuesta para “${c.eventName}”. Conversemos para ajustarla.`,c.eventName);toast("Propuesta rechazada","✖");bump()}});
+  const myRev=DB.reviews().find(r=>r.id===c.id+"_"+user.id);
+  const sendRev=()=>{if(!rv.stars){toast("Elige de 1 a 5 estrellas","⭐");return}
+    DB.setReviews([...DB.reviews(),{id:c.id+"_"+user.id,contractId:c.id,fromId:user.id,toId:otherId,stars:rv.stars,text:rv.text.trim().slice(0,400),ts:new Date().toISOString()}]);toast("¡Gracias por tu reseña!","⭐");bump()};
   return <div>
     <Back onClick={()=>go("acuerdos",{})} label="Mis acuerdos"/>
     <div className="card mb12" style={{borderColor:"var(--border)"}}>
       <div className="txs cmu fw7 mb8">ACUERDO DE PATROCINIO</div>
       <div style={{fontSize:20,fontWeight:800,fontFamily:"'Sora',sans-serif",marginBottom:4}}>{c.eventName}</div>
       <div className="row mb16" style={{gap:8}}><Av u={other} size={26}/><span className="tsm cmu">{isS?"Evento: ":"Marca: "}<b className="cwh">{isS?c.sponsoredName:c.sponsorName}</b></span></div>
-      <Stepper steps={["Acuerdo firmado","Entregas en curso","Completado"]} cur={st==="done"?3:stepIdx}/>
+      <Stepper steps={["Propuesta","Firmado por ambos","Entregas","Completado"]} cur={st==="pending"||st==="rejected"?0:st==="done"?4:2}/>
       <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-end",marginBottom:8}}>
         <div><div className="txs cmu">Pagado</div><div className="money-big">{money(paid)}</div></div>
         <div style={{textAlign:"right"}}><div className="txs cmu">Total</div><div className="fw7" style={{fontSize:17}}>{money(c.amount)}</div></div>
       </div>
       <Bar v={paid/c.amount*100}/>
-      <div className="txs cmu mt8">🔒 {money(c.milestones.filter(m=>!msDone(m)).reduce((s,m)=>s+m.amount,0))} siguen protegidos por GetSponzo hasta que se cumplan las entregas.</div>
+      {live&&<div className="txs cmu mt8">🔒 {money(c.milestones.filter(m=>!msDone(m)).reduce((s,m)=>s+m.amount,0))} siguen protegidos por GetSponzo hasta que se cumplan las entregas.</div>}
+      <div className="txs cmu mt8">💶 Comisión GetSponzo {fee}% ({money(feeAmt)}) la paga la marca. El evento recibe el 100% de cada entrega.</div>
       <div style={{display:"flex",gap:8,marginTop:14}}>
         <button className="btn btn-g btn-sm" style={{flex:1}} onClick={()=>chatWith(otherId,c.eventName)}>💬 Chat</button>
-        <button className="btn btn-g btn-sm" style={{flex:1}} onClick={()=>startCall(other)}>📹 Videollamada</button>
+        <button className="btn btn-g btn-sm" style={{flex:1}} onClick={()=>startCall(other)}>📹 Llamar</button>
+        <button className="btn btn-g btn-sm" style={{flex:1}} onClick={()=>openDoc(c,"contract")}>📄 Contrato</button>
       </div>
+      {st==="done"&&<button className="btn btn-p btn-sm mt8" style={{width:"100%"}} onClick={()=>openDoc(c,"report")}>📊 Ver informe de resultados</button>}
     </div>
+
+    {st==="pending"&&(iSigned?<div className="hint w mb12">⏳ <div><b>Propuesta enviada.</b> Falta que {isS?c.sponsoredName:c.sponsorName} la revise y firme. Mientras tanto no se mueve dinero.</div></div>
+      :<div className="card mb12" style={{borderColor:"rgba(245,200,66,.4)",background:"var(--wbg)"}}>
+        <div className="fw7 mb8">✍️ {isS?c.sponsoredName:c.sponsorName} te envió esta propuesta</div>
+        <div className="tsm cmu mb12" style={{lineHeight:1.5}}>Revisa las entregas y montos de abajo. Si estás de acuerdo, fírmala y queda activa. Si no, recházala y conversen por chat.</div>
+        <div style={{display:"flex",gap:8}}><button className="btn btn-g" style={{flex:1}} onClick={reject}>Rechazar</button><button className="btn btn-p" style={{flex:2}} onClick={sign}>✍️ Firmar acuerdo</button></div>
+      </div>)}
+    {st==="rejected"&&<div className="hint e mb12">✖ <div>Esta propuesta fue rechazada. Conversen por chat y creen una nueva si llegan a acuerdo.</div></div>}
+    {st==="done"&&(myRev?<div className="hint mb12">⭐ <div>Calificaste a {isS?c.sponsoredName:c.sponsorName} con {myRev.stars} estrella{myRev.stars>1?"s":""}. ¡Gracias!</div></div>
+      :<div className="card mb12" style={{borderColor:"rgba(245,200,66,.4)"}}>
+        <div className="fw7 mb8">⭐ ¿Cómo te fue con {isS?c.sponsoredName:c.sponsorName}?</div>
+        <div className="row mb12" style={{gap:4}}>{[1,2,3,4,5].map(n=><button key={n} onClick={()=>setRv(p=>({...p,stars:n}))} style={{fontSize:30,color:n<=rv.stars?"var(--warn)":"rgba(255,255,255,.2)",lineHeight:1}} aria-label={n+" estrellas"}>★</button>)}</div>
+        <textarea className="inp mb8" style={{minHeight:60}} value={rv.text} onChange={e=>setRv(p=>({...p,text:e.target.value}))} placeholder="Cuenta en una frase cómo fue (opcional)"/>
+        <button className="btn btn-p btn-sm" style={{width:"100%"}} onClick={sendRev}>Publicar reseña</button>
+        <div className="txs cmu mt8">Las reseñas son públicas y no se pueden borrar. Construyen la reputación de cada uno.</div>
+      </div>)}
 
     {next&&<div className="hint mb12">👉 <div><b>¿Qué sigue?</b> {next.status==="pending"?(isS?`${c.sponsoredName} debe cumplir “${next.title}” y subir la evidencia. Te avisaremos.`:`Cumple “${next.title}” y sube una foto o prueba con el botón “📤 Subir evidencia”.`):(isS?`Revisa la evidencia de “${next.title}”. Si está bien, apruébala y se paga.`:`La marca está revisando “${next.title}”. Cuando apruebe, recibes el pago.`)}</div></div>}
 
@@ -1193,12 +1387,12 @@ function DealDetail({id}){
         </div>
         {m.evidence&&<div className="tsm mt12" style={{background:"rgba(255,255,255,.03)",borderRadius:10,padding:"9px 11px"}}>📎 <span className="cmu">Evidencia:</span> {m.evidence}{m.files&&m.files.length>0&&<div className="txs cte mt8">{m.files.join(" · ")}</div>}</div>}
         {m.status==="resolved"&&<div className="tsm mt12" style={{color:"var(--pur)"}}>🤖 La IA decidió pagar el {m.paidPct}% ({money(m.amount*m.paidPct/100)})</div>}
-        {!isS&&m.status==="pending"&&<button className="btn btn-p btn-sm mt12" style={{width:"100%"}} onClick={()=>setEv(m.id)}>📤 Subir evidencia</button>}
-        {isS&&m.status==="submitted"&&<div style={{display:"flex",gap:8,marginTop:12}}>
+        {live&&!isS&&m.status==="pending"&&<button className="btn btn-p btn-sm mt12" style={{width:"100%"}} onClick={()=>setEv(m.id)}>📤 Subir evidencia</button>}
+        {live&&isS&&m.status==="submitted"&&<div style={{display:"flex",gap:8,marginTop:12}}>
           <button className="btn btn-d btn-sm" style={{flex:1}} onClick={()=>setDisp(m)}>⚠️ No cumple</button>
           <button className="btn btn-p btn-sm" style={{flex:2}} onClick={()=>approve(m)}>✅ Aprobar y pagar</button></div>}
-        {!isS&&m.status==="submitted"&&<div className="txs cmu mt12">⏳ Esperando que la marca revise. <button className="cte fw6" style={{textDecoration:"underline",fontSize:12}} onClick={()=>setDisp(m)}>¿No responde? Abrir disputa</button></div>}
-        {isS&&m.status==="pending"&&<div className="txs cmu mt12">⏳ Esperando la entrega del evento.</div>}
+        {live&&!isS&&m.status==="submitted"&&<div className="txs cmu mt12">⏳ Esperando que la marca revise. <button className="cte fw6" style={{textDecoration:"underline",fontSize:12}} onClick={()=>setDisp(m)}>¿No responde? Abrir disputa</button></div>}
+        {live&&isS&&m.status==="pending"&&<div className="txs cmu mt12">⏳ Esperando la entrega del evento.</div>}
         {m.status==="disputed"&&d&&<button className="btn btn-g btn-sm mt12" style={{width:"100%",color:"var(--err)"}} onClick={()=>go("acuerdos",{did:d.id})}>⚖️ Ver la disputa →</button>}
       </div>;
     })}
@@ -1335,7 +1529,13 @@ function NewDeal(){
   const [step,setStep]=useState(0);
   const [evId,setEvId]=useState(route.ev||(!isS&&myEvents.length===1?myEvents[0].id:""));
   const [brandId,setBrandId]=useState(route.to||"");
-  const [ms,setMs]=useState([{title:"",amount:"",due:""}]);
+  const [ms,setMs]=useState(()=>{
+    const e0=DB.events().find(e=>e.id===route.ev),p=e0&&e0.packages&&route.pkg!=null?e0.packages[route.pkg]:null;
+    if(!p)return [{title:"",amount:"",due:""}];
+    const n=p.items.length,base=Math.floor(p.price/n/100)*100;
+    return p.items.map((t,i)=>({title:t,amount:String(i===n-1?p.price-base*(n-1):base),due:""}));
+  });
+  useEffect(()=>{if(route.pkg!=null&&route.ev)setStep(1)},[]);
   const [ai,setAi]=useState(true);
   const ev=DB.events().find(e=>e.id===evId);
   const brand=userById(brandId);
@@ -1347,11 +1547,11 @@ function NewDeal(){
   const create=()=>{
     const owner=userById(ev.ownerId);
     const sponsor=isS?user:brand,sponsored=isS?owner:user;
-    const c={id:uid("c"),parties:[sponsor.id,sponsored.id],eventId:ev.id,eventName:ev.name,sponsorId:sponsor.id,sponsorName:dispName(sponsor),sponsoredId:sponsored.id,sponsoredName:sponsored.name,amount:total,aiClause:ai,created:new Date().toISOString(),
+    const c={id:uid("c"),parties:[sponsor.id,sponsored.id],status:"pending",feePct:FEE,createdBy:user.id,signed:{[user.id]:new Date().toISOString()},eventId:ev.id,eventName:ev.name,sponsorId:sponsor.id,sponsorName:dispName(sponsor),sponsoredId:sponsored.id,sponsoredName:sponsored.name,amount:total,aiClause:ai,created:new Date().toISOString(),
       milestones:ms.map((m,i)=>({id:i+1,title:m.title.trim(),amount:Number(m.amount),due:m.due,status:"pending",evidence:""}))};
     DB.setContracts([...DB.contracts(),c]);
-    sysMsg(user.id,isS?sponsored.id:sponsor.id,`🤝 ${dispName(user)} creó un acuerdo de ${money(total)} para “${ev.name}” con ${ms.length} entrega${ms.length>1?"s":""}.`,ev.name);
-    toast("¡Acuerdo creado!","🤝",isS?"Tu dinero queda protegido":"La marca fue notificada");bump();go("acuerdos",{cid:c.id});
+    sysMsg(user.id,isS?sponsored.id:sponsor.id,`🤝 ${dispName(user)} te envió una propuesta de ${money(total)} para “${ev.name}” con ${ms.length} entrega${ms.length>1?"s":""}. Revísala y fírmala en Acuerdos.`,ev.name);
+    toast("¡Propuesta enviada!","✍️","Falta la firma de "+(isS?sponsored.name:dispName(sponsor)));bump();go("acuerdos",{cid:c.id});
   };
   return <div>
     <Back onClick={()=>step?setStep(step-1):go("acuerdos",{})} label={step?"Paso anterior":"Cancelar"}/>
@@ -1400,12 +1600,17 @@ function NewDeal(){
         {ms.map((m,i)=><div key={i} style={{display:"flex",justifyContent:"space-between",padding:"9px 0",borderBottom:"1px solid var(--bs)",gap:10}}><span className="tmd">{i+1}. {m.title}</span><b className="tmd" style={{flexShrink:0}}>{money(m.amount)}</b></div>)}
         <div style={{display:"flex",justifyContent:"space-between",paddingTop:12}}><span className="fw7">Total</span><span className="money-big" style={{fontSize:22}}>{money(total)}</span></div>
       </div>
-      <div className="hint mb12">🔒 <div><b>Pago protegido:</b> {isS?"depositas el total y GetSponzo lo guarda. Solo se paga cada entrega cuando tú la apruebas.":"la marca deposita el total y GetSponzo lo guarda. Recibes cada pago cuando la marca aprueba tu entrega."}</div></div>
+      <div className="card mb12">
+        <div style={{display:"flex",justifyContent:"space-between"}} className="tsm mb8"><span className="cmu">Monto del acuerdo (lo recibe el evento)</span><b>{money(total)}</b></div>
+        <div style={{display:"flex",justifyContent:"space-between"}} className="tsm mb8"><span className="cmu">Comisión GetSponzo ({FEE}%, la paga la marca)</span><b>{money(Math.round(total*FEE/100))}</b></div>
+        <div style={{display:"flex",justifyContent:"space-between",borderTop:"1px solid var(--bs)",paddingTop:8}} className="tsm"><span className="fw7">Total que paga la marca</span><b className="cte">{money(total+Math.round(total*FEE/100))}</b></div>
+      </div>
+      <div className="hint mb12">🔒 <div><b>Pago protegido:</b> {isS?"depositas el total y GetSponzo lo guarda. Solo se paga cada entrega cuando tú la apruebas.":"la marca deposita el total y GetSponzo lo guarda. Recibes cada pago cuando la marca aprueba tu entrega."} <b>El acuerdo se activa cuando {isS?"el evento":"la marca"} también lo firma.</b></div></div>
       <label className="mcard" style={{display:"flex",gap:12,alignItems:"flex-start",cursor:"pointer"}}>
         <input type="checkbox" checked={ai} onChange={e=>setAi(e.target.checked)} style={{width:22,height:22,accentColor:"#17d4a0",flexShrink:0,marginTop:2,appearance:"auto"}}/>
         <div><div className="fw7 tmd">🤖 Acepto la cláusula de arbitraje con IA</div><div className="tsm cmu" style={{lineHeight:1.5}}>Si hay un desacuerdo, la otra parte tiene 7 días para defenderse y luego la IA decide qué % se paga (0, 25, 50, 75 o 100%).</div></div>
       </label>
-      <button className="btn btn-p mt8" style={{width:"100%"}} disabled={!ai} onClick={create}>{ai?"✍️ Firmar y crear acuerdo":"Debes aceptar la cláusula"}</button>
+      <button className="btn btn-p mt8" style={{width:"100%"}} disabled={!ai} onClick={create}>{ai?"✍️ Firmar y enviar propuesta":"Debes aceptar la cláusula"}</button>
     </div>}
   </div>;
 }
@@ -1415,6 +1620,7 @@ const QUICK={patrocinado:["¡Hola! Gracias por escribir 😊","Te envío una pro
 function ChatView(){
   const {user,route,go,toast,bump,startCall}=useApp();
   const [txt,setTxt]=useState("");
+  const [rep,setRep]=useState(false);
   const endRef=useRef(null);
   const chats=DB.chats().filter(c=>c.participants.includes(user.id)).sort((a,b)=>{const am=a.messages||[],bm=b.messages||[];const la=am[am.length-1],lb=bm[bm.length-1];return (lb?lb.ts:"").localeCompare(la?la.ts:"")});
   const ch=route.chat&&chats.find(c=>c.id===route.chat);
@@ -1450,6 +1656,7 @@ function ChatView(){
         <Av u={other} size={38}/>
         <div style={{flex:1,minWidth:0}}><div className="fw7 tmd ellip">{ch.names[oid]||dispName(other)}</div><div className="txs cmu ellip">{ch.eventName||ROLE[(other||{}).role||"patrocinado"].l}</div></div>
         <button className="ibtn" onClick={()=>startCall(other)} title="Videollamada" style={{background:"rgba(23,212,160,.12)",borderColor:"var(--border)"}}>📹</button>
+        <button className="ibtn" onClick={()=>setRep(true)} title="Reportar" aria-label="Reportar">🚩</button>
       </div>
       <div className="chat-body">
         <div className="sysmsg">🔒 Conversación protegida por GetSponzo</div>
@@ -1461,12 +1668,26 @@ function ChatView(){
         <div ref={endRef}/>
       </div>
       <div className="qr">{(QUICK[user.role]||QUICK.patrocinado).map(q=><button key={q} onClick={()=>send(q)}>{q}</button>)}</div>
+      {rep&&<ReportSheet target={other} chatId={ch.id} onClose={()=>setRep(false)}/>}
       <div className="chat-foot">
         <input className="inp" value={txt} onChange={e=>setTxt(e.target.value)} onKeyDown={e=>e.key==="Enter"&&send()} placeholder="Escribe un mensaje…" style={{flex:1}}/>
         <button className="btn btn-p" style={{width:52,padding:0,flexShrink:0}} onClick={()=>send()} aria-label="Enviar">➤</button>
       </div>
     </div>
   </div>;
+}
+
+const REP_REASONS=["Pide pagar fuera de GetSponzo","Parece una cuenta falsa","Datos del evento falsos","Mensajes ofensivos","Otro"];
+function ReportSheet({target,chatId,onClose}){
+  const {user,toast}=useApp();
+  const [r,setR]=useState(""),[d,setD]=useState("");
+  const send=()=>{if(!r){toast("Elige un motivo","⚠️");return}addReport({fromId:user.id,targetId:(target&&target.id)||"",chatId:chatId||"",reason:r,detail:d.trim().slice(0,500)});toast("Reporte enviado","🚩","El equipo de GetSponzo lo revisará");onClose()};
+  return <Sheet title={"Reportar a "+dispName(target)} icon="🚩" onClose={onClose} footer={<><button className="btn btn-g" onClick={onClose}>Cancelar</button><button className="btn btn-d" onClick={send}>Enviar reporte</button></>}>
+    <div className="hint w mb16">🛡️ <div>Nunca pagues ni compartas datos bancarios fuera de GetSponzo. Si alguien te lo pide, repórtalo.</div></div>
+    <Field label="¿Qué pasó?"><div className="chips" style={{flexWrap:"wrap"}}>{REP_REASONS.map(x=><button key={x} className={"chip"+(r===x?" on":"")} onClick={()=>setR(x)}>{x}</button>)}</div></Field>
+    <Field label="Cuéntanos más (opcional)"><textarea className="inp" value={d} onChange={e=>setD(e.target.value)} placeholder="Describe lo que pasó…"/></Field>
+    <div className="txs cmu">La otra persona no sabrá que la reportaste.</div>
+  </Sheet>;
 }
 
 /* ══════════ PERFIL ══════════ */
@@ -1494,7 +1715,9 @@ function ProfileView(){
       <div style={{display:"flex",justifyContent:"center",marginBottom:10}}><Av u={user} size={76}/></div>
       <div style={{fontSize:20,fontWeight:800,fontFamily:"'Sora',sans-serif"}}>{user.name}</div>
       {user.company&&<div className="tsm cte fw6">{user.company}</div>}
-      <div className="mt8"><span className="pill" style={{background:"rgba(255,255,255,.06)",color:"var(--white)"}}>{ROLE[user.role].i} {ROLE[user.role].l}</span></div>
+      <div className="mt8 rowb" style={{justifyContent:"center",gap:6}}><span className="pill" style={{background:"rgba(255,255,255,.06)",color:"var(--white)"}}>{ROLE[user.role].i} {ROLE[user.role].l}</span>
+        {user.role!=="inversor"&&<span className="pill" style={{background:"rgba(255,255,255,.06)",color:"var(--white)"}}>{repTxt(user.id)}</span>}
+        {REAL&&AUTH&&AUTH.currentUser&&(AUTH.currentUser.emailVerified?<span className="pill" style={{background:"var(--obg)",color:"var(--ok)"}}>✉️ Correo verificado</span>:<span className="pill" style={{background:"var(--wbg)",color:"var(--warn)"}}>✉️ Correo sin verificar</span>)}</div>
       {user.bio&&!edit&&<p className="tsm cmu mt12" style={{lineHeight:1.55,maxWidth:420,margin:"12px auto 0"}}>{user.bio}</p>}
       {user.role!=="inversor"&&<div className="g3 mt16" style={{gridTemplateColumns:"repeat(3,1fr)",gap:8}}>
         <div className="st"><div className="stv" style={{fontSize:18}}>{cs.length}</div><div className="stl">Acuerdos</div></div>
@@ -1507,7 +1730,8 @@ function ProfileView(){
       <div className="fw7 mb16">✏️ Editar mi perfil</div>
       <Field label="Nombre"><input className="inp" value={f.name} onChange={e=>set("name",e.target.value)}/></Field>
       {user.role!=="patrocinado"&&<Field label={user.role==="patrocinador"?"Marca o empresa":"Fondo o empresa"}><input className="inp" value={f.company||""} onChange={e=>set("company",e.target.value)}/></Field>}
-      {user.role==="patrocinador"&&<><Field label="Sector"><input className="inp" value={f.sector||""} onChange={e=>set("sector",e.target.value)} placeholder="Ej: Alimentos, Retail, Banca"/></Field>
+      {user.role==="patrocinador"&&<><Field label="Categorías que te interesan" hint="Las usamos para recomendarte eventos compatibles"><div className="chips" style={{flexWrap:"wrap"}}>{CATS.map(c=><button key={c.v} className={"chip"+((f.cats||[]).includes(c.v)?" on":"")} onClick={()=>set("cats",(f.cats||[]).includes(c.v)?(f.cats||[]).filter(x=>x!==c.v):[...(f.cats||[]),c.v])}>{c.i} {c.v}</button>)}</div></Field>
+        <Field label="Sector"><input className="inp" value={f.sector||""} onChange={e=>set("sector",e.target.value)} placeholder="Ej: Alimentos, Retail, Banca"/></Field>
         <Field label="Presupuesto aproximado"><div className="chips" style={{flexWrap:"wrap"}}>{["€1.000 – €5.000","€5.000 – €20.000","€20.000 – €50.000","Más de €50.000"].map(b=><button key={b} className={"chip"+(f.budget===b?" on":"")} onClick={()=>set("budget",b)}>{b}</button>)}</div></Field></>}
       <Field label="Ciudad"><input className="inp" value={f.loc||""} onChange={e=>set("loc",e.target.value)} placeholder="Ej: Santiago, Chile"/></Field>
       <Field label="Sobre ti" hint={user.role==="patrocinado"?"Qué haces y por qué una marca debería apoyarte":"Qué buscas patrocinar"}><textarea className="inp" value={f.bio||""} onChange={e=>set("bio",e.target.value)}/></Field>
@@ -1596,8 +1820,8 @@ function InvMercado(){
   return <div>
     <Head title="Mercado" sub="Por qué ahora y por qué partir en Chile"/>
     <div className="g2 mb16">
-      {[{f:"🇨🇱",n:"Chile — Partimos aquí",c:"var(--teal)",a:"~€445M",p:["Mercado sin competidores directos","Red de contactos del fundador","Validación rápida y barata","PYMEs sin acceso a agencias"]},
-        {f:"🇪🇸",n:"España — Fase 2",c:"var(--pur)",a:"€1.967M",p:["+19% de crecimiento en 2024","El más rápido de Europa","Llegamos con casos de éxito","Competidores sin pago protegido ni IA"]}].map(m=>(
+      {[{f:"🇨🇱",n:"Chile — Partimos aquí",c:"var(--teal)",a:"~€445M",p:["Sin marketplace de patrocinio de eventos","Red de contactos del fundador","Validación rápida y barata","PYMEs sin acceso a agencias"]},
+        {f:"🇪🇸",n:"España — Fase 2",c:"var(--pur)",a:"€1.967M",p:["+19% de crecimiento en 2024","El más rápido de Europa","Llegamos con casos de éxito","Nadie ofrece pago por entrega ni árbitro IA"]}].map(m=>(
         <div key={m.n} className="card" style={{borderColor:m.c}}>
           <div className="row mb12"><span style={{fontSize:30}}>{m.f}</span><div><div className="fw7">{m.n}</div><div style={{fontFamily:"'Sora',sans-serif",fontWeight:800,fontSize:20,color:m.c}}>{m.a}</div></div></div>
           {m.p.map(p=><div key={p} className="tsm cmu mb8">✓ {p}</div>)}
@@ -1605,8 +1829,17 @@ function InvMercado(){
     </div>
     <div className="card">
       <div className="fw7 mb12">🏆 Ventajas frente a la competencia</div>
-      {[["🔒","Pago protegido por entregas","Nadie paga por algo que no recibió."],["🤖","Árbitro IA","Disputas resueltas en 7 días, sin abogados."],["⭐","Reputación verificada","Historial de cumplimiento imposible de falsear."],["🇨🇱","Chile primero","Mercado virgen = aprendemos rápido y barato."]].map(([i,t,d])=>(
+      {[["🔒","Pago protegido por entregas","Nadie paga por algo que no recibió."],["🤖","Árbitro IA","Disputas resueltas en 7 días, sin abogados."],["⭐","Reputación verificada","Historial de cumplimiento imposible de falsear."],["🇨🇱","Chile primero","Sin competidor directo en eventos: aprendemos rápido y barato."]].map(([i,t,d])=>(
         <div key={t} className="row mb12" style={{alignItems:"flex-start"}}><div className="ti" style={{background:"rgba(23,212,160,.1)",width:36,height:36,fontSize:16}}>{i}</div><div><div className="fw7 tmd">{t}</div><div className="tsm cmu">{d}</div></div></div>))}
+    </div>
+    <div className="card mt12">
+      <div className="fw7 mb8">🔎 Competencia (revisada en septiembre 2026)</div>
+      <div className="tsm cmu mb12">Hay plataformas parecidas, sobre todo en Europa. Ninguna combina pago por entrega, árbitro IA y foco en Chile/LATAM.</div>
+      <div style={{overflowX:"auto"}}><table style={{width:"100%",borderCollapse:"collapse",fontSize:12.5,minWidth:460}}>
+        <thead><tr>{["Plataforma","Mercado","Pago por entrega","Árbitro IA","Comisión"].map(h=><th key={h} style={{textAlign:"left",padding:"7px 6px",borderBottom:"1px solid var(--bs)",color:"var(--muted)"}}>{h}</th>)}</tr></thead>
+        <tbody>{[["GetSponzo","Chile → LATAM → España","✅","✅",FEE+"% (marca)"],["sponso.com","EE.UU. y España (2026)","—","—","€199/mes + 5%"],["Sponsoo","Europa (2014)","—","—","Por acuerdo"],["Matching 365","España","—","—","% por acuerdo"],["Sponsor Up","México","—","—","18%"],["Invictos","Chile (atletas)","—","—","No publicado"]].map((r,k)=>
+          <tr key={k} style={k===0?{color:"var(--teal)",fontWeight:700}:{}}>{r.map((x,j)=><td key={j} style={{padding:"7px 6px",borderBottom:"1px solid var(--bs)"}}>{x}</td>)}</tr>)}</tbody>
+      </table></div>
     </div>
   </div>;
 }
