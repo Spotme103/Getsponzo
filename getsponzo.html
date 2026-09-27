@@ -4,6 +4,14 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=5.0"/>
 <title>GetSponzo — Patrocinio protegido</title>
+<link rel="manifest" href="manifest.webmanifest"/>
+<meta name="theme-color" content="#07101e"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="GetSponzo"/>
+<link rel="apple-touch-icon" href="icon-192.png"/>
+<link rel="icon" type="image/png" href="icon-192.png"/>
 <meta name="description" content="Conecta marcas con eventos. Pago protegido por escrow. Árbitro IA en 7 días."/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
@@ -255,7 +263,7 @@ textarea.inp{min-height:80px;resize:vertical;line-height:1.5}
 <div id="root"></div>
 <script type="text/babel">
 const {useState,useEffect,useRef,useContext,createContext}=React;
-const VERSION="v7";
+const VERSION="v8";
 const PHOTO="data:image/jpeg;base64,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";
 
 /* ══════════ GEMINI (Árbitro IA) ══════════ */
@@ -331,8 +339,8 @@ let REAL=HAS_FB&&!demoFlag();
 function setDemo(on){try{on?sessionStorage.setItem("gs_demo","1"):sessionStorage.removeItem("gs_demo")}catch(e){}REAL=HAS_FB&&!on}
 let FS=null,AUTH=null,PENDING=null;
 if(HAS_FB){try{firebase.initializeApp(FIREBASE_CONFIG);AUTH=firebase.auth();FS=firebase.firestore()}catch(e){console.error(e)}}
-const COLS=["users","events","contracts","chats","disputes","reviews"];
-const CACHE={users:[],events:[],contracts:[],chats:[],disputes:[],reviews:[]};
+const COLS=["users","events","contracts","chats","disputes","reviews","photos"];
+const CACHE={users:[],events:[],contracts:[],chats:[],disputes:[],reviews:[],photos:[]};
 let onData=()=>{};
 const clean=o=>JSON.parse(JSON.stringify(o));
 function writeCol(col,arr){
@@ -351,7 +359,8 @@ function startSync(me){
     contracts:FS.collection("contracts").where("parties","array-contains",me),
     chats:FS.collection("chats").where("participants","array-contains",me),
     disputes:FS.collection("disputes").where("parties","array-contains",me),
-    reviews:FS.collection("reviews")};
+    reviews:FS.collection("reviews"),
+    photos:FS.collection("photos").where("parties","array-contains",me)};
   return new Promise(res=>{
     const pending=new Set(COLS);const done=c=>{if(pending.has(c)){pending.delete(c);if(!pending.size)res()}};
     COLS.forEach(col=>unsubs.push(Q[col].onSnapshot(snap=>{CACHE[col]=snap.docs.map(d=>d.data());done(col);onData()},err=>{console.error(err);done(col)})));
@@ -376,6 +385,7 @@ const DB={
   chats:()=>readCol("chats"),setChats:v=>writeCol("chats",v),
   disputes:()=>readCol("disputes"),setDisputes:v=>writeCol("disputes",v),
   reviews:()=>readCol("reviews"),setReviews:v=>writeCol("reviews",v),
+  photos:()=>readCol("photos"),setPhotos:v=>writeCol("photos",v),
   api:()=>{try{return localStorage.getItem("gs_api")||""}catch(e){return ""}},
   setApi:k=>{try{k?localStorage.setItem("gs_api",k):localStorage.removeItem("gs_api")}catch(e){}},
   sess:()=>{const s=load("gs_sess",null);return s&&typeof s==="object"?s.id:s},
@@ -383,7 +393,7 @@ const DB={
   flag:k=>load("gs_f_"+k,false),setFlag:k=>save("gs_f_"+k,true),
 };
 const uid=p=>p+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
-const money=n=>"€"+String(Math.round(Number(n||0))).replace(/\B(?=(\d{3})+(?!\d))/g,".");
+const money=(n,cur)=>{const v=Math.round(Number(n||0));const s=String(Math.abs(v)).replace(/\B(?=(\d{3})+(?!\d))/g,".");return (v<0?"-":"")+(cur==="CLP"?"$":"€")+s};
 const DAY=86400000;
 const iso=(ms)=>new Date(ms).toISOString();
 const ini=n=>(n||"?").split(" ").filter(Boolean).map(w=>w[0]).slice(0,2).join("").toUpperCase();
@@ -396,7 +406,7 @@ const daysLeft=d=>Math.max(0,Math.ceil((new Date(d.deadline).getTime()-Date.now(
 const ROLE={patrocinado:{l:"Patrocinado",i:"🎯",d:"Evento, club o creador"},patrocinador:{l:"Patrocinador",i:"🏢",d:"Marca o empresa"},inversor:{l:"Inversor",i:"💼",d:"Quiero invertir"}};
 
 /* ══════════ DATOS DE EJEMPLO ══════════ */
-const SEED_VER="5";
+const SEED_VER="6";
 function makeSeeds(){
   const T=Date.now();
   const users=[
@@ -416,13 +426,13 @@ function makeSeeds(){
     {id:"e5",social:{ig:"6.000",tt:"9.500",web:"",attendees:"8.000 en streaming"},confirm:{date:true,venue:false,happens:true},packages:[{name:"Plata",price:2500,items:["Logo en la transmisión","Mención del locutor"]},{name:"Oro",price:5000,items:["Nombre del torneo","Logo en la transmisión","Premio entregado por la marca"]}],ownerId:"u7",name:"Torneo eSports Universitario",cat:"eSports",icon:"🎮",loc:"Santiago, Chile",date:iso(T+30*DAY).slice(0,10),budgetMin:2000,budgetMax:5000,audience:"Universitarios de 18 a 25 años · 8.000 espectadores en streaming",desc:"Torneo de videojuegos entre 16 universidades, transmitido en vivo.",trust:84,badge:"new",created:iso(T-5*DAY)},
   ];
   const contracts=[
-    {id:"c1",parties:["u2","u1"],status:"active",feePct:8,signed:{u2:iso(T-40*DAY),u1:iso(T-40*DAY)},eventId:"e1",eventName:"Club Deportivo Andes",sponsorId:"u2",sponsorName:"Marca Deportiva Chile",sponsoredId:"u1",sponsoredName:"Cristóbal Torretti",amount:6000,aiClause:true,created:iso(T-40*DAY),
+    {id:"c1",parties:["u2","u1"],status:"active",funded:true,feePct:8,signed:{u2:iso(T-40*DAY),u1:iso(T-40*DAY)},eventId:"e1",eventName:"Club Deportivo Andes",sponsorId:"u2",sponsorName:"Marca Deportiva Chile",sponsoredId:"u1",sponsoredName:"Cristóbal Torretti",amount:6000,aiClause:true,created:iso(T-40*DAY),
      milestones:[
       {id:1,title:"Logo en camisetas oficiales",amount:2000,status:"approved",evidence:"Fotos del equipo con las camisetas y el logo.",due:iso(T-30*DAY).slice(0,10)},
       {id:2,title:"10 posts en redes sociales",amount:2000,status:"approved",evidence:"Capturas de los 10 posts publicados en Instagram.",due:iso(T-15*DAY).slice(0,10)},
       {id:3,title:"4 vallas publicitarias en el estadio",amount:2000,status:"disputed",evidence:"",due:iso(T-4*DAY).slice(0,10)},
      ]},
-    {id:"c2",parties:["u2","u1"],status:"active",feePct:8,signed:{u2:iso(T-10*DAY),u1:iso(T-10*DAY)},eventId:"e2",eventName:"Trail Running Cordillera",sponsorId:"u2",sponsorName:"Marca Deportiva Chile",sponsoredId:"u1",sponsoredName:"Cristóbal Torretti",amount:4500,aiClause:true,created:iso(T-10*DAY),
+    {id:"c2",parties:["u2","u1"],status:"active",funded:true,feePct:8,signed:{u2:iso(T-10*DAY),u1:iso(T-10*DAY)},eventId:"e2",eventName:"Trail Running Cordillera",sponsorId:"u2",sponsorName:"Marca Deportiva Chile",sponsoredId:"u1",sponsoredName:"Cristóbal Torretti",amount:4500,aiClause:true,created:iso(T-10*DAY),
      milestones:[
       {id:1,title:"Logo en los dorsales",amount:1500,status:"submitted",evidence:"Foto del dorsal impreso con el logo de la marca.",due:iso(T+5*DAY).slice(0,10)},
       {id:2,title:"Stand de marca en la meta",amount:2000,status:"pending",evidence:"",due:iso(T+45*DAY).slice(0,10)},
@@ -430,11 +440,11 @@ function makeSeeds(){
      ]},
   ];
   contracts.push(
-    {id:"c3",parties:["u4","u1"],status:"pending",feePct:8,createdBy:"u4",signed:{u4:iso(T-3600000)},eventId:"e2",eventName:"Trail Running Cordillera",sponsorId:"u4",sponsorName:"Banco Futuro",sponsoredId:"u1",sponsoredName:"Cristóbal Torretti",amount:3500,aiClause:true,created:iso(T-3600000),
+    {id:"c3",parties:["u4","u1"],status:"pending",funded:false,feePct:8,createdBy:"u4",signed:{u4:iso(T-3600000)},eventId:"e2",eventName:"Trail Running Cordillera",sponsorId:"u4",sponsorName:"Banco Futuro",sponsoredId:"u1",sponsoredName:"Cristóbal Torretti",amount:3500,aiClause:true,created:iso(T-3600000),
      milestones:[{id:1,title:"Logo en los dorsales",amount:1500,status:"pending",evidence:"",due:iso(T+30*DAY).slice(0,10)},{id:2,title:"Stand de marca en la meta",amount:2000,status:"pending",evidence:"",due:iso(T+45*DAY).slice(0,10)}]},
-    {id:"c0",parties:["u2","u1"],status:"active",feePct:8,signed:{u2:iso(T-300*DAY),u1:iso(T-300*DAY)},eventId:"e1",eventName:"Club Deportivo Andes (temporada 2025)",sponsorId:"u2",sponsorName:"Marca Deportiva Chile",sponsoredId:"u1",sponsoredName:"Cristóbal Torretti",amount:3000,aiClause:true,created:iso(T-300*DAY),
+    {id:"c0",parties:["u2","u1"],status:"active",funded:true,feePct:8,signed:{u2:iso(T-300*DAY),u1:iso(T-300*DAY)},eventId:"e1",eventName:"Club Deportivo Andes (temporada 2025)",sponsorId:"u2",sponsorName:"Marca Deportiva Chile",sponsoredId:"u1",sponsoredName:"Cristóbal Torretti",amount:3000,aiClause:true,created:iso(T-300*DAY),
      milestones:[{id:1,title:"Logo en camiseta",amount:1500,status:"approved",evidence:"Fotos del equipo con camiseta.",due:""},{id:2,title:"Posts en redes sociales",amount:1500,status:"approved",evidence:"Capturas de 8 posts.",due:""}]},
-    {id:"c4",parties:["u5","u6"],status:"active",feePct:8,signed:{u5:iso(T-200*DAY),u6:iso(T-200*DAY)},eventId:"e3",eventName:"Festival Sonidos del Sur 2025",sponsorId:"u5",sponsorName:"Energía Verde SpA",sponsoredId:"u6",sponsoredName:"Camila Rojas",amount:9000,aiClause:true,created:iso(T-200*DAY),
+    {id:"c4",parties:["u5","u6"],status:"active",funded:true,feePct:8,signed:{u5:iso(T-200*DAY),u6:iso(T-200*DAY)},eventId:"e3",eventName:"Festival Sonidos del Sur 2025",sponsorId:"u5",sponsorName:"Energía Verde SpA",sponsoredId:"u6",sponsoredName:"Camila Rojas",amount:9000,aiClause:true,created:iso(T-200*DAY),
      milestones:[{id:1,title:"Stand de marca",amount:9000,status:"approved",evidence:"Fotos del stand.",due:""}]}
   );
   const reviews=[
@@ -502,6 +512,7 @@ const cPaid=c=>c.milestones.reduce((s,m)=>s+msPaid(m),0);
 function nextStep(c,u){
   const isS=c.sponsorId===u.id,other=isS?c.sponsoredName:c.sponsorName;
   if(c.status==="rejected")return {t:"✖ Propuesta rechazada",c:"var(--muted)"};
+  if(c.status!=="pending"&&c.funded===false)return isS?{t:"💳 Te toca depositar el pago protegido",c:"var(--teal)",me:true}:{t:"⏳ Esperando que la marca deposite",c:"var(--muted)"};
   if(c.status==="pending")return (c.signed||{})[u.id]?{t:"⏳ Esperando la firma de "+other,c:"var(--muted)"}:{t:"✍️ Te toca revisar y firmar",c:"var(--warn)",me:true};
   const m=c.milestones.find(x=>x.status==="disputed")||c.milestones.find(x=>x.status==="submitted")||c.milestones.find(x=>x.status==="pending");
   if(!m)return {t:"✅ Acuerdo completado",c:"var(--ok)"};
@@ -519,7 +530,8 @@ const evConfirmed=e=>!!(e&&e.confirm&&e.confirm.date&&e.confirm.venue&&e.confirm
 function matchScore(brand,ev){
   let s=0;const cats=brand.cats||[];
   s+=cats.length?(cats.includes(ev.cat)?30:6):15;
-  const br=parseRange(brand.budget);s+=br?(overlap(br,[ev.budgetMin||0,ev.budgetMax||0])?30:8):15;
+  const br=parseRange(brand.budget),bc=/^\s*(más de\s*)?\$/i.test(brand.budget||"")?"CLP":"EUR",ec=curOf(ev);
+  s+=br?(overlap(br,[conv(ev.budgetMin||0,ec,bc),conv(ev.budgetMax||0,ec,bc)])?30:8):15;
   s+=brand.loc&&ev.loc?(cityOf(brand.loc)===cityOf(ev.loc)?20:countryOf(brand.loc)===countryOf(ev.loc)?14:4):10;
   const r=repOf(ev.ownerId);s+=r?Math.round(r.avg/5*12):6;
   s+=(ev.packages&&ev.packages.length?4:0)+(ev.social&&(ev.social.ig||ev.social.tt||ev.social.attendees)?2:0)+(evConfirmed(ev)?2:0);
@@ -536,11 +548,12 @@ function getTasks(u){
   ds.filter(d=>d.status==="open"&&(d.openedById===u.id||d.againstId===u.id)&&(d.defenseSent||daysLeft(d)<=0)).forEach(d=>T.push({icon:"🤖",c:"var(--pur)",bg:"var(--pbg)",t:"Pide el veredicto de la IA",s:d.title,go:["acuerdos",{did:d.id}]}));
   myContracts(u.id).forEach(c=>{
     const st=cStatus(c),other=c.sponsorId===u.id?c.sponsoredName:c.sponsorName,oid=c.sponsorId===u.id?c.sponsoredId:c.sponsorId;
-    if(st==="pending"&&!(c.signed||{})[u.id])T.push({icon:"✍️",c:"var(--warn)",bg:"var(--wbg)",t:"Revisa y firma una propuesta",s:`${other} · ${money(c.amount)} · ${c.eventName}`,go:["acuerdos",{cid:c.id}]});
+    if(st==="pending"&&!(c.signed||{})[u.id])T.push({icon:"✍️",c:"var(--warn)",bg:"var(--wbg)",t:"Revisa y firma una propuesta",s:`${other} · ${money(c.amount,c.cur)} · ${c.eventName}`,go:["acuerdos",{cid:c.id}]});
+    if(st==="active"&&c.funded===false&&c.sponsorId===u.id)T.push({icon:"💳",c:"var(--teal)",bg:"rgba(23,212,160,.1)",t:"Deposita el pago protegido",s:`${money(c.amount,c.cur)} · ${c.eventName}`,go:["acuerdos",{cid:c.id}]});
     if(st==="done"&&!DB.reviews().some(r=>r.id===c.id+"_"+u.id))T.push({icon:"⭐",c:"var(--warn)",bg:"var(--wbg)",t:"Califica a "+other,s:"Tu opinión construye la reputación de la comunidad",go:["acuerdos",{cid:c.id,act:"rev"}]});
-    if(st==="pending"||st==="rejected")return;
+    if(st==="pending"||st==="rejected"||c.funded===false)return;
     if(c.sponsoredId===u.id){const m=c.milestones.find(x=>x.status==="pending");if(m)T.push({icon:"📤",c:"var(--teal)",bg:"rgba(23,212,160,.1)",t:"Sube la evidencia de una entrega",s:`${m.title} · ${c.eventName}`,go:["acuerdos",{cid:c.id,act:"ev",mid:m.id}]})}
-    if(c.sponsorId===u.id)c.milestones.filter(x=>x.status==="submitted").forEach(m=>T.push({icon:"👀",c:"var(--warn)",bg:"var(--wbg)",t:"Revisa y aprueba una entrega",s:`${m.title} · ${money(m.amount)}`,go:["acuerdos",{cid:c.id}]}));
+    if(c.sponsorId===u.id)c.milestones.filter(x=>x.status==="submitted").forEach(m=>T.push({icon:"👀",c:"var(--warn)",bg:"var(--wbg)",t:"Revisa y aprueba una entrega",s:`${m.title} · ${money(m.amount,c.cur)}`,go:["acuerdos",{cid:c.id}]}));
   });
   const n=unreadCount(u.id);
   if(n)T.push({icon:"💬",c:"var(--teal)",bg:"rgba(23,212,160,.1)",t:`Tienes ${n} mensaje${n>1?"s":""} sin leer`,s:"Responder rápido ayuda a cerrar acuerdos",go:["mensajes",{}]});
@@ -646,8 +659,100 @@ function Field({label,hint,children}){
 function Head({title,sub,right}){
   return <div className="sh" style={{display:"flex",alignItems:"flex-start",gap:12}}><div style={{flex:1,minWidth:0}}><h2>{title}</h2>{sub&&<p>{sub}</p>}</div>{right}</div>;
 }
+
+/* ══════════ MONEDA (CLP / EUR) ══════════ */
+const EUR_CLP=1098; // 1 EUR = 1.098 CLP (referencia 26-sep-2026)
+const curOf=x=>(x&&x.cur)||"EUR";
+const conv=(n,from,to)=>from===to?Number(n||0):from==="EUR"?Number(n||0)*EUR_CLP:Number(n||0)/EUR_CLP;
+const BUDGETS_BY={EUR:[[1000,3000],[3000,6000],[6000,12000],[12000,25000]],CLP:[[500000,1500000],[1500000,3000000],[3000000,6000000],[6000000,12000000]]};
+const BRAND_BUDGETS={EUR:["€1.000 – €5.000","€5.000 – €20.000","€20.000 – €50.000","Más de €50.000"],CLP:["$1.000.000 – $5.000.000","$5.000.000 – $20.000.000","$20.000.000 – $50.000.000","Más de $50.000.000"]};
+
+/* ══════════ ADMINISTRADOR ══════════ */
+const ADMIN_EMAILS=["tobaltorretti@gmail.com"];
+const isAdmin=()=>!REAL||!!(AUTH&&AUTH.currentUser&&AUTH.currentUser.emailVerified&&ADMIN_EMAILS.includes((AUTH.currentUser.email||"").toLowerCase()));
+
+/* ══════════ ENVÍOS SIN CUENTA (lista de espera, soporte) ══════════ */
+async function addPublic(col,data){
+  const x={...data,ts:new Date().toISOString()};
+  if(REAL||(HAS_FB&&FS)){await FS.collection(col).add(x);return}
+  const l=load("gs_"+col,[]);l.push(x);save("gs_"+col,l);
+}
+
+/* ══════════ RUT CHILENO ══════════ */
+function rutClean(r){return String(r||"").replace(/[^0-9kK]/g,"").toUpperCase()}
+function rutValid(r){
+  const c=rutClean(r);if(c.length<8||c.length>9)return false;
+  const body=c.slice(0,-1),dv=c.slice(-1);let s=0,m=2;
+  for(let i=body.length-1;i>=0;i--){s+=Number(body[i])*m;m=m===7?2:m+1}
+  const r11=11-(s%11),exp=r11===11?"0":r11===10?"K":String(r11);
+  return exp===dv;
+}
+function rutFormat(r){const c=rutClean(r);if(c.length<2)return c;const b=c.slice(0,-1).replace(/\B(?=(\d{3})+(?!\d))/g,".");return b+"-"+c.slice(-1)}
+
+/* ══════════ FOTOS (comprimidas, sin costo extra) ══════════ */
+function compressImage(file,maxW=900,q=0.6){
+  return new Promise((res,rej)=>{
+    if(!file||!/^image\//.test(file.type))return rej(new Error("El archivo no es una imagen"));
+    const fr=new FileReader();
+    fr.onload=()=>{const img=new Image();img.onload=()=>{
+      const sc=Math.min(1,maxW/Math.max(img.width,img.height));const w=Math.round(img.width*sc),h=Math.round(img.height*sc);
+      const cv=document.createElement("canvas");cv.width=w;cv.height=h;cv.getContext("2d").drawImage(img,0,0,w,h);
+      let d=cv.toDataURL("image/jpeg",q);if(d.length>380000)d=cv.toDataURL("image/jpeg",0.4);
+      if(d.length>380000)return rej(new Error("La imagen es muy grande"));res(d)};img.onerror=()=>rej(new Error("No se pudo leer la imagen"));img.src=fr.result};
+    fr.onerror=()=>rej(new Error("No se pudo leer el archivo"));fr.readAsDataURL(file);
+  });
+}
+function savePhoto(p){
+  const doc={id:uid("ph"),ts:new Date().toISOString(),...p};
+  DB.setPhotos([...DB.photos(),doc]);return doc.id;
+}
+const photoById=id=>DB.photos().find(p=>p.id===id);
+function PhotoThumbs({ids,size=64}){
+  const [big,setBig]=useState(null);
+  const ph=(ids||[]).map(photoById).filter(Boolean);
+  if(!ph.length)return null;
+  return <><div className="rowb mt8" style={{gap:6}}>{ph.map(p=><img key={p.id} src={p.data} alt="Evidencia" onClick={()=>setBig(p.data)} style={{width:size,height:size,objectFit:"cover",borderRadius:10,cursor:"zoom-in",border:"1px solid var(--bs)"}}/>)}</div>
+    {big&&<div className="ov" style={{alignItems:"center",padding:16,zIndex:950}} onClick={()=>setBig(null)}><img src={big} alt="" style={{maxWidth:"100%",maxHeight:"90vh",borderRadius:12}}/></div>}</>;
+}
+function PhotoPicker({max=3,value,onChange,label="📷 Agregar fotos"}){
+  const {toast}=useApp();const [busy,setBusy]=useState(false);
+  const pick=async e=>{
+    const files=Array.from(e.target.files||[]).slice(0,max-value.length);if(!files.length)return;
+    setBusy(true);const out=[];
+    for(const f of files){try{out.push(await compressImage(f))}catch(err){toast(err.message,"⚠️")}}
+    setBusy(false);onChange([...value,...out].slice(0,max));e.target.value="";
+  };
+  return <div>
+    {value.length>0&&<div className="rowb mb8" style={{gap:6}}>{value.map((d,i)=><div key={i} style={{position:"relative"}}><img src={d} alt="" style={{width:72,height:72,objectFit:"cover",borderRadius:10}}/><button onClick={()=>onChange(value.filter((_,j)=>j!==i))} style={{position:"absolute",top:-6,right:-6,width:22,height:22,borderRadius:"50%",background:"var(--err)",color:"#fff",fontSize:11}} aria-label="Quitar">✕</button></div>)}</div>}
+    {value.length<max&&<label className="btn btn-g" style={{width:"100%",cursor:"pointer"}}>{busy?"Procesando…":label+(max>1?` (máx. ${max})`:"")}<input type="file" accept="image/*" multiple={max>1} style={{display:"none"}} onChange={pick}/></label>}
+  </div>;
+}
+
+/* ══════════ IA: textos con Gemini o plantilla ══════════ */
+async function aiText(key,prompt,fallback){
+  if(!key)return {text:fallback,ai:false};
+  try{const {text}=await gemini(key,prompt,false);return {text:text.trim().replace(/^"|"$/g,""),ai:true}}catch(e){return {text:fallback,ai:false,err:e.message}}
+}
+function proposalTemplate(me,other,ev){
+  const isP=me.role==="patrocinado";
+  if(isP&&ev)return `Hola ${first(other?other.name:"")}, soy ${first(me.name)}, organizador de “${ev.name}” en ${ev.loc}. ${ev.audience?`Nuestro público: ${ev.audience}. `:""}Creo que ${dispName(other)} calza muy bien con nuestra audiencia. Tenemos paquetes desde ${money(Math.min(...((ev.packages||[]).map(p=>p.price).concat([ev.budgetMin]))),curOf(ev))}, con pago protegido por entregas en GetSponzo: solo pagas lo que apruebas. ¿Te parece si lo conversamos o hacemos una videollamada esta semana?`;
+  if(ev)return `Hola ${first(other?other.name:"")}, soy ${first(me.name)} de ${dispName(me)}. Vimos “${ev.name}” y nos interesa patrocinarlo. ${ev.packages&&ev.packages.length?`Nos llamó la atención el paquete ${ev.packages[ev.packages.length-1].name}. `:""}¿Nos cuentas más sobre el público y las fechas? Podemos cerrar todo aquí con pago protegido por entregas.`;
+  return `Hola ${first(other?other.name:"")}, soy ${first(me.name)}${me.company?` de ${me.company}`:""}. Me gustaría explorar un patrocinio contigo a través de GetSponzo. ¿Conversamos?`;
+}
+
+/* ══════════ AVISOS (en la app y del navegador) ══════════ */
+const notifOn=()=>{try{return "Notification" in window&&Notification.permission==="granted"&&localStorage.getItem("gs_notif")==="1"}catch(e){return false}};
+function pushNotif(title,body){try{if(notifOn()&&document.hidden)new Notification(title,{body,icon:"icon-192.png"})}catch(e){}}
+
+/* ══════════ APP INSTALABLE ══════════ */
+let installEvt=null;
+window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();installEvt=e});
+const isIOS=()=>/iphone|ipad|ipod/i.test(navigator.userAgent);
+const isStandalone=()=>{try{return window.matchMedia("(display-mode: standalone)").matches||navigator.standalone===true}catch(e){return false}};
+if("serviceWorker" in navigator&&location.protocol==="https:"){window.addEventListener("load",()=>{navigator.serviceWorker.register("sw.js").catch(()=>{})})}
 /* ══════════ PÁGINA DE INICIO PÚBLICA ══════════ */
 function Landing({onLogin,onRegister,user,onPanel}){
+  const [contact,setContact]=useState(false);
   return(
     <div style={{minHeight:"100vh",background:"var(--bg)"}}>
       <nav className="tnav">
@@ -793,6 +898,8 @@ function Landing({onLogin,onRegister,user,onPanel}){
         </div>
       </section>
 
+      <Waitlist/>
+
       <section style={{padding:"60px 0",textAlign:"center",position:"relative",overflow:"hidden"}}>
         <div style={{position:"absolute",inset:0,background:"radial-gradient(ellipse 60% 80% at 50% 100%,rgba(23,212,160,.1),transparent 70%)",pointerEvents:"none"}}/>
         <div className="container" style={{position:"relative"}}>
@@ -805,9 +912,10 @@ function Landing({onLogin,onRegister,user,onPanel}){
       <footer style={{padding:"24px 0",borderTop:"1px solid var(--bs)"}}>
         <div className="container" style={{display:"flex",justifyContent:"space-between",alignItems:"center",flexWrap:"wrap",gap:12}}>
           <div style={{display:"flex",alignItems:"center",gap:9}}><Logo size={22} glow={false}/><Word s={15}/></div>
-          <div style={{fontSize:12.5,color:"var(--muted2)"}}>getsponzo.com · {new Date().getFullYear()}</div>
+          <div style={{display:"flex",gap:14,alignItems:"center"}}><button className="tsm cte" onClick={()=>setContact(true)}>✉️ Contacto</button><div style={{fontSize:12.5,color:"var(--muted2)"}}>getsponzo.com · {new Date().getFullYear()}</div></div>
         </div>
       </footer>
+      {contact&&<Sheet title="Contáctanos" icon="✉️" onClose={()=>setContact(false)}><SupportForm/></Sheet>}
     </div>
   );
 }
@@ -845,13 +953,13 @@ function Auth({mode,setMode,onLogin,onBack,onDemo}){
     if(f.pass.length<8||!/\d/.test(f.pass)||!/[a-zA-Z]/.test(f.pass))return setErr("La contraseña debe tener al menos 8 caracteres, con letras y números.");
     if(!terms)return setErr("Debes aceptar los términos y la política de privacidad.");
     if(REAL){
-      setBusy(true);PENDING={name:f.name.trim(),role,company:f.company.trim()};
+      setBusy(true);PENDING={name:f.name.trim(),role,company:f.company.trim(),cur:"CLP"};
       try{const cr=await AUTH.createUserWithEmailAndPassword(f.email.trim(),f.pass);try{await cr.user.sendEmailVerification()}catch(e){}}catch(e){PENDING=null;setErr(fbErr(e));setBusy(false)}
       return;
     }
     const users=DB.users();
     if(users.some(x=>x.email.toLowerCase()===f.email.trim().toLowerCase()))return setErr("Ya existe una cuenta con ese correo. Prueba entrando.");
-    const u={id:uid("u"),name:f.name.trim(),email:f.email.trim(),pass:f.pass,role,company:f.company.trim(),bio:"",loc:"",created:new Date().toISOString()};
+    const u={id:uid("u"),name:f.name.trim(),email:f.email.trim(),pass:f.pass,role,company:f.company.trim(),cur:"CLP",bio:"",loc:"",created:new Date().toISOString()};
     DB.setUsers([...users,u]);onLogin(u);
   };
   const demo=id=>onDemo(id);
@@ -965,8 +1073,12 @@ function HelpSheet({onClose}){
     <GuideList role={user.role}/>
     <div className="sec-t">Palabras clave</div>
     {GLOSSARY.map(([i,t,d])=><div key={t} className="mcard"><div className="fw7 tmd mb8">{i} {t}</div><div className="tsm cmu" style={{lineHeight:1.55}}>{d}</div></div>)}
+    <div className="sec-t">Preguntas frecuentes</div>
+    {FAQ.map(([q,a])=><details key={q} className="mcard" style={{cursor:"pointer"}}><summary className="fw7 tmd">{q}</summary><div className="tsm cmu mt8" style={{lineHeight:1.55}}>{a}</div></details>)}
+    <div className="sec-t">¿No encontraste tu respuesta?</div>
+    <SupportForm/>
     <div className="sec-t">Botones de arriba</div>
-    <div className="tsm cmu" style={{lineHeight:1.8}}>❓ Abre esta ayuda<br/>🔄 Carga la versión más nueva de la plataforma<br/>Tu foto → Tu perfil y configuración</div>
+    <div className="tsm cmu" style={{lineHeight:1.8}}>🔔 Tus avisos y pendientes<br/>❓ Abre esta ayuda<br/>🔄 Carga la versión más nueva de la plataforma<br/>Tu foto → Tu perfil y configuración</div>
   </Sheet>;
 }
 
@@ -1018,11 +1130,12 @@ function HomeView(){
   const tasks=getTasks(user);
   const cs=myContracts(user.id).filter(c=>c.status!=="pending"&&c.status!=="rejected");
   const steps=firstSteps(user);const done=steps.filter(s=>s.ok).length;
-  const total=cs.reduce((s,c)=>s+c.amount,0),paid=cs.reduce((s,c)=>s+cPaid(c),0);
-  const pendingAmt=cs.reduce((s,c)=>s+c.milestones.filter(m=>!msDone(m)).reduce((a,m)=>a+m.amount,0),0);
+  const U=user.cur||"EUR",cv=(n,c)=>conv(n,curOf(c),U);
+  const total=cs.reduce((s,c)=>s+cv(c.amount,c),0),paid=cs.reduce((s,c)=>s+cv(cPaid(c),c),0);
+  const pendingAmt=cs.reduce((s,c)=>s+cv(c.milestones.filter(m=>!msDone(m)).reduce((a,m)=>a+m.amount,0),c),0);
   const active=cs.filter(c=>cStatus(c)!=="done").length;
-  const stats=isP?[[money(pendingAmt),"Por cobrar","💰"],[money(paid),"Ya cobrado","✅"],[DB.events().filter(e=>e.ownerId===user.id).length,"Eventos","🎪"]]
-                 :[[money(pendingAmt),"Protegido (aún no pagado)","🔒"],[money(paid),"Pagado","✅"],[active,"Acuerdos activos","🤝"]];
+  const stats=isP?[[money(pendingAmt,U),"Por cobrar","💰"],[money(paid,U),"Ya cobrado","✅"],[DB.events().filter(e=>e.ownerId===user.id).length,"Eventos","🎪"]]
+                 :[[money(pendingAmt,U),"Protegido (aún no pagado)","🔒"],[money(paid,U),"Pagado","✅"],[active,"Acuerdos activos","🤝"]];
   const qa=isP?[["➕","Crear evento",["eventos",{nuevo:1}]],["🏢","Ver marcas",["marcas",{}]],["🤝","Proponer acuerdo",["nuevo",{}]],["💬","Mensajes",["mensajes",{}]]]
               :[["🔍","Buscar eventos",["buscar",{}]],["🤝","Nuevo acuerdo",["nuevo",{}]],["📋","Mis acuerdos",["acuerdos",{}]],["💬","Mensajes",["mensajes",{}]]];
   const h=new Date().getHours();
@@ -1057,7 +1170,7 @@ function HomeView(){
     <div className="g3" style={{gridTemplateColumns:"repeat(3,1fr)",gap:8}}>
       {stats.map(([v,l,i],k)=><div key={k} className="st"><div style={{fontSize:18,marginBottom:4}}>{i}</div><div className="stv" style={{fontSize:"clamp(15px,4vw,20px)"}}>{v}</div><div className="stl">{l}</div></div>)}
     </div>
-    {total>0&&<div className="mt12 tsm cmu">Del total de tus acuerdos ({money(total)}) ya se pagó el {Math.round(paid/total*100)}%.</div>}
+    {total>0&&<div className="mt12 tsm cmu">Del total de tus acuerdos ({money(total,U)}) ya se pagó el {Math.round(paid/total*100)}%.</div>}
 
     <div className="sec-t">⚡ ¿Qué quieres hacer?</div>
     <div className="qa">{qa.map(([i,l,g])=><button key={l} onClick={()=>go(...g)}><i>{i}</i>{l}</button>)}</div>
@@ -1067,14 +1180,25 @@ function HomeView(){
 /* ══════════ MIS EVENTOS (patrocinado) ══════════ */
 const BUDGETS=[[1000,3000],[3000,6000],[6000,12000],[12000,25000]];
 function EventSheet({ev,onClose,onSaved}){
-  const {user,toast}=useApp();
-  const [f,setF]=useState(()=>{const b={name:"",cat:"Deporte",icon:"⚽",loc:user.loc||"",date:"",budgetMin:3000,budgetMax:6000,audience:"",desc:"",social:{ig:"",tt:"",web:"",attendees:""},confirm:{date:false,venue:false,happens:false},packages:[]};return ev?{...b,...ev,social:{...b.social,...(ev.social||{})},confirm:{...b.confirm,...(ev.confirm||{})},packages:ev.packages||[]}:b});
+  const {user,toast,apiKey}=useApp();
+  const [shot,setShot]=useState([]),[aiBusy,setAiBusy]=useState(false);
+  const [f,setF]=useState(()=>{const uc=user.cur||"EUR";const b={name:"",cat:"Deporte",icon:"⚽",loc:user.loc||"",date:"",cur:uc,cover:"",budgetMin:BUDGETS_BY[uc][1][0],budgetMax:BUDGETS_BY[uc][1][1],audience:"",desc:"",social:{ig:"",tt:"",web:"",attendees:""},confirm:{date:false,venue:false,happens:false},packages:[]};return ev?{...b,...ev,social:{...b.social,...(ev.social||{})},confirm:{...b.confirm,...(ev.confirm||{})},packages:ev.packages||[]}:b});
   const [err,setErr]=useState("");
   const set=(k,v)=>{setF(p=>({...p,[k]:v}));setErr("")};
   const setS=(k,v)=>setF(p=>({...p,social:{...p.social,[k]:v}}));
   const setP=(i,k,v)=>setF(p=>({...p,packages:p.packages.map((x,j)=>j===i?{...x,[k]:v}:x)}));
   const r100=n=>Math.max(100,Math.round(n/100)*100);
   const suggest=()=>set("packages",[{name:"Bronce",price:r100(f.budgetMin*0.5),items:["Logo en redes sociales del evento","2 posts dedicados"]},{name:"Plata",price:r100((f.budgetMin+f.budgetMax)/2),items:["Logo en el material del evento","Stand o espacio de marca","5 posts dedicados"]},{name:"Oro",price:r100(f.budgetMax),items:["Marca principal del evento","Stand premium","10 posts dedicados","Informe de resultados"]}]);
+  const aiPk=async()=>{
+    if(!apiKey)return suggest();
+    setAiBusy(true);
+    try{
+      const {text}=await gemini(apiKey,`Eres experto en patrocinio. Propón 3 paquetes de patrocinio (Bronce, Plata, Oro) para este evento. Evento: ${f.name||"sin nombre"}, tipo ${f.cat}, en ${f.loc}. Público: ${f.audience||"no indicado"}. Presupuesto buscado: ${f.budgetMin} a ${f.budgetMax} ${f.cur}. Precios en ${f.cur}, redondeados. Responde SOLO JSON: {"packages":[{"name":"Bronce","price":NUMERO,"items":["...","..."]}]} con 2 a 4 items cortos en español por paquete.`,true);
+      const o=JSON.parse((text.match(/\{[\s\S]*\}/)||["{}"])[0]);
+      if(Array.isArray(o.packages)&&o.packages.length){set("packages",o.packages.slice(0,4).map(p=>({name:String(p.name||""),price:Math.round(Number(p.price)||0),items:(p.items||[]).map(String).slice(0,6)})));toast("Paquetes sugeridos por IA","✨","Revísalos y ajústalos")}else suggest();
+    }catch(e){suggest();toast("Usamos paquetes sugeridos","✨")}
+    setAiBusy(false);
+  };
   const saveEv=()=>{
     const bad=m=>{setErr(m);toast(m,"⚠️")};
     if(!f.name.trim())return bad("Ponle un nombre a tu evento.");
@@ -1082,9 +1206,10 @@ function EventSheet({ev,onClose,onSaved}){
     const pk=f.packages.map(p=>({name:(p.name||"").trim(),price:Number(p.price)||0,items:(p.items||[]).map(x=>x.trim()).filter(Boolean)})).filter(p=>p.name||p.items.length);
     if(pk.some(p=>!p.name||!p.price||!p.items.length))return bad("Cada paquete necesita nombre, precio y al menos una cosa incluida.");
     f.packages=pk;
-    const all=DB.events();
+    const all=DB.events(),eid=ev?ev.id:uid("e");
+    if(shot.length){f.audPhotoId=savePhoto({kind:"audience",data:shot[0],parties:[user.id],eventId:eid});f.audReq="pending"}
     if(ev){DB.setEvents(all.map(e=>e.id===ev.id?{...e,...f}:e));toast("Evento actualizado","✏️")}
-    else{DB.setEvents([...all,{...f,id:uid("e"),ownerId:user.id,trust:80,badge:"new",created:new Date().toISOString()}]);toast("¡Evento creado!","🎉","Ya aparece para las marcas")}
+    else{DB.setEvents([...all,{...f,id:eid,ownerId:user.id,badge:"new",created:new Date().toISOString()}]);toast("¡Evento creado!","🎉","Ya aparece para las marcas")}
     onSaved();
   };
   return <Sheet title={ev?"Editar evento":"Nuevo evento"} icon="🎪" onClose={onClose} footer={<><button className="btn btn-g" onClick={onClose}>Cancelar</button><button className="btn btn-p" onClick={saveEv}>{ev?"Guardar":"Crear evento"}</button></>}>
@@ -1094,7 +1219,10 @@ function EventSheet({ev,onClose,onSaved}){
       <Field label="3. ¿Dónde?"><input className="inp" value={f.loc} onChange={e=>set("loc",e.target.value)} placeholder="Ciudad, país u Online"/></Field>
       <Field label="4. ¿Cuándo? (opcional)"><input className="inp" type="date" value={f.date||""} onChange={e=>set("date",e.target.value)} style={{colorScheme:"dark"}}/></Field>
     </div>
-    <Field label="5. ¿Cuánto buscas de patrocinio?"><div className="chips" style={{flexWrap:"wrap"}}>{BUDGETS.map(([a,b])=><button key={a} className={"chip"+(f.budgetMin===a&&f.budgetMax===b?" on":"")} onClick={()=>{set("budgetMin",a);set("budgetMax",b)}}>{money(a)} – {money(b)}</button>)}</div></Field>
+    <Field label="5. ¿Cuánto buscas de patrocinio?">
+      <div className="seg" style={{maxWidth:260}}>{[["CLP","🇨🇱 Pesos"],["EUR","🇪🇺 Euros"]].map(([k,l])=><button key={k} className={f.cur===k?"on":""} onClick={()=>setF(p=>({...p,cur:k,budgetMin:BUDGETS_BY[k][1][0],budgetMax:BUDGETS_BY[k][1][1],packages:p.packages.map(x=>({...x,price:Math.round(conv(x.price,p.cur,k)/100)*100}))}))}>{l}</button>)}</div>
+      <div className="chips" style={{flexWrap:"wrap"}}>{BUDGETS_BY[f.cur].map(([a,b])=><button key={a} className={"chip"+(f.budgetMin===a&&f.budgetMax===b?" on":"")} onClick={()=>{set("budgetMin",a);set("budgetMax",b)}}>{money(a,f.cur)} – {money(b,f.cur)}</button>)}</div></Field>
+    <Field label="Foto de portada (opcional)" hint="Una buena foto aumenta mucho el interés de las marcas"><PhotoPicker max={1} value={f.cover?[f.cover]:[]} onChange={v=>set("cover",v[0]||"")} label="🖼️ Elegir foto"/></Field>
     <Field label="6. ¿Quién es tu público?" hint="Edad, tipo de personas y cuántas son"><input className="inp" value={f.audience} onChange={e=>set("audience",e.target.value)} placeholder="Ej: Familias de 30-45 años · 2.000 asistentes"/></Field>
     <Field label="7. Descríbelo en pocas palabras"><textarea className="inp" value={f.desc} onChange={e=>set("desc",e.target.value)} placeholder="¿Qué es? ¿Qué le ofreces a la marca?"/></Field>
     <div className="sec-t" style={{marginTop:6}}>📊 8. Tu audiencia (opcional, ayuda mucho)</div>
@@ -1104,6 +1232,9 @@ function EventSheet({ev,onClose,onSaved}){
       <Field label="Asistentes o alcance"><input className="inp" value={f.social.attendees} onChange={e=>setS("attendees",e.target.value)} placeholder="Ej: 3.000 corredores"/></Field>
       <Field label="Sitio web"><input className="inp" value={f.social.web} onChange={e=>setS("web",e.target.value)} placeholder="Ej: micorrida.cl"/></Field>
     </div>
+    {f.audVerified?<div className="hint mb16">📊 <div><b>Audiencia verificada</b> por GetSponzo.</div></div>
+    :f.audReq==="pending"&&!shot.length?<div className="hint w mb16">⏳ <div>Tu captura de estadísticas está en revisión. Pronto tendrás la insignia “📊 Audiencia verificada”.</div></div>
+    :<Field label="Verifica tu audiencia (opcional)" hint="Sube una captura de las estadísticas de tu Instagram o TikTok. Si coincide, tu evento muestra “📊 Audiencia verificada”."><PhotoPicker max={1} value={shot} onChange={setShot} label="📸 Subir captura"/></Field>}
     <div className="sec-t" style={{marginTop:6}}>📦 9. Paquetes de patrocinio</div>
     <div className="tsm cmu mb12" style={{lineHeight:1.5}}>Las marcas eligen un paquete con un toque y el acuerdo se arma solo. Puedes usar los sugeridos y editarlos.</div>
     {f.packages.map((p,i)=><div key={i} className="mcard">
@@ -1115,7 +1246,7 @@ function EventSheet({ev,onClose,onSaved}){
       <textarea className="inp" style={{minHeight:64}} value={p.items.join("\n")} onChange={e=>setP(i,"items",e.target.value.split("\n"))} placeholder="Qué incluye (una cosa por línea)"/>
     </div>)}
     <div style={{display:"flex",gap:8}} className="mb16">
-      {f.packages.length===0&&<button className="btn btn-p btn-sm" style={{flex:1}} onClick={suggest}>✨ Usar paquetes sugeridos</button>}
+      {f.packages.length===0&&<button className="btn btn-p btn-sm" style={{flex:1}} disabled={aiBusy} onClick={aiPk}>{aiBusy?"Pensando…":apiKey?"✨ Sugerir paquetes con IA":"✨ Usar paquetes sugeridos"}</button>}
       {f.packages.length<4&&<button className="btn btn-g btn-sm" style={{flex:1}} onClick={()=>set("packages",[...f.packages,{name:"",price:"",items:[]}])}>➕ Agregar paquete</button>}
     </div>
     <div className="sec-t" style={{marginTop:6}}>✅ 10. Confirmaciones (dan confianza a las marcas)</div>
@@ -1127,7 +1258,9 @@ function EventSheet({ev,onClose,onSaved}){
 }
 function EventCard({e,children,onClick,score}){
   const b=BDG[e.badge];
+  const ow=userById(e.ownerId);
   return <div className={"card"+(onClick?" card-i":"")} onClick={onClick}>
+    {e.cover&&<img src={e.cover} alt="" style={{width:"calc(100% + 36px)",margin:"-18px -18px 12px",height:140,objectFit:"cover",borderRadius:"16px 16px 0 0",maxWidth:"none"}}/>}
     <div style={{display:"flex",gap:12,alignItems:"flex-start",marginBottom:10}}>
       <div style={{width:48,height:48,borderRadius:14,background:"rgba(23,212,160,.08)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:24,flexShrink:0}}>{e.icon}</div>
       <div style={{flex:1,minWidth:0}}>
@@ -1141,9 +1274,11 @@ function EventCard({e,children,onClick,score}){
       {score!=null&&<MatchPill v={score}/>}
       <span className="pill" style={{background:"rgba(255,255,255,.06)",color:"var(--white)"}}>{repTxt(e.ownerId)}</span>
       {evConfirmed(e)&&<span className="pill" style={{background:"var(--obg)",color:"var(--ok)"}}>✔ Datos confirmados</span>}
+      {e.audVerified&&<span className="pill" style={{background:"var(--obg)",color:"var(--ok)"}}>📊 Audiencia verificada</span>}
+      {ow&&ow.verified&&<span className="pill" style={{background:"var(--obg)",color:"var(--ok)"}}>🪪 Identidad verificada</span>}
       {e.packages&&e.packages.length>0&&<span className="pill" style={{background:"rgba(255,255,255,.06)",color:"var(--muted)"}}>📦 {e.packages.length} paquete{e.packages.length>1?"s":""}</span>}
     </div>
-    <div className="tsm"><span className="cmu">Busca: </span><b className="cte">{money(e.budgetMin)} – {money(e.budgetMax)}</b></div>
+    <div className="tsm"><span className="cmu">Busca: </span><b className="cte">{money(e.budgetMin,curOf(e))} – {money(e.budgetMax,curOf(e))}</b></div>
     {children}
   </div>;
 }
@@ -1176,8 +1311,8 @@ function ExploreView(){
   const {user,go,chatWith}=useApp();
   const [q,setQ]=useState(""),[cat,setCat]=useState("Todos"),[sel,setSel]=useState(null),[sort,setSort]=useState("match");
   useEffect(()=>{DB.setFlag("explored_"+user.id)},[]);
-  const evs=DB.events().filter(e=>e.ownerId!==user.id).filter(e=>cat==="Todos"||e.cat===cat).filter(e=>!q||(e.name+" "+e.loc+" "+e.desc+" "+e.audience).toLowerCase().includes(q.toLowerCase()))
-    .map(e=>({e,s:matchScore(user,e)})).sort((a,b)=>sort==="match"?b.s-a.s:sort==="cheap"?a.e.budgetMin-b.e.budgetMin:(b.e.created||"").localeCompare(a.e.created||""));
+  const evs=DB.events().filter(e=>e.ownerId!==user.id&&!(userById(e.ownerId)||{}).suspended).filter(e=>cat==="Todos"||e.cat===cat).filter(e=>!q||(e.name+" "+e.loc+" "+e.desc+" "+e.audience).toLowerCase().includes(q.toLowerCase()))
+    .map(e=>({e,s:matchScore(user,e)})).sort((a,b)=>sort==="match"?b.s-a.s:sort==="cheap"?conv(a.e.budgetMin,curOf(a.e),"EUR")-conv(b.e.budgetMin,curOf(b.e),"EUR"):(b.e.created||"").localeCompare(a.e.created||""));
   const owner=sel&&userById(sel.ownerId);
   return <div>
     <Head title="Buscar eventos" sub="Toca un evento para ver detalles, escribir o proponer un acuerdo"/>
@@ -1190,10 +1325,11 @@ function ExploreView(){
     {sel&&<Sheet title={sel.name} icon={sel.icon} onClose={()=>setSel(null)} footer={<>
       <button className="btn btn-g" onClick={()=>{setSel(null);chatWith(sel.ownerId,sel.name)}}>💬 Escribir</button>
       <button className="btn btn-p" onClick={()=>{setSel(null);go("nuevo",{ev:sel.id})}}>🤝 Proponer acuerdo</button></>}>
+      {sel.cover&&<img src={sel.cover} alt="" style={{width:"100%",borderRadius:12,marginBottom:12,maxHeight:220,objectFit:"cover"}}/>}
       <div className="tsm cmu mb12">📍 {sel.loc}{sel.date?" · 📅 "+fdate(sel.date):""} · {sel.cat}</div>
       <p className="tmd mb16" style={{lineHeight:1.6}}>{sel.desc}</p>
       <div className="g2" style={{gap:8}}>
-        <div className="st"><div className="stv" style={{fontSize:16}}>{money(sel.budgetMin)}–{money(sel.budgetMax)}</div><div className="stl">Presupuesto que busca</div></div>
+        <div className="st"><div className="stv" style={{fontSize:16}}>{money(sel.budgetMin,curOf(sel))}–{money(sel.budgetMax,curOf(sel))}</div><div className="stl">Presupuesto que busca</div></div>
         <div className="st"><div className="stv" style={{fontSize:16}}>{matchScore(user,sel)}%</div><div className="stl">Compatible con tu marca</div></div>
       </div>
       {sel.audience&&<div className="mcard mt12"><div className="txs cmu fw7 mb8">👥 PÚBLICO</div><div className="tmd">{sel.audience}</div></div>}
@@ -1202,7 +1338,7 @@ function ExploreView(){
       {evConfirmed(sel)&&<div className="hint mb12">✔ <div>El organizador confirmó <b>fecha, lugar</b> y que el evento <b>se hace igual</b>, con o sin patrocinio.</div></div>}
       {sel.packages&&sel.packages.length>0&&<><div className="sec-t" style={{marginTop:8}}>📦 Paquetes disponibles</div>
         {sel.packages.map((p,i)=><div key={i} className="mcard">
-          <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:6}}><b>{p.name}</b><b className="cte">{money(p.price)}</b></div>
+          <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:6}}><b>{p.name}</b><b className="cte">{money(p.price,curOf(sel))}</b></div>
           {p.items.map((it,j)=><div key={j} className="tsm cmu">✓ {it}</div>)}
           <button className="btn btn-p btn-sm mt12" style={{width:"100%"}} onClick={()=>{setSel(null);go("nuevo",{ev:sel.id,pkg:i})}}>Elegir {p.name} →</button>
         </div>)}</>}
@@ -1216,7 +1352,7 @@ function ExploreView(){
 function BrandsView(){
   const {user,go,chatWith}=useApp();
   const mine=DB.events().filter(e=>e.ownerId===user.id);
-  const brands=DB.users().filter(u=>u.role==="patrocinador").map(b=>({b,s:brandScore(b,mine)})).sort((x,y)=>y.s-x.s);
+  const brands=DB.users().filter(u=>u.role==="patrocinador"&&!u.suspended).map(b=>({b,s:brandScore(b,mine)})).sort((x,y)=>y.s-x.s);
   return <div>
     <Back onClick={()=>go("inicio",{})} label="Inicio"/>
     <Head title="Marcas en GetSponzo" sub="Ordenadas de más a menos compatibles con tus eventos"/>
@@ -1224,7 +1360,7 @@ function BrandsView(){
     :<div className="g2">{brands.map(({b,s})=>(
       <div key={b.id} className="card">
         <div className="row mb12"><Av u={b} size={46}/><div style={{minWidth:0}}><div className="fw7" style={{fontSize:15.5}}>{dispName(b)}</div><div className="txs cmu">{b.sector||"Marca"}{b.loc?" · "+b.loc:""}</div></div></div>
-        <div className="rowb mb12" style={{gap:6}}>{mine.length>0&&<MatchPill v={s}/>}<span className="pill" style={{background:"rgba(255,255,255,.06)",color:"var(--white)"}}>{repTxt(b.id)}</span></div>
+        <div className="rowb mb12" style={{gap:6}}>{mine.length>0&&<MatchPill v={s}/>}<span className="pill" style={{background:"rgba(255,255,255,.06)",color:"var(--white)"}}>{repTxt(b.id)}</span>{b.verified&&<span className="pill" style={{background:"var(--obg)",color:"var(--ok)"}}>🪪 Empresa verificada</span>}</div>
         {b.cats&&b.cats.length>0&&<div className="txs cmu mb8">Le interesa: {b.cats.join(", ")}</div>}
         {b.bio&&<p className="tsm cmu mb12" style={{lineHeight:1.55}}>{b.bio}</p>}
         {b.budget&&<div className="tsm mb12"><span className="cmu">Presupuesto: </span><b className="cte">{b.budget}</b></div>}
@@ -1239,15 +1375,16 @@ function BrandsView(){
 /* ══════════ CONTRATO E INFORME DESCARGABLES ══════════ */
 const esc=s=>String(s==null?"":s).replace(/[&<>"]/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[ch]));
 function openDoc(c,kind){
+  const $m=n=>money(n,c.cur);
   const fee=c.feePct||FEE,feeAmt=Math.round(c.amount*fee/100),sg=c.signed||{};
   const dt=x=>x?new Date(x).toLocaleString("es",{day:"numeric",month:"long",year:"numeric",hour:"2-digit",minute:"2-digit"}):"Pendiente";
   const ds=DB.disputes().filter(d=>d.contractId===c.id);
-  const rows=c.milestones.map((m,i)=>`<tr><td>${i+1}</td><td>${esc(m.title)}</td><td>${esc(m.due?fdate(m.due):"—")}</td><td style="text-align:right">${money(m.amount)}</td>${kind==="report"?`<td>${esc(MS[m.status].l)}${m.status==="resolved"?" ("+m.paidPct+"%)":""}</td><td style="text-align:right">${money(msPaid(m))}</td><td>${esc(m.evidence||"—")}</td>`:""}</tr>`).join("");
+  const rows=c.milestones.map((m,i)=>`<tr><td>${i+1}</td><td>${esc(m.title)}</td><td>${esc(m.due?fdate(m.due):"—")}</td><td style="text-align:right">${$m(m.amount)}</td>${kind==="report"?`<td>${esc(MS[m.status].l)}${m.status==="resolved"?" ("+m.paidPct+"%)":""}</td><td style="text-align:right">${$m(msPaid(m))}</td><td>${esc(m.evidence||"—")}</td>`:""}</tr>`).join("");
   const head=kind==="report"?"<th>#</th><th>Entrega</th><th>Fecha límite</th><th>Monto</th><th>Estado</th><th>Pagado</th><th>Evidencia</th>":"<th>#</th><th>Entrega</th><th>Fecha límite</th><th>Monto</th>";
   const revs=DB.reviews().filter(r=>r.contractId===c.id);
   const body=kind==="report"?`
 <h1>Informe de resultados</h1><p class="sub">${esc(c.eventName)} · generado el ${dt(new Date())}</p>
-<div class="kpis"><div><b>${money(c.amount)}</b><span>Monto del acuerdo</span></div><div><b>${money(cPaid(c))}</b><span>Pagado al evento</span></div><div><b>${c.milestones.filter(msDone).length} de ${c.milestones.length}</b><span>Entregas cumplidas</span></div><div><b>${ds.length}</b><span>Disputas</span></div></div>
+<div class="kpis"><div><b>${$m(c.amount)}</b><span>Monto del acuerdo</span></div><div><b>${$m(cPaid(c))}</b><span>Pagado al evento</span></div><div><b>${c.milestones.filter(msDone).length} de ${c.milestones.length}</b><span>Entregas cumplidas</span></div><div><b>${ds.length}</b><span>Disputas</span></div></div>
 <h2>Partes</h2><p>Marca: <b>${esc(c.sponsorName)}</b> · Evento: <b>${esc(c.sponsoredName)}</b></p>
 <h2>Detalle de entregas</h2><table><thead><tr>${head}</tr></thead><tbody>${rows}</tbody></table>
 ${ds.length?`<h2>Disputas</h2>${ds.map(d=>`<p><b>${esc(d.title)}</b>: ${esc(d.reason)}. ${d.verdict?`Decisión IA: ${d.verdict.pct}% al evento.`:"En curso."}</p>`).join("")}`:""}
@@ -1255,9 +1392,9 @@ ${revs.length?`<h2>Reseñas</h2>${revs.map(r=>`<p>${"★".repeat(r.stars)}${"☆
 <h1>Acuerdo de patrocinio</h1><p class="sub">N° ${esc(c.id)} · creado el ${dt(c.created)}</p>
 <h2>1. Partes</h2><p><b>Patrocinador:</b> ${esc(c.sponsorName)}.<br><b>Patrocinado:</b> ${esc(c.sponsoredName)}, organizador de “${esc(c.eventName)}”.</p>
 <h2>2. Objeto</h2><p>El Patrocinador apoya económicamente “${esc(c.eventName)}” y el Patrocinado se compromete a cumplir las entregas indicadas en la cláusula 3.</p>
-<h2>3. Entregas y pagos</h2><table><thead><tr>${head}</tr></thead><tbody>${rows}</tbody><tfoot><tr><td></td><td><b>Total</b></td><td></td><td style="text-align:right"><b>${money(c.amount)}</b></td></tr></tfoot></table>
-<h2>4. Pago protegido</h2><p>El Patrocinador deposita el monto total en GetSponzo. Cada pago se libera al Patrocinado solo cuando el Patrocinador aprueba la evidencia de la entrega correspondiente.</p>
-<h2>5. Comisión</h2><p>GetSponzo cobra una comisión de ${fee}% (${money(feeAmt)}), pagada por el Patrocinador además del monto del acuerdo. El Patrocinado recibe el 100% de cada entrega aprobada.</p>
+<h2>3. Entregas y pagos</h2><table><thead><tr>${head}</tr></thead><tbody>${rows}</tbody><tfoot><tr><td></td><td><b>Total</b></td><td></td><td style="text-align:right"><b>${$m(c.amount)}</b></td></tr></tfoot></table>
+<h2>4. Pago protegido</h2><p>${c.funded===false?"Estado: pendiente de depósito.":"Estado: depositado"+(c.fundedAt?" el "+dt(c.fundedAt):"")+"."} El Patrocinador deposita el monto total en GetSponzo. Cada pago se libera al Patrocinado solo cuando el Patrocinador aprueba la evidencia de la entrega correspondiente.</p>
+<h2>5. Comisión</h2><p>GetSponzo cobra una comisión de ${fee}% (${$m(feeAmt)}), pagada por el Patrocinador además del monto del acuerdo. El Patrocinado recibe el 100% de cada entrega aprobada.</p>
 ${c.aiClause?`<h2>6. Resolución de disputas con IA</h2><p>Si una parte no está conforme con una entrega, puede abrir una disputa en GetSponzo. La otra parte tiene 7 días corridos para presentar su defensa. Vencido ese plazo, un árbitro de inteligencia artificial analiza las pruebas de ambas partes y decide qué porcentaje del pago de esa entrega se libera al Patrocinado: 0%, 25%, 50%, 75% o 100%. Las partes aceptan esta decisión como definitiva para esa entrega.</p>`:""}
 <h2>${c.aiClause?7:6}. Datos de contacto</h2><p>Las partes se comunican a través de GetSponzo. Compartir datos de contacto para cerrar el acuerdo fuera de la plataforma deja sin efecto el pago protegido.</p>
 <h2>Firmas electrónicas</h2><table><tr><td>${esc(c.sponsorName)}</td><td>${sg[c.sponsorId]?"✔ Firmado el "+dt(sg[c.sponsorId]):"Pendiente"}</td></tr><tr><td>${esc(c.sponsoredName)}</td><td>${sg[c.sponsoredId]?"✔ Firmado el "+dt(sg[c.sponsoredId]):"Pendiente"}</td></tr></table>
@@ -1298,7 +1435,7 @@ function DealsList(){
       return <div key={c.id} className="card card-i" onClick={()=>go("acuerdos",{cid:c.id})} style={ns.me?{borderColor:"var(--border)"}:{}}>
         <div style={{display:"flex",justifyContent:"space-between",gap:10,marginBottom:8}}>
           <div style={{minWidth:0}}><div className="fw7" style={{fontSize:15.5}}>{c.eventName}</div><div className="txs cmu">{isS?"Con "+c.sponsoredName:"Con "+c.sponsorName}</div></div>
-          <div style={{textAlign:"right",flexShrink:0}}><div className="fw7 cte">{money(c.amount)}</div><div className="txs cmu">{money(paid)} pagado</div></div>
+          <div style={{textAlign:"right",flexShrink:0}}><div className="fw7 cte">{money(c.amount,c.cur)}</div><div className="txs cmu">{money(paid,c.cur)} pagado</div></div>
         </div>
         <Bar v={paid/c.amount*100} h={6}/>
         <div className="tsm fw6 mt12" style={{color:ns.c}}>{ns.t}</div>
@@ -1309,6 +1446,7 @@ function DealsList(){
 function DealDetail({id}){
   const {user,route,go,toast,confirm,bump,chatWith,startCall}=useApp();
   const c=DB.contracts().find(x=>x.id===id);
+  const $m=n=>money(n,c?c.cur:undefined);
   const [ev,setEv]=useState(route.act==="ev"?route.mid:null);
   const [disp,setDisp]=useState(null);
   const [rv,setRv]=useState({stars:0,text:""});
@@ -1317,15 +1455,18 @@ function DealDetail({id}){
   const paid=cPaid(c),st=cStatus(c);
   const stepIdx=st==="done"?3:c.milestones.some(m=>m.status!=="pending")?1:1;
   const updMs=(mid,patch)=>DB.setContracts(DB.contracts().map(x=>x.id!==c.id?x:{...x,milestones:x.milestones.map(m=>m.id===mid?{...m,...patch}:m)}));
-  const approve=m=>confirm({title:"¿Aprobar y pagar?",text:`Se pagarán ${money(m.amount)} a ${c.sponsoredName} por “${m.title}”. Esta acción no se puede deshacer.`,ok:"✅ Sí, aprobar y pagar",onOk:()=>{
-    updMs(m.id,{status:"approved",approvedAt:new Date().toISOString()});sysMsg(user.id,otherId,`✅ ${c.sponsorName} aprobó “${m.title}” y se pagaron ${money(m.amount)}`,c.eventName);
-    toast("¡Entrega aprobada!","💸",money(m.amount)+" pagados");bump()}});
-  const live=st!=="pending"&&st!=="rejected";
+  const approve=m=>confirm({title:"¿Aprobar y pagar?",text:`Se pagarán ${$m(m.amount)} a ${c.sponsoredName} por “${m.title}”. Esta acción no se puede deshacer.`,ok:"✅ Sí, aprobar y pagar",onOk:()=>{
+    updMs(m.id,{status:"approved",approvedAt:new Date().toISOString()});sysMsg(user.id,otherId,`✅ ${c.sponsorName} aprobó “${m.title}” y se pagaron ${$m(m.amount)}`,c.eventName);
+    toast("¡Entrega aprobada!","💸",$m(m.amount)+" pagados");bump()}});
+  const funded=c.funded!==false;
+  const live=st!=="pending"&&st!=="rejected"&&funded;
+  const deposit=()=>confirm({title:"Depositar el pago protegido",text:`Se depositarán ${$m(c.amount+Math.round(c.amount*(c.feePct||FEE)/100))} (acuerdo + comisión). GetSponzo guarda el dinero y lo libera por cada entrega que apruebes. MODO PILOTO: todavía no se cobra dinero real.`,ok:"💳 Depositar (simulación)",onOk:()=>{
+    updC({funded:true,fundedAt:new Date().toISOString()});sysMsg(user.id,otherId,`💳 ${dispName(user)} depositó ${$m(c.amount)} en el pago protegido de “${c.eventName}”. ¡Ya puedes empezar las entregas!`,c.eventName);toast("Pago protegido depositado","💳","Simulación: no se cobró dinero real");bump()}});
   const next=live?c.milestones.find(m=>!msDone(m)&&m.status!=="disputed"):null;
   const fee=c.feePct||FEE,feeAmt=Math.round(c.amount*fee/100);
   const iSigned=!!(c.signed||{})[user.id];
   const updC=patch=>DB.setContracts(DB.contracts().map(x=>x.id!==c.id?x:{...x,...patch}));
-  const sign=()=>confirm({title:"¿Firmar este acuerdo?",text:`Aceptas ${c.milestones.length} entrega${c.milestones.length>1?"s":""} por un total de ${money(c.amount)}${c.aiClause?" y la cláusula de arbitraje con IA":""}. Desde ahora el acuerdo queda activo.`,ok:"✍️ Sí, firmar",onOk:()=>{
+  const sign=()=>confirm({title:"¿Firmar este acuerdo?",text:`Aceptas ${c.milestones.length} entrega${c.milestones.length>1?"s":""} por un total de ${$m(c.amount)}${c.aiClause?" y la cláusula de arbitraje con IA":""}. Desde ahora el acuerdo queda activo.`,ok:"✍️ Sí, firmar",onOk:()=>{
     updC({status:"active",signed:{...(c.signed||{}),[user.id]:new Date().toISOString()}});sysMsg(user.id,otherId,`✍️ ${dispName(user)} firmó el acuerdo de “${c.eventName}”. ¡Está activo!`,c.eventName);toast("¡Acuerdo firmado!","✍️","Ya está activo");bump()}});
   const reject=()=>confirm({title:"¿Rechazar la propuesta?",text:"La otra parte verá que la rechazaste. Pueden conversar por chat y hacer una nueva propuesta.",ok:"Rechazar",danger:true,onOk:()=>{
     updC({status:"rejected",rejectedBy:user.id});sysMsg(user.id,otherId,`✖ ${dispName(user)} rechazó la propuesta para “${c.eventName}”. Conversemos para ajustarla.`,c.eventName);toast("Propuesta rechazada","✖");bump()}});
@@ -1338,14 +1479,14 @@ function DealDetail({id}){
       <div className="txs cmu fw7 mb8">ACUERDO DE PATROCINIO</div>
       <div style={{fontSize:20,fontWeight:800,fontFamily:"'Sora',sans-serif",marginBottom:4}}>{c.eventName}</div>
       <div className="row mb16" style={{gap:8}}><Av u={other} size={26}/><span className="tsm cmu">{isS?"Evento: ":"Marca: "}<b className="cwh">{isS?c.sponsoredName:c.sponsorName}</b></span></div>
-      <Stepper steps={["Propuesta","Firmado por ambos","Entregas","Completado"]} cur={st==="pending"||st==="rejected"?0:st==="done"?4:2}/>
+      <Stepper steps={["Propuesta","Firmado","Depositado","Entregas","Completado"]} cur={st==="pending"||st==="rejected"?0:!funded?2:st==="done"?5:3}/>
       <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-end",marginBottom:8}}>
-        <div><div className="txs cmu">Pagado</div><div className="money-big">{money(paid)}</div></div>
-        <div style={{textAlign:"right"}}><div className="txs cmu">Total</div><div className="fw7" style={{fontSize:17}}>{money(c.amount)}</div></div>
+        <div><div className="txs cmu">Pagado</div><div className="money-big">{$m(paid)}</div></div>
+        <div style={{textAlign:"right"}}><div className="txs cmu">Total</div><div className="fw7" style={{fontSize:17}}>{$m(c.amount)}</div></div>
       </div>
       <Bar v={paid/c.amount*100}/>
-      {live&&<div className="txs cmu mt8">🔒 {money(c.milestones.filter(m=>!msDone(m)).reduce((s,m)=>s+m.amount,0))} siguen protegidos por GetSponzo hasta que se cumplan las entregas.</div>}
-      <div className="txs cmu mt8">💶 Comisión GetSponzo {fee}% ({money(feeAmt)}) la paga la marca. El evento recibe el 100% de cada entrega.</div>
+      {live&&<div className="txs cmu mt8">🔒 {$m(c.milestones.filter(m=>!msDone(m)).reduce((s,m)=>s+m.amount,0))} siguen protegidos por GetSponzo hasta que se cumplan las entregas.</div>}
+      <div className="txs cmu mt8">💶 Comisión GetSponzo {fee}% ({$m(feeAmt)}) la paga la marca. El evento recibe el 100% de cada entrega.</div>
       <div style={{display:"flex",gap:8,marginTop:14}}>
         <button className="btn btn-g btn-sm" style={{flex:1}} onClick={()=>chatWith(otherId,c.eventName)}>💬 Chat</button>
         <button className="btn btn-g btn-sm" style={{flex:1}} onClick={()=>startCall(other)}>📹 Llamar</button>
@@ -1360,6 +1501,12 @@ function DealDetail({id}){
         <div className="tsm cmu mb12" style={{lineHeight:1.5}}>Revisa las entregas y montos de abajo. Si estás de acuerdo, fírmala y queda activa. Si no, recházala y conversen por chat.</div>
         <div style={{display:"flex",gap:8}}><button className="btn btn-g" style={{flex:1}} onClick={reject}>Rechazar</button><button className="btn btn-p" style={{flex:2}} onClick={sign}>✍️ Firmar acuerdo</button></div>
       </div>)}
+    {st!=="pending"&&st!=="rejected"&&!funded&&(isS?<div className="card mb12" style={{borderColor:"var(--border)",background:"rgba(23,212,160,.05)"}}>
+        <div className="fw7 mb8">💳 Último paso: deposita el pago protegido</div>
+        <div className="tsm cmu mb12" style={{lineHeight:1.5}}>Ambos firmaron. Deposita {$m(c.amount)} + comisión {c.feePct||FEE}% ({$m(Math.round(c.amount*(c.feePct||FEE)/100))}). El dinero queda guardado y se libera solo cuando apruebes cada entrega.</div>
+        <button className="btn btn-p" style={{width:"100%"}} onClick={deposit}>💳 Depositar {$m(c.amount+Math.round(c.amount*(c.feePct||FEE)/100))}</button>
+        <div className="txs cmu mt8">Modo piloto: todavía no se cobra dinero real.</div>
+      </div>:<div className="hint w mb12">⏳ <div><b>Acuerdo firmado.</b> Esperando que {c.sponsorName} deposite el pago protegido. Cuando lo haga, podrás empezar las entregas.</div></div>)}
     {st==="rejected"&&<div className="hint e mb12">✖ <div>Esta propuesta fue rechazada. Conversen por chat y creen una nueva si llegan a acuerdo.</div></div>}
     {st==="done"&&(myRev?<div className="hint mb12">⭐ <div>Calificaste a {isS?c.sponsoredName:c.sponsorName} con {myRev.stars} estrella{myRev.stars>1?"s":""}. ¡Gracias!</div></div>
       :<div className="card mb12" style={{borderColor:"rgba(245,200,66,.4)"}}>
@@ -1381,12 +1528,12 @@ function DealDetail({id}){
           <div className="ms-ic" style={{background:MS[m.status].bg,color:MS[m.status].c,fontWeight:800}}>{m.status==="approved"?"✓":i+1}</div>
           <div style={{flex:1,minWidth:0}}>
             <div className="fw7 tmd">{m.title}</div>
-            <div className="txs cmu">{money(m.amount)}{m.due?" · antes del "+fdate(m.due):""}</div>
+            <div className="txs cmu">{$m(m.amount)}{m.due?" · antes del "+fdate(m.due):""}</div>
           </div>
           <Pill s={m.status}/>
         </div>
-        {m.evidence&&<div className="tsm mt12" style={{background:"rgba(255,255,255,.03)",borderRadius:10,padding:"9px 11px"}}>📎 <span className="cmu">Evidencia:</span> {m.evidence}{m.files&&m.files.length>0&&<div className="txs cte mt8">{m.files.join(" · ")}</div>}</div>}
-        {m.status==="resolved"&&<div className="tsm mt12" style={{color:"var(--pur)"}}>🤖 La IA decidió pagar el {m.paidPct}% ({money(m.amount*m.paidPct/100)})</div>}
+        {m.evidence&&<div className="tsm mt12" style={{background:"rgba(255,255,255,.03)",borderRadius:10,padding:"9px 11px"}}>📎 <span className="cmu">Evidencia:</span> {m.evidence}{m.files&&m.files.length>0&&<div className="txs cte mt8">{m.files.join(" · ")}</div>}<PhotoThumbs ids={m.photoIds}/></div>}
+        {m.status==="resolved"&&<div className="tsm mt12" style={{color:"var(--pur)"}}>🤖 La IA decidió pagar el {m.paidPct}% ({$m(m.amount*m.paidPct/100)})</div>}
         {live&&!isS&&m.status==="pending"&&<button className="btn btn-p btn-sm mt12" style={{width:"100%"}} onClick={()=>setEv(m.id)}>📤 Subir evidencia</button>}
         {live&&isS&&m.status==="submitted"&&<div style={{display:"flex",gap:8,marginTop:12}}>
           <button className="btn btn-d btn-sm" style={{flex:1}} onClick={()=>setDisp(m)}>⚠️ No cumple</button>
@@ -1404,28 +1551,28 @@ function DealDetail({id}){
 }
 
 function EvidenceSheet({c,m,onClose}){
+  const $m=n=>money(n,c.cur);
   const {user,toast,bump}=useApp();
-  const [txt,setTxt]=useState(""),[files,setFiles]=useState([]);
+  const [txt,setTxt]=useState(""),[pics,setPics]=useState([]);
   if(!m)return null;
   const send=()=>{
-    if(!txt.trim()&&!files.length){toast("Describe lo que hiciste o adjunta una foto","⚠️");return}
-    DB.setContracts(DB.contracts().map(x=>x.id!==c.id?x:{...x,milestones:x.milestones.map(y=>y.id===m.id?{...y,status:"submitted",evidence:txt.trim()||"Fotos adjuntas",files:files,submittedAt:new Date().toISOString()}:y)}));
+    if(!txt.trim()&&!pics.length){toast("Describe lo que hiciste o adjunta una foto","⚠️");return}
+    const photoIds=pics.map(d=>savePhoto({kind:"evidence",data:d,parties:[c.sponsorId,c.sponsoredId],contractId:c.id,milestoneId:m.id}));
+    DB.setContracts(DB.contracts().map(x=>x.id!==c.id?x:{...x,milestones:x.milestones.map(y=>y.id===m.id?{...y,status:"submitted",evidence:txt.trim()||"Fotos adjuntas",photoIds,submittedAt:new Date().toISOString()}:y)}));
     sysMsg(user.id,c.sponsorId,`📤 ${first(user.name)} subió la evidencia de “${m.title}”. ¡Revísala!`,c.eventName);
     toast("¡Evidencia enviada!","📤","La marca la revisará y aprobará el pago");onClose();bump();
   };
   return <Sheet title="Subir evidencia" icon="📤" onClose={onClose} footer={<><button className="btn btn-g" onClick={onClose}>Cancelar</button><button className="btn btn-p" onClick={send}>Enviar a la marca</button></>}>
-    <div className="mcard act"><div className="fw7 tmd">{m.title}</div><div className="txs cmu">Al aprobarse recibes {money(m.amount)}</div></div>
+    <div className="mcard act"><div className="fw7 tmd">{m.title}</div><div className="txs cmu">Al aprobarse recibes {$m(m.amount)}</div></div>
     <Field label="1. Cuenta qué hiciste" hint="Ej: Se instaló el logo en las 200 camisetas del equipo."><textarea className="inp" value={txt} onChange={e=>setTxt(e.target.value)} placeholder="Describe la entrega…"/></Field>
-    <Field label="2. Adjunta fotos o capturas (opcional)">
-      <label className="btn btn-g" style={{width:"100%",cursor:"pointer"}}>📎 Elegir archivos<input type="file" multiple accept="image/*,.pdf" style={{display:"none"}} onChange={e=>setFiles(Array.from(e.target.files||[]).map(f=>"📷 "+f.name))}/></label>
-      {files.length>0&&<div className="tsm cte mt8">{files.join(" · ")}</div>}
-    </Field>
+    <Field label="2. Adjunta fotos o capturas (recomendado)"><PhotoPicker max={3} value={pics} onChange={setPics}/></Field>
     <div className="hint">💡 Mientras más clara la evidencia, más rápido te pagan y mejor queda tu reputación.</div>
   </Sheet>;
 }
 
 const REASONS={patrocinador:["No se entregó","Entrega incompleta","Fuera de plazo","No es lo acordado"],patrocinado:["La marca no responde","La marca no aprueba sin motivo","Me piden algo extra","Otro"]};
 function OpenDisputeSheet({c,m,onClose}){
+  const $m=n=>money(n,c.cur);
   const {user,toast,bump,go}=useApp();
   const [reason,setReason]=useState(""),[desc,setDesc]=useState(""),[evi,setEvi]=useState("");
   const isS=c.sponsorId===user.id,againstId=isS?c.sponsoredId:c.sponsorId;
@@ -1433,7 +1580,7 @@ function OpenDisputeSheet({c,m,onClose}){
     if(!reason){toast("Elige el motivo","⚠️");return}
     if(!desc.trim()){toast("Explica brevemente qué pasó","⚠️");return}
     const d={id:uid("d"),parties:[user.id,againstId],contractId:c.id,milestoneId:m.id,title:m.title,amount:m.amount,openedById:user.id,openedByName:isS?c.sponsorName:c.sponsoredName,openerRole:user.role,againstId,againstName:isS?c.sponsoredName:c.sponsorName,
-      reason,description:desc.trim(),claimantEvidence:evi.trim(),priorEvidence:m.evidence||"",defense:"",defenseSent:false,status:"open",created:new Date().toISOString(),deadline:new Date(Date.now()+7*DAY).toISOString()};
+      cur:c.cur,reason,description:desc.trim(),claimantEvidence:evi.trim(),priorEvidence:m.evidence||"",defense:"",defenseSent:false,status:"open",created:new Date().toISOString(),deadline:new Date(Date.now()+7*DAY).toISOString()};
     DB.setDisputes([...DB.disputes(),d]);
     DB.setContracts(DB.contracts().map(x=>x.id!==c.id?x:{...x,milestones:x.milestones.map(y=>y.id===m.id?{...y,status:"disputed"}:y)}));
     sysMsg(user.id,againstId,`⚖️ Se abrió una disputa por “${m.title}”. Tienes 7 días para responder.`,c.eventName);
@@ -1441,7 +1588,7 @@ function OpenDisputeSheet({c,m,onClose}){
   };
   return <Sheet title="Abrir una disputa" icon="⚖️" onClose={onClose} footer={<><button className="btn btn-g" onClick={onClose}>Cancelar</button><button className="btn btn-d" onClick={open}>Abrir disputa</button></>}>
     <div className="hint w mb16">💡 <div>Antes de abrir una disputa, intenta conversarlo por chat. Si no se resuelve, la otra parte tendrá <b>7 días</b> para responder y después <b>la IA decide</b>.</div></div>
-    <div className="mcard"><div className="fw7 tmd">{m.title}</div><div className="txs cmu">{money(m.amount)} en juego</div></div>
+    <div className="mcard"><div className="fw7 tmd">{m.title}</div><div className="txs cmu">{$m(m.amount)} en juego</div></div>
     <Field label="1. ¿Cuál es el problema?"><div className="chips" style={{flexWrap:"wrap"}}>{REASONS[user.role].map(r=><button key={r} className={"chip"+(reason===r?" on":"")} onClick={()=>setReason(r)}>{r}</button>)}</div></Field>
     <Field label="2. Explica qué pasó"><textarea className="inp" value={desc} onChange={e=>setDesc(e.target.value)} placeholder="Cuenta los hechos de forma simple…"/></Field>
     <Field label="3. ¿Tienes pruebas? (opcional)"><textarea className="inp" style={{minHeight:60}} value={evi} onChange={e=>setEvi(e.target.value)} placeholder="Ej: fotos del 16 de marzo, capturas de mensajes…"/></Field>
@@ -1451,8 +1598,10 @@ function OpenDisputeSheet({c,m,onClose}){
 function DisputeDetail({id}){
   const {user,go,toast,bump,apiKey,confirm}=useApp();
   const d=DB.disputes().find(x=>x.id===id);
+  const $m=n=>money(n,d?(d.cur||curOf(DB.contracts().find(x=>x.id===d.contractId))):undefined);
   const [def,setDef]=useState("");
   const [loading,setLoading]=useState(false),[err,setErr]=useState("");
+  const [aiSum,setAiSum]=useState(""),[sumBusy,setSumBusy]=useState(false);
   if(!d)return <div><Back onClick={()=>go("acuerdos",{})}/><Empty icon="🤷" title="No encontramos esta disputa" text=""/></div>;
   const iAmAgainst=d.againstId===user.id,iOpened=d.openedById===user.id;
   const left=daysLeft(d),ready=d.defenseSent||left<=0;
@@ -1482,7 +1631,7 @@ function DisputeDetail({id}){
     <div className="card mb12" style={{borderColor:"rgba(240,96,74,.3)"}}>
       <div className="txs fw7 mb8" style={{color:"var(--err)"}}>⚖️ DISPUTA</div>
       <div style={{fontSize:19,fontWeight:800,fontFamily:"'Sora',sans-serif",marginBottom:4}}>{d.title}</div>
-      <div className="tsm cmu mb16">{money(d.amount)} en juego · abierta el {fdate(d.created)}</div>
+      <div className="tsm cmu mb16">{$m(d.amount)} en juego · abierta el {fdate(d.created)}</div>
       <Stepper steps={["Disputa abierta","Defensa (7 días)","Decisión IA","Pago hecho"]} cur={cur}/>
       {d.status==="open"&&<div className={"hint "+(ready?"p":"w")}>{ready?"🤖 Todo listo. Cualquiera de las partes puede pedir la decisión de la IA.":`⏳ Quedan ${left} días para que ${iAmAgainst?"tú presentes":d.againstName+" presente"} la defensa.`}</div>}
     </div>
@@ -1490,8 +1639,8 @@ function DisputeDetail({id}){
     {v&&<div className="card mb12" style={{borderColor:"rgba(167,139,250,.35)",background:"var(--pbg)"}}>
       <div className="fw7 mb12" style={{color:"var(--pur)"}}>🤖 Decisión de la IA {v.demo&&<span className="pill" style={{background:"rgba(255,255,255,.08)",color:"var(--muted)",marginLeft:6}}>Modo demo</span>}</div>
       <div className="g2" style={{gap:8,marginBottom:14}}>
-        <div className="st"><div className="stv">{money(d.amount*v.pct/100)}</div><div className="stl">{v.pct}% para el evento</div></div>
-        <div className="st"><div className="stv" style={{color:"var(--pur)"}}>{money(d.amount*(100-v.pct)/100)}</div><div className="stl">{100-v.pct}% vuelve a la marca</div></div>
+        <div className="st"><div className="stv">{$m(d.amount*v.pct/100)}</div><div className="stl">{v.pct}% para el evento</div></div>
+        <div className="st"><div className="stv" style={{color:"var(--pur)"}}>{$m(d.amount*(100-v.pct)/100)}</div><div className="stl">{100-v.pct}% vuelve a la marca</div></div>
       </div>
       {v.reasoning.map((r,i)=><div key={i} className="tsm mb8" style={{display:"flex",gap:8,lineHeight:1.5}}><span style={{color:"var(--pur)"}}>{i+1}.</span><span>{r}</span></div>)}
       <div className="txs cmu mt8">✅ El pago ya se ejecutó automáticamente.</div>
@@ -1511,6 +1660,11 @@ function DisputeDetail({id}){
       </div>:<div className="tsm cmu">{left>0?"Todavía no ha respondido.":"No presentó defensa dentro del plazo."}</div>}
     </div>
 
+    {d.status==="open"&&<div className="mcard" style={{borderColor:"rgba(167,139,250,.3)"}}><div className="txs fw7 mb8" style={{color:"var(--pur)"}}>🤖 QUÉ VA A REVISAR LA IA</div>
+      {aiSum?<div className="tsm" style={{whiteSpace:"pre-wrap",lineHeight:1.6}}>{aiSum}</div>
+      :<div className="tsm cmu" style={{lineHeight:1.7}}>• Lo que prometía la entrega: “{d.title}”.<br/>• El reclamo de {d.openedByName} y sus pruebas.<br/>• {d.defenseSent?`La defensa de ${d.againstName}.`:`La defensa de ${d.againstName}, si la presenta (si no, decide sin ella).`}<br/>• La evidencia subida antes de la disputa.<br/>Solo puede decidir 0, 25, 50, 75 o 100% del pago. Consejo: sé concreto y aporta fechas y fotos.</div>}
+      {apiKey&&!aiSum&&<button className="btn btn-g btn-sm mt8" disabled={sumBusy} onClick={async()=>{setSumBusy(true);const r=await aiText(apiKey,`Resume en español muy simple y NEUTRAL, en 4 viñetas cortas, esta disputa de patrocinio para que ambas partes entiendan qué se discute y qué pruebas faltan. No des un veredicto. Entrega: ${d.title}. Reclamo de ${d.openedByName}: ${d.reason}. ${d.description}. Pruebas: ${d.claimantEvidence||"ninguna"}. Defensa de ${d.againstName}: ${d.defense||"aún no presentada"}.`,"");setAiSum(r.text||"No se pudo generar el resumen.");setSumBusy(false)}}>{sumBusy?"Pensando…":"✨ Resumen neutral con IA"}</button>}
+    </div>}
     {d.status==="open"&&<div className="mt16">
       {err&&<div className="hint w mb12">⚠️ {err}</div>}
       {ready?<button className="btn btn-pur" style={{width:"100%"}} disabled={loading} onClick={run}>{loading?<><span style={{width:16,height:16,border:"2px solid rgba(255,255,255,.3)",borderTopColor:"#fff",borderRadius:"50%",animation:"spin 1s linear infinite"}}/> La IA está analizando…</>:"🤖 Pedir la decisión de la IA"}</button>
@@ -1538,6 +1692,7 @@ function NewDeal(){
   useEffect(()=>{if(route.pkg!=null&&route.ev)setStep(1)},[]);
   const [ai,setAi]=useState(true);
   const ev=DB.events().find(e=>e.id===evId);
+  const $m=n=>money(n,ev?curOf(ev):user.cur);
   const brand=userById(brandId);
   const total=ms.reduce((s,m)=>s+(Number(m.amount)||0),0);
   const setM=(i,k,v)=>setMs(p=>p.map((m,j)=>j===i?{...m,[k]:v}:m));
@@ -1547,10 +1702,10 @@ function NewDeal(){
   const create=()=>{
     const owner=userById(ev.ownerId);
     const sponsor=isS?user:brand,sponsored=isS?owner:user;
-    const c={id:uid("c"),parties:[sponsor.id,sponsored.id],status:"pending",feePct:FEE,createdBy:user.id,signed:{[user.id]:new Date().toISOString()},eventId:ev.id,eventName:ev.name,sponsorId:sponsor.id,sponsorName:dispName(sponsor),sponsoredId:sponsored.id,sponsoredName:sponsored.name,amount:total,aiClause:ai,created:new Date().toISOString(),
+    const c={id:uid("c"),parties:[sponsor.id,sponsored.id],status:"pending",funded:false,cur:curOf(ev),feePct:FEE,createdBy:user.id,signed:{[user.id]:new Date().toISOString()},eventId:ev.id,eventName:ev.name,sponsorId:sponsor.id,sponsorName:dispName(sponsor),sponsoredId:sponsored.id,sponsoredName:sponsored.name,amount:total,aiClause:ai,created:new Date().toISOString(),
       milestones:ms.map((m,i)=>({id:i+1,title:m.title.trim(),amount:Number(m.amount),due:m.due,status:"pending",evidence:""}))};
     DB.setContracts([...DB.contracts(),c]);
-    sysMsg(user.id,isS?sponsored.id:sponsor.id,`🤝 ${dispName(user)} te envió una propuesta de ${money(total)} para “${ev.name}” con ${ms.length} entrega${ms.length>1?"s":""}. Revísala y fírmala en Acuerdos.`,ev.name);
+    sysMsg(user.id,isS?sponsored.id:sponsor.id,`🤝 ${dispName(user)} te envió una propuesta de ${$m(total)} para “${ev.name}” con ${ms.length} entrega${ms.length>1?"s":""}. Revísala y fírmala en Acuerdos.`,ev.name);
     toast("¡Propuesta enviada!","✍️","Falta la firma de "+(isS?sponsored.name:dispName(sponsor)));bump();go("acuerdos",{cid:c.id});
   };
   return <div>
@@ -1563,7 +1718,7 @@ function NewDeal(){
         <div className="lbl">¿Qué evento quieres patrocinar?</div>
         {others.map(e=><button key={e.id} className={"task"+(evId===e.id?" ":"")} style={evId===e.id?{borderColor:"var(--teal)",background:"rgba(23,212,160,.06)"}:{}} onClick={()=>setEvId(e.id)}>
           <div className="ti" style={{background:"rgba(255,255,255,.05)"}}>{e.icon}</div>
-          <div style={{flex:1,minWidth:0}}><div className="fw7 tmd">{e.name}</div><div className="txs cmu">{e.loc} · busca {money(e.budgetMin)}–{money(e.budgetMax)}</div></div>
+          <div style={{flex:1,minWidth:0}}><div className="fw7 tmd">{e.name}</div><div className="txs cmu">{e.loc} · busca {$m(e.budgetMin)}–{$m(e.budgetMax)}</div></div>
           {evId===e.id&&<span className="cte fw7">✓</span>}</button>)}
       </>:<>
         <div className="lbl">1. ¿Para cuál de tus eventos?</div>
@@ -1583,12 +1738,12 @@ function NewDeal(){
         {!m.title&&<div className="chips" style={{flexWrap:"wrap",marginBottom:8}}>{TEMPLATES.map(t=><button key={t} className="chip" style={{fontSize:12,padding:"6px 11px"}} onClick={()=>setM(i,"title",t)}>+ {t}</button>)}</div>}
         <input className="inp mb8" value={m.title} onChange={e=>setM(i,"title",e.target.value)} placeholder="¿Qué se entrega? (o toca una idea de arriba)"/>
         <div style={{display:"flex",gap:8}}>
-          <input className="inp" type="number" inputMode="numeric" min="0" value={m.amount} onChange={e=>setM(i,"amount",e.target.value)} placeholder="Monto €" style={{flex:1}}/>
+          <input className="inp" type="number" inputMode="numeric" min="0" value={m.amount} onChange={e=>setM(i,"amount",e.target.value)} placeholder={"Monto "+(curOf(ev)==="CLP"?"$":"€")} style={{flex:1}}/>
           <input className="inp" type="date" value={m.due} onChange={e=>setM(i,"due",e.target.value)} style={{flex:1,colorScheme:"dark"}} title="Fecha límite (opcional)"/>
         </div>
       </div>)}
       <button className="btn btn-g" style={{width:"100%"}} onClick={()=>setMs(p=>[...p,{title:"",amount:"",due:""}])}>➕ Agregar otra entrega</button>
-      <div className="card mt16" style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}><span className="fw7">Total del acuerdo</span><span className="money-big">{money(total)}</span></div>
+      <div className="card mt16" style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}><span className="fw7">Total del acuerdo</span><span className="money-big">{$m(total)}</span></div>
       <button className="btn btn-p mt16" style={{width:"100%"}} disabled={!ok1} onClick={()=>setStep(2)}>{ok1?"Revisar →":"Completa nombre y monto de cada entrega"}</button>
     </div>}
 
@@ -1597,13 +1752,13 @@ function NewDeal(){
         <div className="txs cmu fw7 mb8">RESUMEN</div>
         <div className="fw7" style={{fontSize:17}}>{ev.icon} {ev.name}</div>
         <div className="tsm cmu mb12">{isS?"Organiza: "+(userById(ev.ownerId)||{}).name:"Marca: "+dispName(brand)}</div>
-        {ms.map((m,i)=><div key={i} style={{display:"flex",justifyContent:"space-between",padding:"9px 0",borderBottom:"1px solid var(--bs)",gap:10}}><span className="tmd">{i+1}. {m.title}</span><b className="tmd" style={{flexShrink:0}}>{money(m.amount)}</b></div>)}
-        <div style={{display:"flex",justifyContent:"space-between",paddingTop:12}}><span className="fw7">Total</span><span className="money-big" style={{fontSize:22}}>{money(total)}</span></div>
+        {ms.map((m,i)=><div key={i} style={{display:"flex",justifyContent:"space-between",padding:"9px 0",borderBottom:"1px solid var(--bs)",gap:10}}><span className="tmd">{i+1}. {m.title}</span><b className="tmd" style={{flexShrink:0}}>{$m(m.amount)}</b></div>)}
+        <div style={{display:"flex",justifyContent:"space-between",paddingTop:12}}><span className="fw7">Total</span><span className="money-big" style={{fontSize:22}}>{$m(total)}</span></div>
       </div>
       <div className="card mb12">
-        <div style={{display:"flex",justifyContent:"space-between"}} className="tsm mb8"><span className="cmu">Monto del acuerdo (lo recibe el evento)</span><b>{money(total)}</b></div>
-        <div style={{display:"flex",justifyContent:"space-between"}} className="tsm mb8"><span className="cmu">Comisión GetSponzo ({FEE}%, la paga la marca)</span><b>{money(Math.round(total*FEE/100))}</b></div>
-        <div style={{display:"flex",justifyContent:"space-between",borderTop:"1px solid var(--bs)",paddingTop:8}} className="tsm"><span className="fw7">Total que paga la marca</span><b className="cte">{money(total+Math.round(total*FEE/100))}</b></div>
+        <div style={{display:"flex",justifyContent:"space-between"}} className="tsm mb8"><span className="cmu">Monto del acuerdo (lo recibe el evento)</span><b>{$m(total)}</b></div>
+        <div style={{display:"flex",justifyContent:"space-between"}} className="tsm mb8"><span className="cmu">Comisión GetSponzo ({FEE}%, la paga la marca)</span><b>{$m(Math.round(total*FEE/100))}</b></div>
+        <div style={{display:"flex",justifyContent:"space-between",borderTop:"1px solid var(--bs)",paddingTop:8}} className="tsm"><span className="fw7">Total que paga la marca</span><b className="cte">{$m(total+Math.round(total*FEE/100))}</b></div>
       </div>
       <div className="hint mb12">🔒 <div><b>Pago protegido:</b> {isS?"depositas el total y GetSponzo lo guarda. Solo se paga cada entrega cuando tú la apruebas.":"la marca deposita el total y GetSponzo lo guarda. Recibes cada pago cuando la marca aprueba tu entrega."} <b>El acuerdo se activa cuando {isS?"el evento":"la marca"} también lo firma.</b></div></div>
       <label className="mcard" style={{display:"flex",gap:12,alignItems:"flex-start",cursor:"pointer"}}>
@@ -1615,12 +1770,277 @@ function NewDeal(){
   </div>;
 }
 
+/* ══════════ LISTA DE ESPERA (página pública) ══════════ */
+function Waitlist(){
+  const [f,setF]=useState({email:"",type:"patrocinado",city:""});
+  const [st,setSt]=useState("idle"),[err,setErr]=useState("");
+  const send=async()=>{
+    setErr("");
+    if(!/^\S+@\S+\.\S+$/.test(f.email.trim()))return setErr("Escribe un correo válido.");
+    setSt("busy");
+    try{await addPublic("waitlist",{email:f.email.trim().toLowerCase().slice(0,110),type:f.type,city:f.city.trim().slice(0,60)});setSt("ok")}
+    catch(e){setSt("idle");setErr("No se pudo guardar. Revisa tu conexión e intenta de nuevo.")}
+  };
+  return <section style={{padding:"52px 0",background:"var(--bg2)"}}>
+    <div className="container" style={{maxWidth:560}}>
+      <div className="tc-c" style={{marginBottom:22}}>
+        <div style={{fontSize:11.5,fontWeight:700,color:"var(--teal)",textTransform:"uppercase",letterSpacing:1,marginBottom:9}}>Lista de espera</div>
+        <h2 style={{fontSize:"clamp(22px,4.2vw,32px)",fontWeight:700,marginBottom:10}}>Sé de los primeros</h2>
+        <p className="cmu" style={{fontSize:15,lineHeight:1.6}}>Los primeros inscritos tendrán <b className="cwh">6 meses sin comisión</b> y acompañamiento personal para cerrar su primer patrocinio.</p>
+      </div>
+      {st==="ok"?<div className="card tc-c"><div style={{fontSize:40,marginBottom:8}}>🎉</div><div className="fw7 mb8">¡Listo, estás en la lista!</div><div className="tsm cmu">Te escribiremos apenas abramos en tu ciudad.</div></div>
+      :<div className="card">
+        <div className="seg">{[["patrocinado","🎯 Tengo un evento"],["patrocinador","🏢 Soy marca"],["inversor","💼 Inversor"]].map(([k,l])=><button key={k} className={f.type===k?"on":""} onClick={()=>setF(p=>({...p,type:k}))}>{l}</button>)}</div>
+        <Field label="Tu correo"><input className="inp" type="email" value={f.email} onChange={e=>setF(p=>({...p,email:e.target.value}))} placeholder="tu@correo.com"/></Field>
+        <Field label="Ciudad"><input className="inp" value={f.city} onChange={e=>setF(p=>({...p,city:e.target.value}))} placeholder="Ej: Santiago"/></Field>
+        {err&&<div className="hint e mb12">⚠️ {err}</div>}
+        <button className="btn btn-p" style={{width:"100%"}} disabled={st==="busy"} onClick={send}>{st==="busy"?"Guardando…":"Quiero ser de los primeros →"}</button>
+        <div className="txs cmu tc-c mt8">Solo usaremos tu correo para avisarte del lanzamiento.</div>
+      </div>}
+    </div>
+  </section>;
+}
+
+/* ══════════ SOPORTE Y PREGUNTAS FRECUENTES ══════════ */
+const FAQ=[
+  ["¿Cuánto cuesta usar GetSponzo?",`Crear cuenta y publicar eventos es gratis. En cada acuerdo, la marca paga una comisión de ${FEE}%. El evento recibe el 100% de cada entrega aprobada.`],
+  ["¿Cuándo recibe el dinero el evento?","Cuando la marca aprueba cada entrega. Por eso conviene subir fotos claras como evidencia."],
+  ["¿Qué pasa si la marca no aprueba y no responde?","Puedes abrir una disputa. La marca tiene 7 días para defenderse y luego la IA decide qué % se paga."],
+  ["¿Puedo patrocinar con productos en vez de dinero?","Por ahora los acuerdos son en dinero. Los canjes llegarán pronto."],
+  ["¿Por qué no puedo compartir mi teléfono en el chat?","Para protegerte: si el acuerdo se cierra fuera de la plataforma, pierdes el pago protegido y el arbitraje."],
+  ["¿En qué moneda funciona?","En pesos chilenos o euros. Cada evento elige su moneda y el acuerdo se hace en esa moneda."],
+];
+function SupportForm({compact}){
+  const {user,toast}=useApp()||{};
+  const [f,setF]=useState({name:user?user.name:"",email:"",msg:""}),[st,setSt]=useState("idle");
+  const send=async()=>{
+    if(!f.msg.trim()||(!user&&!/^\S+@\S+\.\S+$/.test(f.email.trim()))){toast&&toast("Escribe tu mensaje"+(user?"":" y tu correo"),"⚠️");return}
+    setSt("busy");
+    try{await addPublic("support",{name:(f.name||"").slice(0,80),email:(f.email||(REAL&&AUTH&&AUTH.currentUser?AUTH.currentUser.email:"")||"").slice(0,110),msg:f.msg.trim().slice(0,1900),uid:user?user.id:""});setSt("ok")}
+    catch(e){setSt("idle");toast&&toast("No se pudo enviar","⚠️")}
+  };
+  if(st==="ok")return <div className="hint">✅ <div><b>Mensaje enviado.</b> Te responderemos lo antes posible{user?"":" a tu correo"}.</div></div>;
+  return <div>
+    {!user&&<Field label="Tu correo"><input className="inp" type="email" value={f.email} onChange={e=>setF(p=>({...p,email:e.target.value}))} placeholder="tu@correo.com"/></Field>}
+    {user&&REAL&&<div className="txs cmu mb8">Te responderemos al correo de tu cuenta.</div>}
+    <Field label="Tu mensaje"><textarea className="inp" value={f.msg} onChange={e=>setF(p=>({...p,msg:e.target.value}))} placeholder="¿En qué te podemos ayudar?"/></Field>
+    <button className="btn btn-p" style={{width:"100%"}} disabled={st==="busy"} onClick={send}>{st==="busy"?"Enviando…":"✉️ Enviar a soporte"}</button>
+  </div>;
+}
+
+/* ══════════ AVISOS ══════════ */
+function NotifSheet({onClose}){
+  const {user,go}=useApp();
+  const tasks=getTasks(user);
+  const recent=DB.chats().filter(c=>c.participants.includes(user.id)).flatMap(c=>(c.messages||[]).filter(m=>m.from==="sys").map(m=>({...m,chat:c.id}))).sort((a,b)=>(b.ts||"").localeCompare(a.ts||"")).slice(0,8);
+  return <Sheet title="Avisos" icon="🔔" onClose={onClose}>
+    <div className="sec-t" style={{marginTop:0}}>Pendientes ({tasks.length})</div>
+    {tasks.length?tasks.map((t,i)=><button key={i} className="task" onClick={()=>{onClose();go(...t.go)}}><div className="ti" style={{background:t.bg}}>{t.icon}</div><div style={{flex:1,minWidth:0}}><div className="fw7 tmd">{t.t}</div><div className="tsm cmu ellip">{t.s}</div></div><span style={{color:t.c}}>›</span></button>)
+    :<div className="hint">✅ No tienes nada pendiente.</div>}
+    <div className="sec-t">Actividad reciente</div>
+    {recent.length?recent.map(m=><button key={m.id} className="lrow" onClick={()=>{onClose();go("mensajes",{chat:m.chat})}}><div style={{flex:1,minWidth:0}}><div className="tsm">{m.text}</div><div className="txs cmu">{hhmm(m.ts)}</div></div></button>)
+    :<div className="tsm cmu">Aún no hay actividad.</div>}
+  </Sheet>;
+}
+
+/* ══════════ INSTALAR COMO APP ══════════ */
+function InstallSheet({onClose}){
+  const {toast}=useApp();
+  const doInstall=async()=>{if(installEvt){installEvt.prompt();const r=await installEvt.userChoice.catch(()=>({}));if(r&&r.outcome==="accepted")toast("¡App instalada!","📲");installEvt=null;onClose()}};
+  return <Sheet title="Instalar GetSponzo" icon="📲" onClose={onClose} footer={installEvt?<button className="btn btn-p" onClick={doInstall}>📲 Instalar ahora</button>:<button className="btn btn-p" onClick={onClose}>Entendido</button>}>
+    {isStandalone()?<div className="hint">✅ Ya estás usando GetSponzo como app.</div>:isIOS()?<div>
+      <div className="tmd mb12">En iPhone o iPad:</div>
+      {["Abre esta página en Safari.","Toca el botón Compartir (el cuadrado con una flecha hacia arriba).","Elige “Agregar a pantalla de inicio”.","Toca “Agregar”. ¡Listo! Verás el ícono de GetSponzo."].map((t,i)=><div key={i} className="row mb12" style={{alignItems:"flex-start"}}><span style={{width:24,height:24,borderRadius:"50%",background:"var(--teal)",color:"#07101e",fontWeight:800,fontSize:12,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>{i+1}</span><span className="tsm">{t}</span></div>)}
+    </div>:installEvt?<div className="tmd">Toca “Instalar ahora” y GetSponzo quedará en tu pantalla de inicio como una app más.</div>:<div>
+      <div className="tmd mb12">En Android (Chrome):</div>
+      {["Toca los tres puntos ⋮ arriba a la derecha.","Elige “Instalar app” o “Agregar a pantalla principal”.","Confirma. ¡Listo!"].map((t,i)=><div key={i} className="row mb12" style={{alignItems:"flex-start"}}><span style={{width:24,height:24,borderRadius:"50%",background:"var(--teal)",color:"#07101e",fontWeight:800,fontSize:12,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>{i+1}</span><span className="tsm">{t}</span></div>)}
+    </div>}
+  </Sheet>;
+}
+
+/* ══════════ CUENTA SUSPENDIDA ══════════ */
+function Suspended({onLogout}){
+  return <div style={{minHeight:"100vh",display:"flex",alignItems:"center",justifyContent:"center",padding:24}}>
+    <div className="card tc-c" style={{maxWidth:420}}>
+      <div style={{fontSize:44,marginBottom:10}}>⛔</div>
+      <div className="fw7 mb8" style={{fontSize:18}}>Tu cuenta está suspendida</div>
+      <div className="tsm cmu mb16" style={{lineHeight:1.6}}>Recibimos reportes sobre esta cuenta y la estamos revisando. Si crees que es un error, escríbenos.</div>
+      <SupportForm/>
+      <button className="btn btn-g mt12" style={{width:"100%"}} onClick={onLogout}>Cerrar sesión</button>
+    </div>
+  </div>;
+}
+
+/* ══════════ PANEL DE ADMINISTRADOR ══════════ */
+const weekKey=ts=>{const d=new Date(ts);if(isNaN(d))return null;const t=new Date(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate()));const day=(t.getUTCDay()+6)%7;t.setUTCDate(t.getUTCDate()-day);return t.toISOString().slice(0,10)};
+function toCSV(rows){if(!rows.length)return "";const ks=Object.keys(rows[0]);return [ks.join(";")].concat(rows.map(r=>ks.map(k=>`"${String(r[k]==null?"":r[k]).replace(/"/g,'""')}"`).join(";"))).join("\n")}
+function download(name,text){const a=document.createElement("a");a.href=URL.createObjectURL(new Blob(["﻿"+text],{type:"text/csv;charset=utf-8"}));a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),2000)}
+function AdminView(){
+  const {go,toast,confirm,user:me}=useApp();
+  const [D,setD]=useState(null),[err,setErr]=useState(""),[tab,setTab]=useState("metricas"),[big,setBig]=useState(null);
+  const loadAll=async()=>{
+    setErr("");
+    try{
+      if(REAL){
+        const cols=["users","events","contracts","disputes","reviews","reports","waitlist","support","leads","verifications"];
+        const snaps=await Promise.all(cols.map(c=>FS.collection(c).get().then(s=>s.docs.map(d=>({_id:d.id,...d.data()}))).catch(()=>null)));
+        const o={};cols.forEach((c,i)=>o[c]=snaps[i]);
+        if(o.contracts===null)throw new Error("Sin permiso de administrador. Revisa que tu correo esté verificado y que las reglas nuevas estén publicadas.");
+        const vp=await FS.collection("photos").where("kind","==","audience").get().then(s=>s.docs.map(d=>d.data())).catch(()=>[]);
+        o.audPhotos=vp;setD(o);
+      }else{
+        setD({users:DB.users(),events:DB.events(),contracts:DB.contracts(),disputes:DB.disputes(),reviews:DB.reviews(),reports:load("gs_reports",[]),waitlist:load("gs_waitlist",[]),support:load("gs_support",[]),leads:load("gs_leads",[]),verifications:load("gs_verif",[]),audPhotos:DB.photos().filter(p=>p.kind==="audience")});
+      }
+    }catch(e){setErr(e.message)}
+  };
+  useEffect(()=>{loadAll()},[]);
+  const setUserFlag=async(id,patch)=>{
+    if(REAL){await FS.collection("users").doc(id).update(patch)}else DB.setUsers(DB.users().map(u=>u.id===id?{...u,...patch}:u));
+    toast("Cambios guardados","✅");loadAll();
+  };
+  const setEventFlag=async(id,patch)=>{
+    if(REAL){await FS.collection("events").doc(id).update(patch)}else DB.setEvents(DB.events().map(e=>e.id===id?{...e,...patch}:e));
+    toast("Cambios guardados","✅");loadAll();
+  };
+  if(err)return <div><Back onClick={()=>go("perfil",{})} label="Perfil"/><div className="hint e">⚠️ <div>{err}</div></div></div>;
+  if(!D)return <div className="empty"><div className="empty-i">⏳</div><h3>Cargando datos…</h3></div>;
+  const U=D.users||[],E=D.events||[],C=D.contracts||[],Ds=D.disputes||[],R=D.reviews||[],Rp=D.reports||[],W=D.waitlist||[],S=D.support||[],L=D.leads||[];
+  const byRole=r=>U.filter(u=>u.role===r).length;
+  const sumBy=cur=>C.filter(c=>curOf(c)===cur&&c.status!=="rejected").reduce((s,c)=>s+c.amount,0);
+  const paidBy=cur=>C.filter(c=>curOf(c)===cur).reduce((s,c)=>s+cPaid(c),0);
+  const signed=C.filter(c=>c.status!=="pending"&&c.status!=="rejected"),funded=signed.filter(c=>c.funded!==false),done=C.filter(c=>cStatus(c)==="done");
+  const funnel=[["Propuestas enviadas",C.length],["Firmadas por ambos",signed.length],["Con depósito",funded.length],["Completadas",done.length]];
+  const weeks=[];const now=new Date();for(let i=7;i>=0;i--){const d=new Date(now);d.setDate(d.getDate()-i*7);weeks.push(weekKey(d))}
+  const wk=weeks.map(w=>({w,n:U.filter(u=>weekKey(u.created)===w).length,wl:W.filter(x=>weekKey(x.ts)===w).length}));
+  const maxW=Math.max(1,...wk.map(x=>x.n+x.wl));
+  const avg=R.length?(R.reduce((s,r)=>s+Number(r.stars||0),0)/R.length).toFixed(1).replace(".",","):"—";
+  const pendingV=U.filter(u=>u.verifyReq==="pending"&&!u.verified),pendingA=E.filter(e=>e.audReq==="pending"&&!e.audVerified);
+  const nameOf=id=>{const u=U.find(x=>x.id===id);return u?dispName(u):id};
+  const kpi=(v,l)=><div className="st"><div className="stv" style={{fontSize:19}}>{v}</div><div className="stl">{l}</div></div>;
+  return <div>
+    <Back onClick={()=>go("perfil",{})} label="Perfil"/>
+    <Head title="Panel de administrador" sub={REAL?"Datos reales de la plataforma":"Datos de la demo"} right={<button className="btn btn-g btn-sm" onClick={loadAll}>🔄</button>}/>
+    <div className="seg">{[["metricas","📊 Métricas"],["espera",`📝 Espera (${W.length})`],["revisar",`🛡️ Revisar (${Rp.length+pendingV.length+pendingA.length})`],["mensajes",`✉️ Mensajes (${S.length+L.length})`]].map(([k,l])=><button key={k} className={tab===k?"on":""} onClick={()=>setTab(k)}>{l}</button>)}</div>
+
+    {tab==="metricas"&&<div>
+      <div className="g4 mb12">{kpi(U.length,"Usuarios")}{kpi(byRole("patrocinado"),"Eventos/creadores")}{kpi(byRole("patrocinador"),"Marcas")}{kpi(W.length,"En lista de espera")}</div>
+      <div className="g4 mb12">{kpi(E.length,"Eventos publicados")}{kpi(C.length,"Propuestas")}{kpi(Ds.filter(d=>d.status==="open").length+" / "+Ds.length,"Disputas abiertas / total")}{kpi(avg+" ⭐","Nota promedio ("+R.length+")")}</div>
+      <div className="card mb12">
+        <div className="fw7 mb12">💶 Dinero en acuerdos</div>
+        {["CLP","EUR"].map(k=><div key={k} className="row mb8" style={{justifyContent:"space-between"}}><span className="tsm cmu">{k==="CLP"?"🇨🇱 Pesos":"🇪🇺 Euros"}</span><span className="tsm"><b>{money(sumBy(k),k)}</b> acordado · <b className="cte">{money(paidBy(k),k)}</b> pagado · comisión {money(Math.round(sumBy(k)*FEE/100),k)}</span></div>)}
+      </div>
+      <div className="card mb12">
+        <div className="fw7 mb12">🔻 Embudo de acuerdos</div>
+        {funnel.map(([l,n],i)=><div key={l} className="mb12"><div className="row mb8" style={{justifyContent:"space-between"}}><span className="tsm">{l}</span><span className="tsm"><b>{n}</b>{i>0&&funnel[i-1][1]?<span className="cmu"> · {Math.round(n/funnel[i-1][1]*100)}% del paso anterior</span>:""}</span></div><Bar v={C.length?n/C.length*100:0}/></div>)}
+      </div>
+      <div className="card mb12">
+        <div className="fw7 mb8">📈 Registros por semana (últimas 8)</div>
+        <div className="txs cmu mb12"><span style={{color:"var(--teal)"}}>■</span> Cuentas nuevas · <span style={{color:"var(--pur)"}}>■</span> Lista de espera</div>
+        <div style={{display:"flex",alignItems:"flex-end",gap:6,height:130}}>{wk.map(x=><div key={x.w} style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",gap:4}}>
+          <span className="txs">{x.n+x.wl||""}</span>
+          <div style={{width:"100%",display:"flex",flexDirection:"column",justifyContent:"flex-end",height:96}}>
+            <div style={{height:x.wl/maxW*96,background:"var(--pur)",borderRadius:"4px 4px 0 0"}}/><div style={{height:x.n/maxW*96,background:"var(--teal)",borderRadius:x.wl?0:"4px 4px 0 0"}}/></div>
+          <span style={{fontSize:9.5,color:"var(--muted)"}}>{new Date(x.w+"T12:00:00").toLocaleDateString("es",{day:"numeric",month:"short"})}</span></div>)}</div>
+      </div>
+      <div className="rowb" style={{gap:8}}>
+        <button className="btn btn-g btn-sm" onClick={()=>download("usuarios.csv",toCSV(U.map(u=>({id:u.id,nombre:u.name,rol:u.role,empresa:u.company||"",ciudad:u.loc||"",creado:u.created||"",verificado:u.verified?"sí":"no"}))))}>⬇️ Usuarios (CSV)</button>
+        <button className="btn btn-g btn-sm" onClick={()=>download("acuerdos.csv",toCSV(C.map(c=>({id:c.id,evento:c.eventName,marca:c.sponsorName,patrocinado:c.sponsoredName,moneda:curOf(c),monto:c.amount,pagado:cPaid(c),estado:cStatus(c),creado:c.created}))))}>⬇️ Acuerdos (CSV)</button>
+      </div>
+    </div>}
+
+    {tab==="espera"&&<div>
+      <div className="rowb mb12" style={{gap:8}}>
+        <button className="btn btn-p btn-sm" disabled={!W.length} onClick={()=>{const t=W.map(x=>x.email).join(", ");try{navigator.clipboard.writeText(t);toast("Correos copiados","📋")}catch(e){prompt("Copia los correos:",t)}}}>📋 Copiar correos</button>
+        <button className="btn btn-g btn-sm" disabled={!W.length} onClick={()=>download("lista-espera.csv",toCSV(W.map(x=>({correo:x.email,tipo:x.type,ciudad:x.city,fecha:x.ts}))))}>⬇️ Descargar CSV</button>
+      </div>
+      {W.length?<div className="card" style={{padding:"4px 14px"}}>{W.slice().sort((a,b)=>(b.ts||"").localeCompare(a.ts||"")).map((x,i)=><div key={i} className="lrow"><div style={{flex:1,minWidth:0}}><div className="tsm fw6 ellip">{x.email}</div><div className="txs cmu">{ROLE[x.type]?ROLE[x.type].l:x.type}{x.city?" · "+x.city:""} · {fdate(x.ts)}</div></div></div>)}</div>
+      :<Empty icon="📝" title="Nadie en la lista todavía" text="Comparte el link de GetSponzo para que se inscriban."/>}
+    </div>}
+
+    {tab==="revisar"&&<div>
+      <div className="sec-t" style={{marginTop:0}}>🪪 Verificación de identidad ({pendingV.length})</div>
+      {pendingV.length?pendingV.map(u=><div key={u.id} className="mcard"><div className="fw7 tmd">{dispName(u)}</div>{(()=>{const v=(D.verifications||[]).find(x=>x.uid===u.id)||{};return <div className="tsm cmu mb8">{u.name} · RUT {v.rut||"—"} {v.rut?(rutValid(v.rut)?"✅ dígito válido":"⚠️ no válido"):""} · revisa en el SII que coincida con el nombre</div>})()}
+        <div className="row" style={{gap:8}}><button className="btn btn-g btn-sm" style={{flex:1}} onClick={()=>setUserFlag(u.id,{verifyReq:"rejected"})}>Rechazar</button><button className="btn btn-p btn-sm" style={{flex:1}} onClick={()=>setUserFlag(u.id,{verified:true,verifyReq:"done"})}>✅ Verificar</button></div></div>)
+      :<div className="tsm cmu">No hay solicitudes.</div>}
+      <div className="sec-t">📊 Audiencia por verificar ({pendingA.length})</div>
+      {pendingA.length?pendingA.map(e=>{const ph=(D.audPhotos||[]).find(p=>p.id===e.audPhotoId);return <div key={e.id} className="mcard"><div className="fw7 tmd">{e.name}</div><div className="tsm cmu mb8">Declara: {e.social&&e.social.ig?e.social.ig+" IG":""} {e.social&&e.social.tt?e.social.tt+" TikTok":""} {e.social&&e.social.attendees?"· "+e.social.attendees:""}</div>
+        {ph?<img src={ph.data} alt="" onClick={()=>setBig(ph.data)} style={{width:120,borderRadius:10,cursor:"zoom-in",marginBottom:8}}/>:<div className="txs cmu mb8">Captura no disponible.</div>}
+        <div className="row" style={{gap:8}}><button className="btn btn-g btn-sm" style={{flex:1}} onClick={()=>setEventFlag(e.id,{audReq:"rejected"})}>Rechazar</button><button className="btn btn-p btn-sm" style={{flex:1}} onClick={()=>setEventFlag(e.id,{audVerified:true,audReq:"done"})}>✅ Verificar</button></div></div>})
+      :<div className="tsm cmu">No hay solicitudes.</div>}
+      <div className="sec-t">🚩 Reportes ({Rp.length})</div>
+      {Rp.length?Rp.slice().sort((a,b)=>(b.ts||"").localeCompare(a.ts||"")).map((r,i)=>{const t=U.find(u=>u.id===r.targetId);return <div key={i} className="mcard">
+        <div className="fw7 tmd">{t?dispName(t):"Usuario"} {t&&t.suspended&&<span className="pill" style={{background:"var(--ebg)",color:"var(--err)"}}>Suspendido</span>}</div>
+        <div className="tsm">{r.reason}</div>{r.detail&&<div className="tsm cmu">{r.detail}</div>}
+        <div className="txs cmu mb8">Reportado por {nameOf(r.fromId)} · {fdate(r.ts)}</div>
+        {t&&t.id!==me.id&&<button className={"btn btn-sm "+(t.suspended?"btn-g":"btn-d")} onClick={()=>confirm({title:t.suspended?"¿Reactivar la cuenta?":"¿Suspender la cuenta?",text:t.suspended?"La persona podrá volver a usar GetSponzo.":"La persona no podrá usar GetSponzo y sus eventos dejarán de mostrarse.",ok:t.suspended?"Reactivar":"Suspender",danger:!t.suspended,onOk:()=>setUserFlag(t.id,{suspended:!t.suspended})})}>{t.suspended?"Reactivar cuenta":"⛔ Suspender cuenta"}</button>}
+      </div>}):<div className="tsm cmu">No hay reportes. 🎉</div>}
+    </div>}
+
+    {tab==="mensajes"&&<div>
+      <div className="sec-t" style={{marginTop:0}}>✉️ Soporte ({S.length})</div>
+      {S.length?S.slice().sort((a,b)=>(b.ts||"").localeCompare(a.ts||"")).map((m,i)=><div key={i} className="mcard"><div className="tsm fw7">{m.name||"Sin nombre"} {m.email&&<span className="cmu">· {m.email}</span>}</div><div className="tsm mt8" style={{whiteSpace:"pre-wrap"}}>{m.msg}</div><div className="txs cmu mt8">{fdate(m.ts)}</div></div>):<div className="tsm cmu">Sin mensajes.</div>}
+      <div className="sec-t">💼 Interesados en invertir ({L.length})</div>
+      {L.length?L.map((m,i)=><div key={i} className="mcard"><div className="tsm fw7">{m.name} {m.email&&<span className="cmu">· {m.email}</span>}</div><div className="tsm cte">{m.amt}</div><div className="tsm mt8">{m.msg}</div></div>):<div className="tsm cmu">Sin mensajes.</div>}
+    </div>}
+    {big&&<div className="ov" style={{alignItems:"center",padding:16,zIndex:950}} onClick={()=>setBig(null)}><img src={big} alt="" style={{maxWidth:"100%",maxHeight:"90vh",borderRadius:12}}/></div>}
+  </div>;
+}
+
+/* ══════════ PERFIL: PREFERENCIAS, AVISOS, VERIFICACIÓN ══════════ */
+async function sendVerification(uidv,rut){
+  const x={uid:uidv,rut,ts:new Date().toISOString()};
+  if(REAL){await FS.collection("verifications").doc(uidv).set(x)}else{const l=load("gs_verif",[]).filter(v=>v.uid!==uidv);l.push(x);save("gs_verif",l)}
+}
+function ProfileExtras(){
+  const {user,setUser,toast,go}=useApp();
+  const [rut,setRut]=useState("");
+  const [inst,setInst]=useState(false);
+  const [nOn,setNOn]=useState(notifOn());
+  const cur=user.cur||"EUR";
+  const reqVerify=async()=>{
+    if(!rutValid(rut)){toast("Ese RUT no es válido","⚠️","Revisa el número y el dígito verificador");return}
+    try{await sendVerification(user.id,rutFormat(rut));setUser({...user,verifyReq:"pending"});toast("Solicitud enviada","🪪","Te avisaremos cuando esté verificada")}
+    catch(e){toast("No se pudo enviar","⚠️",e.message)}
+  };
+  const toggleNotif=async()=>{
+    if(nOn){try{localStorage.setItem("gs_notif","0")}catch(e){}setNOn(false);return}
+    if(!("Notification" in window)){toast("Este navegador no permite avisos","⚠️","En iPhone, primero instala la app");return}
+    const p=await Notification.requestPermission();
+    if(p==="granted"){try{localStorage.setItem("gs_notif","1")}catch(e){}setNOn(true);toast("Avisos activados","🔔","Te avisaremos cuando tengas algo pendiente")}
+    else toast("No diste permiso","⚠️","Puedes activarlo en la configuración del navegador");
+  };
+  return <>
+    <div className="sec-t">⚙️ Preferencias</div>
+    <div className="card mb12">
+      <div className="fw7 tmd mb8">💱 Moneda de tus totales</div>
+      <div className="seg" style={{maxWidth:280,marginBottom:4}}>{[["CLP","🇨🇱 Pesos"],["EUR","🇪🇺 Euros"]].map(([k,l])=><button key={k} className={cur===k?"on":""} onClick={()=>setUser({...user,cur:k})}>{l}</button>)}</div>
+      <div className="txs cmu">Cada evento y acuerdo mantiene su propia moneda. Referencia: 1 € = {money(EUR_CLP,"CLP")}.</div>
+    </div>
+    <div className="card mb12" style={{padding:"4px 8px"}}>
+      <button className="pbtn" onClick={toggleNotif}><i>🔔</i>Avisos en este dispositivo<span className="ar" style={{color:nOn?"var(--ok)":"var(--teal)",fontSize:12.5,fontWeight:700}}>{nOn?"● Activados":"Activar"}</span></button>
+      <button className="pbtn" onClick={()=>setInst(true)}><i>📲</i>Instalar como app<span className="ar">›</span></button>
+      {isAdmin()&&<button className="pbtn" onClick={()=>go("admin",{})}><i>🛠️</i>Panel de administrador{!REAL?" (demo)":""}<span className="ar">›</span></button>}
+    </div>
+    {user.role!=="inversor"&&<><div className="sec-t">🪪 Verificación</div>
+    <div className="card mb12">
+      {user.verified?<div className="hint">🪪 <div><b>{user.role==="patrocinador"?"Empresa":"Identidad"} verificada.</b> Tu perfil muestra la insignia de confianza.</div></div>
+      :user.verifyReq==="pending"?<div className="hint w">⏳ <div>Tu solicitud de verificación está en revisión.</div></div>
+      :<><div className="tsm cmu mb12" style={{lineHeight:1.5}}>Ingresa tu RUT {user.role==="patrocinador"?"de la empresa":"personal"} para obtener la insignia “🪪 {user.role==="patrocinador"?"Empresa":"Identidad"} verificada”. Tu RUT no se muestra a otros usuarios: solo lo ve el equipo de GetSponzo.</div>
+        {user.verifyReq==="rejected"&&<div className="hint e mb12">No pudimos verificar el RUT anterior. Revisa los datos e intenta de nuevo.</div>}
+        <div className="row" style={{gap:8}}><input className="inp" value={rut} onChange={e=>setRut(e.target.value)} placeholder="12.345.678-9" style={{flex:1}}/><button className="btn btn-p btn-sm" onClick={reqVerify}>Enviar</button></div>
+        {rut&&<div className="txs mt8" style={{color:rutValid(rut)?"var(--ok)":"var(--muted)"}}>{rutValid(rut)?"✅ RUT válido":"Escribe el RUT completo, con dígito verificador"}</div>}</>}
+    </div></>}
+    {inst&&<InstallSheet onClose={()=>setInst(false)}/>}
+  </>;
+}
+
 /* ══════════ MENSAJES ══════════ */
 const QUICK={patrocinado:["¡Hola! Gracias por escribir 😊","Te envío una propuesta con entregas","¿Hacemos una videollamada?","Ya subí la evidencia, ¿la puedes revisar?"],patrocinador:["¡Hola! Nos interesa tu evento","¿Cuál es el público exacto?","¿Hacemos una videollamada?","Te envío la propuesta de acuerdo"]};
 function ChatView(){
   const {user,route,go,toast,bump,startCall}=useApp();
   const [txt,setTxt]=useState("");
-  const [rep,setRep]=useState(false);
+  const [rep,setRep]=useState(false),[aiBusy,setAiBusy]=useState(false);
+  const {apiKey}=useApp();
   const endRef=useRef(null);
   const chats=DB.chats().filter(c=>c.participants.includes(user.id)).sort((a,b)=>{const am=a.messages||[],bm=b.messages||[];const la=am[am.length-1],lb=bm[bm.length-1];return (lb?lb.ts:"").localeCompare(la?la.ts:"")});
   const ch=route.chat&&chats.find(c=>c.id===route.chat);
@@ -1643,6 +2063,14 @@ function ChatView(){
       </button>})}</div>}
   </div>;
   const oid=ch.participants.find(p=>p!==user.id),other=userById(oid);
+  const writeAI=async()=>{
+    const evs=DB.events();const ev=evs.find(e=>e.name===ch.eventName)||(user.role==="patrocinado"?evs.find(e=>e.ownerId===user.id):evs.find(e=>e.ownerId===oid));
+    const fb=proposalTemplate(user,other,ev);
+    setAiBusy(true);
+    const r=await aiText(apiKey,`Escribe un mensaje breve (máximo 70 palabras), cordial y profesional, en español de Chile, para iniciar o continuar una conversación de patrocinio en una plataforma. Yo soy ${dispName(user)} (${ROLE[user.role].l}). Le escribo a ${dispName(other)} (${other?ROLE[other.role].l:""}${other&&other.sector?", sector "+other.sector:""}). ${ev?`Evento: ${ev.name}, en ${ev.loc}, público: ${ev.audience||"no indicado"}, paquetes: ${(ev.packages||[]).map(p=>p.name+" "+money(p.price,curOf(ev))).join(", ")||"sin paquetes"}.`:""} No incluyas correos ni teléfonos. Solo el mensaje, sin comillas.`,fb);
+    setTxt(r.text.replace(/[\w.+-]+@[\w-]+\.[\w.]+/g,"").slice(0,700));setAiBusy(false);
+    toast(r.ai?"Borrador escrito por IA":"Borrador listo",r.ai?"✨":"📝","Revísalo y tócalo para editar antes de enviar");
+  };
   const send=t=>{
     const text=(t||txt).trim();if(!text)return;
     if(/[\w.+-]+@[\w-]+\.[\w.]+/.test(text)||/(\+?\d[\d\s-]{7,}\d)/.test(text)){toast("Por tu seguridad no compartas correos ni teléfonos","🛡️","Todo dentro de GetSponzo queda protegido");return}
@@ -1667,7 +2095,7 @@ function ChatView(){
           </div>)}
         <div ref={endRef}/>
       </div>
-      <div className="qr">{(QUICK[user.role]||QUICK.patrocinado).map(q=><button key={q} onClick={()=>send(q)}>{q}</button>)}</div>
+      <div className="qr"><button disabled={aiBusy} onClick={writeAI} style={{background:"var(--pbg)",borderColor:"rgba(167,139,250,.4)",color:"var(--pur)"}}>{aiBusy?"✨ Escribiendo…":"✨ Escribir con IA"}</button>{(QUICK[user.role]||QUICK.patrocinado).map(q=><button key={q} onClick={()=>send(q)}>{q}</button>)}</div>
       {rep&&<ReportSheet target={other} chatId={ch.id} onClose={()=>setRep(false)}/>}
       <div className="chat-foot">
         <input className="inp" value={txt} onChange={e=>setTxt(e.target.value)} onKeyDown={e=>e.key==="Enter"&&send()} placeholder="Escribe un mensaje…" style={{flex:1}}/>
@@ -1749,8 +2177,9 @@ function ProfileView(){
         </div>
         <div className="txs cmu mt8">🔒 La clave se guarda solo en este navegador.</div>
       </div>}
-      <button className="pbtn" onClick={openHelp}><i>❓</i>Ayuda: cómo funciona<span className="ar">›</span></button>
+      <button className="pbtn" onClick={openHelp}><i>❓</i>Ayuda, preguntas y soporte<span className="ar">›</span></button>
     </div>}
+    {!edit&&<ProfileExtras/>}
 
     {REAL?<div className="hint mb16 mt16">🟢 <div><b>Conectado al servidor.</b> Todos los usuarios ven los mismos eventos, acuerdos y mensajes en tiempo real.</div></div>:<>
     <div className="sec-t">👀 Ver la plataforma como…</div>
@@ -1869,8 +2298,8 @@ const TABS={
 const homeTab=u=>u&&u.role==="inversor"?"resumen":"inicio";
 function View(){
   const {user,route}=useApp();
-  const V={inicio:HomeView,eventos:EventsView,buscar:ExploreView,marcas:BrandsView,acuerdos:DealsView,nuevo:NewDeal,mensajes:ChatView,perfil:ProfileView,resumen:InvResumen,numeros:InvNumeros,mercado:InvMercado,contacto:InvContacto}[route.tab];
-  const allowed=TABS[user.role].map(t=>t[0]).concat(user.role==="patrocinado"?["marcas","nuevo"]:user.role==="patrocinador"?["nuevo"]:[]);
+  const V={admin:AdminView,inicio:HomeView,eventos:EventsView,buscar:ExploreView,marcas:BrandsView,acuerdos:DealsView,nuevo:NewDeal,mensajes:ChatView,perfil:ProfileView,resumen:InvResumen,numeros:InvNumeros,mercado:InvMercado,contacto:InvContacto}[route.tab];
+  const allowed=TABS[user.role].map(t=>t[0]).concat(isAdmin()?["admin"]:[]).concat(user.role==="patrocinado"?["marcas","nuevo"]:user.role==="patrocinador"?["nuevo"]:[]);
   if(!V||!allowed.includes(route.tab)){const H=user.role==="inversor"?InvResumen:HomeView;return <H/>}
   return <V/>;
 }
@@ -1885,6 +2314,7 @@ function Shell(){
     <nav className="tnav"><div className="container"><div className="tni">
       <button onClick={()=>go(homeTab(user),{})} style={{display:"flex",alignItems:"center",gap:8,color:"var(--white)",minWidth:0}}><Logo size={26} glow={false}/><Word s={17}/></button>
       <div style={{display:"flex",gap:7,alignItems:"center"}}>
+        <button className="ibtn" onClick={A.openNotif} title="Avisos" aria-label="Avisos" style={{position:"relative"}}>🔔{tasks.length>0&&<i className="nb" style={{top:-6,left:"auto",right:-6}}>{tasks.length>9?"9+":tasks.length}</i>}</button>
         <button className="ibtn" onClick={openHelp} title="Ayuda" aria-label="Ayuda">❓</button>
         <button className="ibtn" onClick={()=>{A.toast("Buscando la versión más nueva…","🔄");setTimeout(()=>location.replace(location.pathname+"?v="+Date.now()),500)}} title="Actualizar" aria-label="Actualizar">🔄</button>
         <button onClick={()=>go("perfil",{})} aria-label="Perfil" style={{borderRadius:"50%"}}><Av u={user} size={38}/></button>
@@ -1914,7 +2344,8 @@ function App(){
   const [toastS,setToastS]=useState(null);
   const [call,setCall]=useState(null);
   const [conf,setConf]=useState(null);
-  const [help,setHelp]=useState(false);
+  const [help,setHelp]=useState(false),[notif,setNotif]=useState(false);
+  const lastTasks=useRef(-1);
   const [welcome,setWelcome]=useState(false);
   const [apiKey,setApiKeyS]=useState(DB.api());
   const tRef=useRef(null);
@@ -1946,7 +2377,7 @@ function App(){
       setScreen(s=>s==="auth"?"auth":"loading");
       await startSync(fu.uid);
       let u=userById(fu.uid);
-      if(!u){const p=PENDING||{};PENDING=null;u={id:fu.uid,name:p.name||(fu.email||"").split("@")[0],role:p.role||"patrocinado",company:p.company||"",bio:"",loc:"",created:new Date().toISOString()};DB.setUsers([...DB.users(),u])}
+      if(!u){const p=PENDING||{};PENDING=null;u={id:fu.uid,name:p.name||(fu.email||"").split("@")[0],role:p.role||"patrocinado",company:p.company||"",cur:p.cur||"CLP",bio:"",loc:"",created:new Date().toISOString()};DB.setUsers([...DB.users(),u])}
       login(u);
     });
   },[]);
@@ -1971,16 +2402,23 @@ function App(){
     go("mensajes",{chat:ch.id});
   };
   const ctx={user,setUser,route,go,toast,bump,apiKey,setApiKey,logout,switchUser,chatWith,enterDemo,
-    startCall:peer=>setCall(peer||{id:"x",name:"Usuario"}),confirm:o=>setConf(o),openHelp:()=>setHelp(true)};
+    startCall:peer=>setCall(peer||{id:"x",name:"Usuario"}),confirm:o=>setConf(o),openHelp:()=>setHelp(true),openNotif:()=>setNotif(true)};
+  const tcount=user?getTasks(user).length:0;
+  useEffect(()=>{
+    try{document.title=(tcount?"("+tcount+") ":"")+"GetSponzo — Patrocinio protegido"}catch(e){}
+    if(lastTasks.current>=0&&tcount>lastTasks.current)pushNotif("GetSponzo","Tienes "+tcount+" pendiente"+(tcount>1?"s":"")+". Toca para revisar.");
+    lastTasks.current=user?tcount:-1;
+  });
 
   return <Ctx.Provider value={ctx}>
     {screen==="loading"&&<div style={{minHeight:"100vh",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:14}}><Logo size={56}/><Word s={22}/><div className="tsm cmu">Conectando…</div></div>}
     {screen==="landing"&&<Landing user={user} onPanel={()=>go(homeTab(user),{})} onLogin={()=>{setAuthMode("login");nav("auth",{mode:"login"})}} onRegister={()=>{setAuthMode("register");nav("auth",{mode:"register"})}}/>}
     {screen==="auth"&&<Auth mode={authMode} setMode={setAuthMode} onLogin={login} onDemo={enterDemo} onBack={()=>nav("landing")}/>}
-    {screen==="app"&&user&&<Shell/>}
+    {screen==="app"&&user&&(user.suspended?<Suspended onLogout={logout}/>:<Shell/>)}
     {screen==="app"&&!user&&<Landing user={null} onPanel={()=>{}} onLogin={()=>{setAuthMode("login");nav("auth",{mode:"login"})}} onRegister={()=>{setAuthMode("register");nav("auth",{mode:"register"})}}/>}
     {welcome&&user&&<WelcomeSheet onClose={()=>setWelcome(false)}/>}
     {help&&user&&<HelpSheet onClose={()=>setHelp(false)}/>}
+    {notif&&user&&<NotifSheet onClose={()=>setNotif(false)}/>}
     {conf&&<Sheet title={conf.title} icon={conf.danger?"⚠️":"✋"} onClose={()=>setConf(null)} footer={<><button className="btn btn-g" onClick={()=>setConf(null)}>Cancelar</button><button className={"btn "+(conf.danger?"btn-d":"btn-p")} onClick={()=>{const f=conf.onOk;setConf(null);f&&f()}}>{conf.ok||"Confirmar"}</button></>}><p className="tmd" style={{lineHeight:1.6}}>{conf.text}</p></Sheet>}
     {call&&user&&<CallSheet peer={call} onClose={()=>setCall(null)}/>}
     {toastS&&<div className="toast"><span style={{fontSize:19,flexShrink:0}}>{toastS.icon}</span><div style={{minWidth:0}}><div style={{fontWeight:700,fontSize:14}}>{toastS.msg}</div>{toastS.sub&&<div style={{fontSize:12,color:"var(--muted)",marginTop:2}}>{toastS.sub}</div>}</div></div>}
