@@ -977,6 +977,17 @@ function VideoSheet({onClose}){
   </Sheet>;
 }
 
+function InlineVideo({compact}){
+  const [err,setErr]=useState(false),[started,setStarted]=useState(false);
+  return <div style={{width:"100%",maxWidth:compact?560:720,margin:"0 auto"}}>
+    {err?<div className="hint w">⚠️ <div>No pudimos cargar el video. Revisa tu conexión e intenta de nuevo.</div></div>
+    :<video src="spot.mp4" poster="spot.jpg" controls playsInline preload="none" onError={()=>setErr(true)}
+      onPlay={()=>{if(!started){setStarted(true);track("video_play",{})}}} onEnded={()=>track("video_end",{})}
+      style={{width:"100%",display:"block",borderRadius:14,background:"#000",aspectRatio:"16/9",border:"1px solid var(--border)",boxShadow:"0 10px 40px rgba(0,0,0,.35)"}}/>}
+    <div className="txs cmu mt8" style={{lineHeight:1.5,textAlign:compact?"left":"center"}}>💡 <b>Pago protegido en garantía: disponible próximamente.</b> Durante el piloto, cada entrega se paga al aprobarse, según el contrato firmado por ambas partes.</div>
+  </div>;
+}
+
 /* ══════════ MONEDA (CLP / EUR) ══════════ */
 const EUR_CLP=1098; // 1 EUR = 1.098 CLP (referencia 26-sep-2026)
 const EUR_USD=1.1474; // 1 EUR = 1,1474 USD (referencia 21-sep-2026)
@@ -1170,11 +1181,12 @@ function Landing({onLogin,onRegister,user,onPanel}){
           </p>
           <div className="fu3" style={{display:"flex",gap:11,justifyContent:"center",flexWrap:"wrap"}}>
             <button className="btn btn-p btn-auto" style={{padding:"14px 28px",fontSize:16}} onClick={user?onPanel:onRegister}>{user?"Ir a mi panel →":"Empezar gratis →"}</button>
-            <button className="btn btn-g btn-auto" style={{padding:"14px 28px",fontSize:16}} onClick={()=>setVid(true)}>▶ Ver cómo funciona (53 s)</button>
+            <button className="btn btn-g btn-auto" style={{padding:"14px 28px",fontSize:16}} onClick={()=>document.getElementById("cf").scrollIntoView({behavior:"smooth"})}>Cómo funciona</button>
           </div>
           <div className="fu3" style={{marginTop:14}}>
             <button onClick={onLogin} style={{color:"var(--teal)",fontSize:14,fontWeight:600,textDecoration:"underline"}}>👀 Prueba la demo sin crear cuenta</button>
           </div>
+          <div className="fu3" style={{marginTop:28}}><InlineVideo/></div>
           <div style={{display:"flex",gap:"clamp(18px,5vw,52px)",justifyContent:"center",marginTop:46,flexWrap:"wrap"}}>
             {[["US$2.260M","Mercado España"],["+19%","Crecimiento anual"],["US$510M","Mercado Chile"],["7 días","Para resolver disputas"]].map(([n,l],i)=>(
               <div key={i} style={{textAlign:"center"}}>
@@ -2834,7 +2846,7 @@ function InvResumen(){
       <div className="greet">Hola, {first(user.name)} 👋</div>
       <p className="tmd cmu">GetSponzo convierte el patrocinio informal en acuerdos con <b className="cwh">pago protegido</b> y <b className="cwh">árbitro IA</b>. Ronda Pre-seed abierta.</p>
       <div className="row mt12" style={{gap:8}}><span className="dot"/><span className="tsm cte fw7">Pre-seed · US$92.000</span></div>
-      <button className="btn btn-g btn-sm mt12" onClick={()=>setVid(true)}>▶ Ver video (53 s)</button>
+      <div className="mt12"><InlineVideo compact/></div>
     </div>
     <div className="sec-t">📊 Tracción del piloto (en vivo)</div>
     <div className="g4">{traction.map(([v,l])=><div key={l} className="st"><div className="stv" style={{fontSize:18}}>{v}</div><div className="stl">{l}</div></div>)}</div>
