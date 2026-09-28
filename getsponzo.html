@@ -779,6 +779,7 @@ function setLang(l){try{localStorage.setItem("gs_lang",l)}catch(e){}
   const u=new URL(location.href);u.searchParams.delete("lang");location.href=u.toString();}
 (function initI18n(){
   try{document.documentElement.lang=LANG}catch(e){}
+  try{if(typeof AUTH!=="undefined"&&AUTH)AUTH.languageCode=LANG}catch(e){}
   if(LANG!=="en")return;
   const _al=window.alert.bind(window),_cf=window.confirm.bind(window),_pr=window.prompt.bind(window);
   window.alert=m=>_al(T(m));window.confirm=m=>_cf(T(m));window.prompt=(m,d)=>_pr(T(m),d);
