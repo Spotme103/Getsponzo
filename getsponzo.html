@@ -3000,6 +3000,7 @@ function App(){
         if(fu.photoURL)u.photoUrl=fu.photoURL;
         DB.setUsers([...DB.users(),u]);track("sign_up",{role:u.role});
       }
+      if(u.email!==undefined||u.pass!==undefined){const {email,pass,...clean_}=u;u=clean_;DB.setUsers(DB.users().map(x=>x.id===u.id?u:x))}
       login(u);saveMailbox(fu);
       try{const was=fu.emailVerified;await fu.reload();const cu=AUTH.currentUser;if(cu&&cu.emailVerified){await cu.getIdToken(true);if(!was)toast("¡Correo verificado!","✅")}setRev(r=>r+1)}catch(e){}
     });
