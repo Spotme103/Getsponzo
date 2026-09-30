@@ -1209,7 +1209,7 @@ function proStatus(u){
 const pairDeals=(sid,pid)=>DB.contracts().filter(c=>c.sponsorId===sid&&c.sponsoredId===pid&&c.status!=="pending"&&c.status!=="rejected").length;
 function dealFee(sponsor,amount,cur,sponsoredId){
   const f=founderInfo(sponsor),used=(sponsor&&sponsor.fdeals||[]).length;
-  const fOk=sponsor&&sponsor.role==="patrocinador"&&f&&used<FOUNDER_FREE_DEALS,needVerify=!!(fOk&&!sponsor.verified);
+  const fOk=sponsor&&sponsor.role==="patrocinador"&&f&&used<FOUNDER_FREE_DEALS,needVerify=!!(fOk&&!rutValidated(sponsor));
   if(fOk&&!needVerify){const b=feeFor(amount,cur,"std",[FOUNDER_RATE,FOUNDER_RATE,FOUNDER_RATE]);return {...b,plan:"fundador",left:FOUNDER_FREE_DEALS-used,renew:0}}
   const pl=proStatus(sponsor).pro?"pro":"std",n=sponsor&&sponsoredId?pairDeals(sponsor.id,sponsoredId):0;
   if(renewOn()&&n>=1){const cap=n>=2?RENEW_CAP[1]:RENEW_CAP[0];const b=feeFor(amount,cur,pl,RATES[pl].map(x=>Math.min(x,cap)));return {...b,plan:pl,renew:n+1,needVerify}}
@@ -1283,7 +1283,7 @@ function PlansView({pub,onRegister,onBack}){
       <p className="cmu" style={{fontSize:14.5,lineHeight:1.6,maxWidth:560,margin:"0 auto"}}>{EN()?<>Signing up, publishing and closing deals is free. <b className="cwh">Events never pay a fee</b>: they receive 100% of every deliverable. Brands pay a fee only when they close a deal.</>:<>Crear cuenta, publicar y cerrar acuerdos es gratis. <b className="cwh">El evento nunca paga comisión</b>: recibe el 100% de cada entrega. La marca paga una comisión solo cuando cierra un acuerdo.</>}</p>
       <div className="txs cmu mt8">{(EN()?"Prices in UF + VAT (Chile) · today 1 UF = ":"Precios en UF + IVA · hoy 1 UF = ")+money(Math.round(uf),"CLP")}</div>
     </div>
-    {user&&st.pro&&<div className="hint mb16" style={{borderColor:"rgba(245,200,66,.35)"}}>🏅 <div>{st.src==="fundador"?<>Eres <b>Socio Fundador #{st.f.n}</b>. Tienes el plan Pro gratis hasta el <b>{fdate(st.until)}</b>.</>:<>Tu plan <b>Pro</b> está activo hasta el <b>{fdate(st.until)}</b>.</>}{user.role==="patrocinador"&&st.f?<> Te quedan <b>{Math.max(0,FOUNDER_FREE_DEALS-(user.fdeals||[]).length)}</b> de {FOUNDER_FREE_DEALS} acuerdos con comisión de solo 3%{user.verified?"":" (se activan al verificar tu RUT en Perfil)"}.</>:null}</div></div>}
+    {user&&st.pro&&<div className="hint mb16" style={{borderColor:"rgba(245,200,66,.35)"}}>🏅 <div>{st.src==="fundador"?<>Eres <b>Socio Fundador #{st.f.n}</b>. Tienes el plan Pro gratis hasta el <b>{fdate(st.until)}</b>.</>:<>Tu plan <b>Pro</b> está activo hasta el <b>{fdate(st.until)}</b>.</>}{user.role==="patrocinador"&&st.f?<> Te quedan <b>{Math.max(0,FOUNDER_FREE_DEALS-(user.fdeals||[]).length)}</b> de {FOUNDER_FREE_DEALS} acuerdos con comisión de solo 3%{rutValidated(user)?"":" (se activan al validar tu RUT en Perfil)"}.</>:null}</div></div>}
     {fo&&<div className="card mb16" style={{borderColor:"rgba(245,200,66,.35)",background:"rgba(245,200,66,.05)"}}>
       <div className="fw7 mb8">🏅 Socios Fundadores · hasta el 31/12/2026</div>
       <div className="tsm cmu mb12" style={{lineHeight:1.55}}>{EN()?<>The first <b className="cwh">70 events</b> and <b className="cwh">30 brands</b> get <b className="cwh">6 months of the Pro plan free</b>, a Founder badge forever and featured placement. Founding brands also pay <b className="cwh">only 3% on their first 3 deals</b> (verified tax ID required: one ID, one account). After that, the standard rate applies.</>:<>Los primeros <b className="cwh">70 eventos</b> y <b className="cwh">30 marcas</b> reciben <b className="cwh">6 meses del plan Pro gratis</b>, insignia de Fundador para siempre y aparecen destacados. Las marcas Fundadoras además pagan <b className="cwh">solo 3% de comisión en sus 3 primeros acuerdos</b>, con RUT verificado (un RUT, una cuenta). Después se aplica la tarifa normal.</>}</div>
@@ -1532,6 +1532,7 @@ async function deleteMyAccount(user){
     await Promise.all([FS.collection("mailboxes").doc(uidv).delete().catch(()=>{}),FS.collection("private").doc(uidv).delete().catch(()=>{})]);
     mailNotify(MAIL_SOPORTE,"🗑️ Cuenta eliminada: "+dispName(user),{"Usuario":dispName(user),"Rol":user.role,"ID":uidv,"Fecha":new Date().toISOString()});
   }
+  releaseRut(user.rutHash);
   DB.setUsers(DB.users().filter(u=>u.id!==uidv));
   if(REAL){await new Promise(r=>setTimeout(r,800));await AUTH.currentUser.delete()}
 }
@@ -1588,6 +1589,33 @@ async function runAdminReminders(C){
       if(REAL)await FS.collection("contracts").doc(r.c.id).update({["rem."+r.key]:new Date().toISOString()});n++}catch(e){}
   }
   return {n,total:list.length};
+}
+
+/* ── RUT: validación automática nivel 1 (dígito correcto + un RUT por cuenta) ── */
+const rutNorm=r=>String(r||"").replace(/[^0-9kK]/g,"").toUpperCase();
+const rutHashOf=async r=>(await sha256("gs-rut:"+rutNorm(r))).slice(0,40);
+async function claimRut(user,rut){
+  const h=await rutHashOf(rut);
+  if(user.rutHash===h&&user.rutOk)return {ok:true,hash:h};
+  if(REAL){
+    try{await FS.collection("ruts").doc(h).set({uid:user.id,ts:new Date().toISOString()})}catch(e){return {dup:true}}
+    if(user.rutHash&&user.rutHash!==h)FS.collection("ruts").doc(user.rutHash).delete().catch(()=>{});
+  }else{
+    const m=load("gs_ruts",{});if(m[h]&&m[h]!==user.id)return {dup:true};
+    if(user.rutHash&&user.rutHash!==h)delete m[user.rutHash];m[h]=user.id;save("gs_ruts",m);
+  }
+  return {ok:true,hash:h};
+}
+function releaseRut(hash){
+  if(!hash)return;
+  if(REAL)FS.collection("ruts").doc(hash).delete().catch(()=>{});
+  else{const m=load("gs_ruts",{});delete m[hash];save("gs_ruts",m)}
+}
+const rutValidated=u=>!!(u&&(u.rutOk||u.verified));
+// Para el 3% de Fundador, el contrato debe ir a nombre del RUT validado
+async function founderRutMatches(user,legal){
+  if(!user||!user.rutHash||!legal||!legal.rut)return !!(user&&user.verified&&!user.rutHash);
+  return (await rutHashOf(legal.rut))===user.rutHash;
 }
 /* ══════════ PÁGINA DE INICIO PÚBLICA ══════════ */
 function Landing({onLogin,onRegister,user,onPanel}){
@@ -2500,14 +2528,17 @@ function DealDetail({id}){
     updC({status:"active",signed:{...(c.signed||{}),[user.id]:now},legal:{...(c.legal||{}),[user.id]:lg},sigs:{...(c.sigs||{}),[user.id]:{ts:now,email:em,hash:hh,v:CONTRACT_V}}});track("sign_contract",{amount:c.amount,cur:curOf(c)});
     if(user.id===c.sponsorId&&c.feePlan==="fundador"&&!(user.fdeals||[]).includes(c.id))setUser({...user,fdeals:[...(user.fdeals||[]),c.id]});
     if(REAL&&feeOf(c)>0)mailNotify(MAIL_CONTACTO,"🧾 Comisión por facturar: "+c.sponsorName,{"Acuerdo":c.eventName+" ("+c.id+")","Marca (se le factura)":c.sponsorName,"RUT marca":((c.legal||{})[c.sponsorId]||(c.sponsorId===user.id?lg:{})||{}).rut||"ver contrato","Monto del acuerdo":money(c.amount,curOf(c)),"Comisión":money(feeOf(c),curOf(c))+" ("+feeLabel(c)+")","IVA":money(ivaOf(feeOf(c),curOf(c)),curOf(c)),"Total a facturar":money(feeOf(c)+ivaOf(feeOf(c),curOf(c)),curOf(c))});sysMsg(user.id,otherId,`✍️ ${dispName(user)} firmó el acuerdo de “${c.eventName}”. ¡Está activo!`,c.eventName);toast("¡Acuerdo firmado!","✍️","Ya está activo");bump()}});
-  const sign=async()=>{const lg=(c.legal||{})[user.id]||await loadMyLegal(user.id);if(!lg||legalMissing(lg)){setLegalOpen(true);return}doSign(lg)};
+  const sign=async()=>{const lg=(c.legal||{})[user.id]||await loadMyLegal(user.id);if(!lg||legalMissing(lg)){setLegalOpen(true);return}signWith(lg)};
+  const signWith=async lg=>{
+    if(user.id===c.sponsorId&&c.feePlan==="fundador"&&!(await founderRutMatches(user,lg))){toast("El contrato debe ir a nombre de tu RUT validado","⚠️","Para usar tu 3% de Fundador, corrige tus datos del contrato o valida ese RUT en Perfil");setLegalOpen(true);return}
+    doSign(lg)};
   const reject=()=>confirm({title:"¿Rechazar la propuesta?",text:"La otra parte verá que la rechazaste. Pueden conversar por chat y hacer una nueva propuesta.",ok:"Rechazar",danger:true,onOk:()=>{
     updC({status:"rejected",rejectedBy:user.id});sysMsg(user.id,otherId,`✖ ${dispName(user)} rechazó la propuesta para “${c.eventName}”. Conversemos para ajustarla.`,c.eventName);toast("Propuesta rechazada","✖");bump()}});
   const myRev=DB.reviews().find(r=>r.id===c.id+"_"+user.id);
   const sendRev=()=>{if(!rv.stars){toast("Elige de 1 a 5 estrellas","⭐");return}
     DB.setReviews([...DB.reviews(),{id:c.id+"_"+user.id,contractId:c.id,fromId:user.id,toId:otherId,stars:rv.stars,text:rv.text.trim().slice(0,400),ts:new Date().toISOString()}]);toast("¡Gracias por tu reseña!","⭐");bump()};
   return <div>
-    {legalOpen&&<LegalSheet user={user} onClose={()=>setLegalOpen(false)} onDone={lg=>{setLegalOpen(false);doSign(lg)}}/>}
+    {legalOpen&&<LegalSheet user={user} onClose={()=>setLegalOpen(false)} onDone={lg=>{setLegalOpen(false);signWith(lg)}}/>}
     <Back onClick={()=>go("acuerdos",{})} label="Mis acuerdos"/>
     <div className="card mb12" style={{borderColor:"var(--border)"}}>
       <div className="txs cmu fw7 mb8">ACUERDO DE PATROCINIO</div>
@@ -2744,6 +2775,7 @@ function NewDeal(){
   if(!isS&&myEvents.length===0)return <div><Back onClick={()=>go("acuerdos",{})}/><Empty icon="🎪" title="Primero crea un evento" text="Para proponer un acuerdo necesitas tener al menos un evento." action="➕ Crear evento" onAction={()=>go("eventos",{nuevo:1})}/></div>;
   const create=async()=>{
     if(!myLegal){setLegalOpen(true);return}
+    if(isS&&fq.plan==="fundador"&&!(await founderRutMatches(user,myLegal))){toast("El contrato debe ir a nombre de tu RUT validado","⚠️","Para usar tu 3% de Fundador, corrige tus datos del contrato o valida ese RUT en Perfil");setLegalOpen(true);return}
     const owner=userById(ev.ownerId);
     const sponsor=isS?user:brand,sponsored=isS?owner:user;
     const c={id:uid("c"),parties:[sponsor.id,sponsored.id],status:"pending",funded:false,cur:curOf(ev),feePct:Math.round(fq.pct*100)/100,feeAmt:fq.amt,feePlan:fq.plan,feeRenew:fq.renew||0,feeRates:fq.rates,feeTiers:fq.tiers,feeMin:fq.min,tarifaV:TARIFA_V,createdBy:user.id,signed:{[user.id]:new Date().toISOString()},eventId:ev.id,eventName:ev.name,sponsorId:sponsor.id,sponsorName:dispName(sponsor),sponsoredId:sponsored.id,sponsoredName:sponsored.name,amount:total,aiClause:ai,created:new Date().toISOString(),
@@ -2809,7 +2841,7 @@ function NewDeal(){
         {fIva>0&&<div style={{display:"flex",justifyContent:"space-between"}} className="tsm mb8"><span className="cmu">IVA de la comisión (19%)</span><b>{$m(fIva)}</b></div>}
         <div style={{display:"flex",justifyContent:"space-between",borderTop:"1px solid var(--bs)",paddingTop:8}} className="tsm"><span className="fw7">Total que paga la marca</span><b className="cte">{$m(total+fq.amt+fIva)}</b></div>
         <div className="txs cmu mt8">{fq.plan==="fundador"?`Marca Socia Fundadora: comisión de solo ${FOUNDER_RATE}% en este acuerdo (le quedan ${fq.left} de ${FOUNDER_FREE_DEALS} acuerdos con este beneficio).`:`${fq.renew?`Renovación n° ${fq.renew} con este evento: comisión con tope de ${fq.renew>=3?RENEW_CAP[1]:RENEW_CAP[0]}%. `:""}Comisión escalonada ${fq.rates.join("% / ")}% según el monto${fq.useMin?", con mínimo de 0,25 UF":""}. El evento no paga comisión.`}{fq.amt>0&&!PAYMENTS_LIVE?" Piloto: la comisión se factura a la marca cuando ambos firman.":""} <button className="cte" style={{textDecoration:"underline"}} onClick={()=>go("planes",{})}>Ver planes</button></div>
-        {fq.needVerify&&<div className="hint w mt8">🪪 <div>{isS?<>Eres marca Fundadora, pero tu RUT aún no está verificado: por eso se aplica la tarifa normal. <button className="cte fw7" style={{textDecoration:"underline"}} onClick={()=>go("perfil",{})}>Verifica tu RUT en Perfil</button> antes de enviar la propuesta para pagar solo 3%.</>:<>La marca es Fundadora, pero aún no verifica su RUT: se aplica la tarifa normal hasta que lo haga.</>}</div></div>}
+        {fq.needVerify&&<div className="hint w mt8">🪪 <div>{isS?<>Eres marca Fundadora, pero aún no validas tu RUT: por eso se aplica la tarifa normal. <button className="cte fw7" style={{textDecoration:"underline"}} onClick={()=>go("perfil",{})}>Valida tu RUT en Perfil</button> (toma segundos) antes de enviar la propuesta para pagar solo 3%.</>:<>La marca es Fundadora, pero aún no valida su RUT: se aplica la tarifa normal hasta que lo haga.</>}</div></div>}
       </div>
       <div className="hint mb12">🔒 <div><b>Pago protegido:</b> {isS?"depositas el total y GetSponzo lo guarda. Solo se paga cada entrega cuando tú la apruebas.":"la marca deposita el total y GetSponzo lo guarda. Recibes cada pago cuando la marca aprueba tu entrega."} <b>El acuerdo se activa cuando {isS?"el evento":"la marca"} también lo firma.</b></div></div>
       <label className="mcard" style={{display:"flex",gap:12,alignItems:"flex-start",cursor:"pointer"}}>
@@ -3073,11 +3105,12 @@ function AdminView(){
     </div>}
 
     {tab==="revisar"&&<div>
-      <div className="sec-t" style={{marginTop:0}}>🪪 Verificación de identidad ({pendingV.length})</div>
+      <div className="sec-t" style={{marginTop:0}}>🪪 Insignia de identidad: revisión en el SII ({pendingV.length})</div>
+      <div className="txs cmu mb8">El RUT ya pasó la validación automática (dígito correcto y un RUT por cuenta). Revisa en el SII que el nombre o la razón social coincida. Si no coincide, al rechazar se le quita también la validación y el 3% de Fundador.</div>
       {pendingV.length?pendingV.map(u=>{const V=D.verifications||[],v=V.find(x=>x.uid===u.id)||{},nr=r=>String(r||"").replace(/[^0-9kK]/g,"").toUpperCase(),dup=v.rut?Uf.filter(o=>o.id!==u.id&&o.verified&&nr((V.find(x=>x.uid===o.id)||{}).rut)===nr(v.rut)):[];
-        return <div key={u.id} className="mcard"><div className="fw7 tmd">{dispName(u)} {founderInfo(u)?"🏅":""}</div><div className="tsm cmu mb8">{u.name} · RUT {v.rut||"—"} {v.rut?(rutValid(v.rut)?"✅ dígito válido":"⚠️ no válido"):""} · revisa en el SII que coincida con el nombre</div>
+        return <div key={u.id} className="mcard"><div className="fw7 tmd">{dispName(u)} {founderInfo(u)?"🏅":""} {u.rutOk&&<span className="pill" style={{background:"var(--obg)",color:"var(--ok)"}}>RUT validado</span>}</div><div className="tsm cmu mb8">{u.name} · RUT {v.rut||"—"} {v.rut?(rutValid(v.rut)?"✅ dígito válido":"⚠️ no válido"):""} · revisa en el SII que coincida con el nombre</div>
         {dup.length>0&&<div className="hint e mb8">⛔ <div>Este RUT ya está verificado en la cuenta <b>{dup.map(dispName).join(", ")}</b>. Un RUT solo puede tener una cuenta verificada: recházala.</div></div>}
-        <div className="row" style={{gap:8}}><button className="btn btn-g btn-sm" style={{flex:1}} onClick={()=>setUserFlag(u.id,{verifyReq:"rejected"})}>Rechazar</button><button className="btn btn-p btn-sm" style={{flex:1}} disabled={dup.length>0||!v.rut||!rutValid(v.rut)} onClick={()=>setUserFlag(u.id,{verified:true,verifyReq:"done"})}>✅ Verificar</button></div></div>})
+        <div className="row" style={{gap:8}}><button className="btn btn-g btn-sm" style={{flex:1}} onClick={()=>{releaseRut(u.rutHash);setUserFlag(u.id,{verifyReq:"rejected",rutOk:false})}}>Rechazar</button><button className="btn btn-p btn-sm" style={{flex:1}} disabled={dup.length>0||!v.rut||!rutValid(v.rut)} onClick={()=>setUserFlag(u.id,{verified:true,verifyReq:"done"})}>✅ Verificar</button></div></div>})
       :<div className="tsm cmu">No hay solicitudes.</div>}
       <div className="sec-t">📊 Audiencia por verificar ({pendingA.length})</div>
       {pendingA.length?pendingA.map(e=>{const ph=(D.audPhotos||[]).find(p=>p.id===e.audPhotoId);return <div key={e.id} className="mcard"><div className="fw7 tmd">{e.name}</div><div className="tsm cmu mb8">Declara: {e.social&&e.social.ig?e.social.ig+" IG":""} {e.social&&e.social.tt?e.social.tt+" TikTok":""} {e.social&&e.social.attendees?"· "+e.social.attendees:""}</div>
@@ -3142,10 +3175,18 @@ function ProfileExtras(){
   useEffect(()=>{if(REAL)getMyMailbox(user.id).then(m=>setMOn(m?m.notify!==false:true))},[]);
   const toggleMail=async()=>{const v=!mOn;setMOn(v);const ok=await setMyNotify(user.id,v);if(!ok){setMOn(!v);toast("No se pudo guardar","⚠️")}else toast(v?"Avisos por correo activados":"Avisos por correo desactivados",v?"📧":"🔕")};
   const cur=user.cur||"EUR";
+  const [rutBusy,setRutBusy]=useState(false);
   const reqVerify=async()=>{
     if(!rutValid(rut)){toast("Ese RUT no es válido","⚠️","Revisa el número y el dígito verificador");return}
-    try{await sendVerification(user.id,rutFormat(rut));setUser({...user,verifyReq:"pending"});toast("Solicitud enviada","🪪","Te avisaremos cuando esté verificada")}
-    catch(e){toast("No se pudo enviar","⚠️",e.message)}
+    setRutBusy(true);
+    try{
+      const r=await claimRut(user,rut);
+      if(r.dup){toast("Ese RUT ya está en otra cuenta","⛔","Cada RUT puede tener una sola cuenta. Si es un error, escribe a soporte@getsponzo.com");setRutBusy(false);return}
+      await sendVerification(user.id,rutFormat(rut));
+      setUser({...user,rutOk:true,rutHash:r.hash,rutAt:new Date().toISOString(),verifyReq:"pending"});
+      toast("¡RUT validado!","✅",user.role==="patrocinador"&&founderInfo(user)?"Tu comisión de 3% de Fundador ya está activa":"La insignia de verificado llega cuando la revisemos");
+    }catch(e){toast("No se pudo validar","⚠️",e.message)}
+    setRutBusy(false);
   };
   const toggleNotif=async()=>{
     if(nOn){try{localStorage.setItem("gs_notif","0")}catch(e){}setNOn(false);return}
@@ -3161,7 +3202,7 @@ function ProfileExtras(){
       <div className="rowb" style={{alignItems:"center",gap:10}}>
         <div style={{minWidth:0}}><div className="fw7 tmd">{ps.pro?(user.role==="patrocinador"?"Pro Marca":"Pro Evento"):"Plan Gratis"}{ps.f?" · 🏅 Socio Fundador #"+ps.f.n:""}</div>
           <div className="tsm cmu">{ps.pro?"Activo hasta el "+fdate(ps.until)+(ps.src==="fundador"?" (regalo de Fundador)":""):user.role==="patrocinador"?"Comisión 10% / 8% / 6% escalonada + IVA":"No pagas comisión en tus acuerdos"}</div>
-          {user.role==="patrocinador"&&ps.f&&<div className="txs cte">Acuerdos al 3% disponibles: {Math.max(0,FOUNDER_FREE_DEALS-(user.fdeals||[]).length)} de {FOUNDER_FREE_DEALS}{user.verified?"":" · requiere verificar tu RUT (abajo)"}</div>}</div>
+          {user.role==="patrocinador"&&ps.f&&<div className="txs cte">Acuerdos al 3% disponibles: {Math.max(0,FOUNDER_FREE_DEALS-(user.fdeals||[]).length)} de {FOUNDER_FREE_DEALS}{rutValidated(user)?"":" · requiere validar tu RUT (abajo)"}</div>}</div>
         <button className="btn btn-g btn-sm" onClick={()=>go("planes",{})}>Ver planes</button>
       </div>
     </div></>}
@@ -3183,10 +3224,10 @@ function ProfileExtras(){
     {user.role!=="inversor"&&<><div className="sec-t">🪪 Verificación</div>
     <div className="card mb12">
       {user.verified?<div className="hint">🪪 <div><b>{user.role==="patrocinador"?"Empresa":"Identidad"} verificada.</b> Tu perfil muestra la insignia de confianza.</div></div>
-      :user.verifyReq==="pending"?<div className="hint w">⏳ <div>Tu solicitud de verificación está en revisión.</div></div>
-      :<>{user.role==="patrocinador"&&founderInfo(user)&&<div className="hint mb12">🏅 <div>Como marca Fundadora, verificar tu RUT activa tu comisión de <b>3%</b> en tus 3 primeros acuerdos. Cada RUT se puede verificar en una sola cuenta.</div></div>}<div className="tsm cmu mb12" style={{lineHeight:1.5}}>Ingresa tu RUT {user.role==="patrocinador"?"de la empresa":"personal"} para obtener la insignia “🪪 {user.role==="patrocinador"?"Empresa":"Identidad"} verificada”. Tu RUT no se muestra a otros usuarios: solo lo ve el equipo de GetSponzo.</div>
+      :user.rutOk&&user.verifyReq!=="rejected"?<div className="hint">✅ <div><b>RUT validado.</b> {user.role==="patrocinador"&&founderInfo(user)?"Tu comisión de 3% de Fundador está activa. ":""}La insignia “🪪 {user.role==="patrocinador"?"Empresa":"Identidad"} verificada” llegará cuando revisemos tu RUT en el SII.</div></div>
+      :<>{user.role==="patrocinador"&&founderInfo(user)&&<div className="hint mb12">🏅 <div>Como marca Fundadora, validar tu RUT activa al instante tu comisión de <b>3%</b> en tus 3 primeros acuerdos. Cada RUT se puede usar en una sola cuenta, y tus contratos deben ir a nombre de ese RUT.</div></div>}<div className="tsm cmu mb12" style={{lineHeight:1.5}}>Ingresa tu RUT {user.role==="patrocinador"?"de la empresa":"personal"} para obtener la insignia “🪪 {user.role==="patrocinador"?"Empresa":"Identidad"} verificada”. Tu RUT no se muestra a otros usuarios: solo lo ve el equipo de GetSponzo.</div>
         {user.verifyReq==="rejected"&&<div className="hint e mb12">No pudimos verificar el RUT anterior. Revisa los datos e intenta de nuevo.</div>}
-        <div className="row" style={{gap:8}}><input className="inp" value={rut} onChange={e=>setRut(e.target.value)} placeholder="12.345.678-9" style={{flex:1}}/><button className="btn btn-p btn-sm" onClick={reqVerify}>Enviar</button></div>
+        <div className="row" style={{gap:8}}><input className="inp" value={rut} onChange={e=>setRut(e.target.value)} placeholder="12.345.678-9" style={{flex:1}}/><button className="btn btn-p btn-sm" disabled={rutBusy} onClick={reqVerify}>{rutBusy?"Validando…":"Validar"}</button></div>
         {rut&&<div className="txs mt8" style={{color:rutValid(rut)?"var(--ok)":"var(--muted)"}}>{rutValid(rut)?"✅ RUT válido":"Escribe el RUT completo, con dígito verificador"}</div>}</>}
     </div></>}
     {inst&&<InstallSheet onClose={()=>setInst(false)}/>}
