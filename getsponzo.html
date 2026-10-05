@@ -2005,9 +2005,9 @@ function PersonaTabs({onRegister,user,onPanel}){
         <div className="rowb mt8 mb16" style={{gap:6}}>{p.gets.map(g=><span key={g} className="pill" style={{background:"rgba(23,212,160,.1)",color:"var(--teal)"}}>✓ {g}</span>)}</div>
         <button className="btn btn-p btn-auto" style={{padding:"13px 24px"}} onClick={()=>{if(user)return onPanel();PENDING_ROLE=p.role;onRegister()}}>{user?"Ir a mi panel →":k==="marca"?"Crear cuenta de marca →":"Crear mi cuenta gratis →"}</button>
       </div>
-      <div style={{maxWidth:300,margin:"0 auto",width:"100%"}}>
+      <div style={{maxWidth:330,margin:"0 auto",width:"100%"}}>
         {err?<div className="hint w">⚠️ <div>No pudimos cargar el video demo. Revisa tu conexión.</div></div>
-        :<video key={p.video} src={p.video} poster={p.video.replace(".mp4",".jpg")} controls playsInline preload="metadata" onError={()=>setErr(true)} onPlay={()=>track("persona_video",{k})} style={{width:"100%",aspectRatio:"390/844",borderRadius:22,background:"#000",border:"1px solid var(--border)",boxShadow:"0 10px 40px rgba(0,0,0,.35)",display:"block"}}/>}
+        :<video key={p.video} src={p.video+"#t=0.1"} poster={p.video.replace(".mp4",".jpg")} controls playsInline preload="metadata" onError={()=>setErr(true)} onPlay={()=>track("persona_video",{k})} style={{width:"100%",aspectRatio:"390/844",borderRadius:22,background:"#000",border:"1px solid var(--border)",boxShadow:"0 10px 40px rgba(0,0,0,.35)",display:"block"}}/>}
         <div className="txs cmu tc-c mt8">Demo real de la app · {p.secs} segundos</div>
       </div>
     </div>
