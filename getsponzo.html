@@ -831,9 +831,12 @@ async function loadConfig(){
 async function saveConfig(patch){CFG={...CFG,...patch};await FS.collection("config").doc("public").set(CFG,{merge:true})}
 
 /* ══════════ GOOGLE ANALYTICS (opcional) ══════════ */
-let GA_ON=false;
+let GA_ON=false,GA_PENDING="";
 function loadGA(id){
-  if(GA_ON||!/^G-[A-Z0-9]+$/i.test(id||""))return;GA_ON=true;
+  if(GA_ON||!/^G-[A-Z0-9]+$/i.test(id||""))return;
+  let ck="";try{ck=localStorage.getItem("gs_ck")||""}catch(e){}
+  if(ck!=="all"){GA_PENDING=id;try{window.dispatchEvent(new Event("gs-ga-pending"))}catch(e){}return}
+  GA_ON=true;
   try{window.dataLayer=window.dataLayer||[];window.gtag=function(){window.dataLayer.push(arguments)};window.gtag("js",new Date());window.gtag("config",id,{anonymize_ip:true});
     const s=document.createElement("script");s.async=true;s.src="https://www.googletagmanager.com/gtag/js?id="+encodeURIComponent(id);document.head.appendChild(s)}catch(e){}
 }
@@ -2014,6 +2017,138 @@ function PersonaTabs({onRegister,user,onPanel}){
     <div className="tsm cmu tc-c mt20">💼 ¿Eres inversor? <button className="cte fw7" style={{textDecoration:"underline"}} onClick={()=>{if(user)return onPanel();PENDING_ROLE="inversor";onRegister()}}>Mira la oportunidad →</button></div>
   </div></section>;
 }
+
+/* ══════════ v13.1 · REPORTE DE MÉTRICAS (capturas de Instagram, TikTok, YouTube o Google Analytics) ══════════ */
+const MET_SRC=[["instagram","📸 Instagram"],["tiktok","🎵 TikTok"],["youtube","▶️ YouTube"],["analytics","📈 Google Analytics"],["otro","📊 Otro"]];
+const MET_F=[["reach","Alcance (cuentas o personas)"],["views","Vistas o reproducciones"],["inter","Interacciones (me gusta, comentarios, guardados)"],["clicks","Clics o toques en el enlace"],["visits","Visitas al sitio web"]];
+const numOf=v=>{const n=Number(String(v==null?"":v).replace(/[^\d]/g,""));return isFinite(n)?n:0};
+function metTotals(c){const t={reach:0,views:0,inter:0,clicks:0,visits:0};(c.metrics||[]).forEach(m=>MET_F.forEach(([k])=>t[k]+=numOf(m[k])));return t}
+async function aiReadMetrics(key,files,src){
+  const parts=[{text:`Lee estas capturas de estadísticas de ${src} y extrae las cifras TOTALES que se ven. No inventes: si un dato no aparece, usa 0. Responde SOLO JSON: {"reach":NUMERO,"views":NUMERO,"inter":NUMERO,"clicks":NUMERO,"visits":NUMERO,"note":"qué período o publicación muestran, en 1 frase"}. reach = cuentas alcanzadas o usuarios; views = reproducciones, impresiones o vistas; inter = suma de me gusta, comentarios, compartidos y guardados; clicks = toques en enlace o clics; visits = visitas o sesiones del sitio web.`}];
+  for(const f of files){if(!/^image\/|pdf/.test(f.type||""))continue;const d=await loadFile(f).catch(()=>null);if(!d)continue;parts.push({inline_data:{mime_type:/pdf/.test(f.type)?"application/pdf":"image/jpeg",data:d.split(",")[1]}})}
+  if(parts.length<2)throw new Error("Sube una captura (foto) o PDF para que la IA la lea");
+  const {text}=await gemini(key,parts,true);const o=JSON.parse((text.match(/\{[\s\S]*\}/)||["{}"])[0]);
+  return {reach:numOf(o.reach),views:numOf(o.views),inter:numOf(o.inter),clicks:numOf(o.clicks),visits:numOf(o.visits),note:String(o.note||"").slice(0,160)};
+}
+function MetricsSheet({c,onClose}){
+  const {user,toast,bump,apiKey}=useApp();
+  const [src,setSrc]=useState("instagram"),[files,setFiles]=useState([]),[v,setV]=useState({reach:"",views:"",inter:"",clicks:"",visits:"",note:""}),[busy,setBusy]=useState(false),[ai,setAi]=useState(false);
+  const read=async()=>{
+    if(!files.length){toast("Primero sube la captura","⚠️");return}
+    setBusy(true);
+    try{
+      let r;
+      if(apiKey)r=await aiReadMetrics(apiKey,files,MET_SRC.find(x=>x[0]===src)[1]);
+      else{await new Promise(z=>setTimeout(z,1200));r={reach:"29912",views:"41380",inter:"3482",clicks:"1105",visits:src==="analytics"?"2350":"",note:"Modo demo: cifras de ejemplo. Con la clave de Gemini se leen de tu captura."}}
+      setV({reach:String(r.reach||""),views:String(r.views||""),inter:String(r.inter||""),clicks:String(r.clicks||""),visits:String(r.visits||""),note:r.note||""});setAi(true);toast("Cifras leídas","✨","Revísalas antes de guardar");
+    }catch(e){toast("No se pudo leer",'⚠️',e.message+" Escribe las cifras a mano.")}
+    setBusy(false);
+  };
+  const saveM=()=>{
+    if(!files.length){toast("Sube la captura como respaldo","⚠️");return}
+    if(!MET_F.some(([k])=>numOf(v[k])>0)){toast("Escribe al menos una cifra","⚠️");return}
+    const m={id:uid("m"),src,files,by:user.id,ts:new Date().toISOString(),ai,note:v.note.trim()};MET_F.forEach(([k])=>m[k]=numOf(v[k]));
+    DB.setContracts(DB.contracts().map(x=>x.id!==c.id?x:{...x,metrics:[...(x.metrics||[]),m]}));
+    sysMsg(user.id,c.sponsorId,`📈 ${first(user.name)} subió resultados de ${MET_SRC.find(x=>x[0]===src)[1]} para “${c.eventName}”. Ya están en tu informe de retorno.`,c.eventName);
+    toast("Resultados guardados","📈","Ya aparecen en el informe de retorno");onClose();bump();
+  };
+  return <Sheet title="Subir resultados en redes" icon="📈" onClose={onClose} footer={<><button className="btn btn-g" onClick={onClose}>Cancelar</button><button className="btn btn-p" onClick={saveM}>Guardar resultados</button></>}>
+    <div className="hint mb12">💡 <div>Sube la captura de estadísticas de tus publicaciones o de tu sitio. La IA lee las cifras y van directo al <b>informe de retorno</b> de la marca, con la captura como respaldo.</div></div>
+    <Field label="1. ¿De dónde son las cifras?"><div className="chips" style={{flexWrap:"wrap"}}>{MET_SRC.map(([k,l])=><button key={k} className={"chip"+(src===k?" on":"")} onClick={()=>setSrc(k)}>{l}</button>)}</div></Field>
+    <Field label="2. Sube la captura o el PDF del reporte"><FileAttach value={files} onChange={setFiles} parties={c.parties} max={3} label="📸 Subir captura de estadísticas"/></Field>
+    <button className="btn btn-pur" style={{width:"100%",marginBottom:14}} disabled={busy||!files.length} onClick={read}>{busy?"Leyendo la captura…":"✨ Leer las cifras con IA"}</button>
+    <div className="lbl">3. Revisa las cifras {ai&&<span className="pill" style={{marginLeft:6,background:"var(--pbg)",color:"var(--pur)"}}>Leídas por IA</span>}</div>
+    {MET_F.map(([k,l])=><Field key={k} label={l}><input className="inp" inputMode="numeric" value={v[k]?fmtThousands(numOf(v[k])):""} onChange={e=>setV(p=>({...p,[k]:e.target.value.replace(/[^\d]/g,"")}))} placeholder="0"/></Field>)}
+    <Field label="Período o publicación (opcional)"><input className="inp" value={v.note} onChange={e=>setV(p=>({...p,note:e.target.value}))} placeholder="Ej: Reel del 12 de octubre, 7 días"/></Field>
+    <div className="txs cmu">Las cifras deben coincidir con la captura. La marca puede descargarla para comprobarlo.</div>
+  </Sheet>;
+}
+function MetricsCard({c,isS}){
+  const [open,setOpen]=useState(false);const ms=c.metrics||[];const t=metTotals(c);
+  if(c.status==="pending"||c.status==="rejected")return null;
+  if(!ms.length&&isS)return null;
+  const f=n=>fmtThousands(n);
+  return <div className="card mb12">
+    <div className="fw7 mb8">📈 Resultados en redes y web</div>
+    {ms.length>0?<>
+      <div className="g2" style={{gap:8,marginBottom:10}}>{[["reach","Alcance"],["views","Vistas"],["inter","Interacciones"],["clicks","Clics"],["visits","Visitas web"]].filter(([k])=>t[k]>0).map(([k,l])=><div key={k} className="st"><div className="stv" style={{fontSize:17}}>{f(t[k])}</div><div className="stl">{l}</div></div>)}</div>
+      {ms.map(m=><div key={m.id} className="txs cmu mb8">{(MET_SRC.find(x=>x[0]===m.src)||[0,"📊"])[1]} · {fdate(m.ts)}{m.ai?" · leído por IA":""}{m.note?" · "+m.note:""}<FilesView files={m.files}/></div>)}
+    </>:<div className="tsm cmu mb8" style={{lineHeight:1.5}}>Sube las estadísticas de tus publicaciones o de tu sitio web. Es lo que la marca muestra en su empresa y lo que hace que renueve.</div>}
+    {!isS&&<button className="btn btn-g btn-sm mt8" style={{width:"100%"}} onClick={()=>setOpen(true)}>📈 Subir reporte de Instagram, TikTok o Analytics</button>}
+    {open&&<MetricsSheet c={c} onClose={()=>setOpen(false)}/>}
+  </div>;
+}
+function metricsReportHtml(c){
+  const ms=c.metrics||[];if(!ms.length)return "";
+  const t=metTotals(c),paid=cPaid(c)||c.amount,$m=n=>money(n,curOf(c)),f=n=>fmtThousands(n);
+  const k=[t.reach?`<div><b>${f(t.reach)}</b><span>Alcance total</span></div>`:"",t.views?`<div><b>${f(t.views)}</b><span>Vistas o reproducciones</span></div>`:"",t.inter?`<div><b>${f(t.inter)}</b><span>Interacciones</span></div>`:"",t.clicks?`<div><b>${f(t.clicks)}</b><span>Clics en el enlace</span></div>`:"",t.visits?`<div><b>${f(t.visits)}</b><span>Visitas al sitio</span></div>`:"",
+    t.reach?`<div><b>${$m(Math.round(paid/t.reach*1000))}</b><span>Costo por cada 1.000 personas alcanzadas</span></div>`:"",(t.clicks||t.visits)?`<div><b>${$m(Math.round(paid/(t.clicks||t.visits)))}</b><span>Costo por ${t.clicks?"clic":"visita"}</span></div>`:"",t.reach&&t.inter?`<div><b>${(t.inter/t.reach*100).toFixed(1).replace(".",",")}%</b><span>Tasa de interacción</span></div>`:""].join("");
+  const rows=ms.map(m=>`<tr><td>${esc((MET_SRC.find(x=>x[0]===m.src)||[0,"Otro"])[1].replace(/^\S+\s/,""))}</td><td>${esc(fdate(m.ts))}</td><td>${f(m.reach)}</td><td>${f(m.views)}</td><td>${f(m.inter)}</td><td>${f(m.clicks||m.visits)}</td><td>${esc(m.note||"")}</td></tr>`).join("");
+  return `<h2>Resultados en redes y web</h2><div class="kpis">${k}</div><table style="margin-top:8px"><thead><tr><th>Fuente</th><th>Fecha</th><th>Alcance</th><th>Vistas</th><th>Interacciones</th><th>Clics/visitas</th><th>Detalle</th></tr></thead><tbody>${rows}</tbody></table><p class="sub">Cifras ${ms.some(m=>m.ai)?"leídas con IA de las capturas":"informadas"} que subió el patrocinado. Las capturas originales se pueden descargar en el acuerdo, dentro de GetSponzo. Costos calculados sobre lo pagado hasta hoy (${$m(paid)}).</p>`;
+}
+
+/* ══════════ AVISO DE COOKIES (Google Analytics solo con permiso) ══════════ */
+const ckGet=()=>{try{return localStorage.getItem("gs_ck")||""}catch(e){return ""}};
+function CookieBanner(){
+  const [show,setShow]=useState(()=>!ckGet()&&!!GA_PENDING);const [priv,setPriv]=useState(false);
+  useEffect(()=>{const h=()=>{if(!ckGet())setShow(true)};window.addEventListener("gs-ga-pending",h);return()=>window.removeEventListener("gs-ga-pending",h)},[]);
+  const set=v=>{try{localStorage.setItem("gs_ck",v)}catch(e){}setShow(false);if(v==="all"&&GA_PENDING){const id=GA_PENDING;GA_PENDING="";loadGA(id)}};
+  if(!show)return priv?<PrivacySheet onClose={()=>setPriv(false)}/>:null;
+  return <><div style={{position:"fixed",left:12,right:12,bottom:12,zIndex:980,maxWidth:560,margin:"0 auto",background:"rgba(7,16,30,.97)",border:"1px solid var(--border)",borderRadius:16,padding:"14px 16px",boxShadow:"0 10px 40px rgba(0,0,0,.5)"}}>
+    <div className="tsm" style={{lineHeight:1.5,marginBottom:10}}>🍪 Usamos cookies de <b>Google Analytics</b> para saber cuánta gente visita GetSponzo y mejorar la plataforma. Es anónimo y no vendemos tus datos. <button className="cte" style={{textDecoration:"underline"}} onClick={()=>setPriv(true)}>Más información</button></div>
+    <div style={{display:"flex",gap:8}}><button className="btn btn-g btn-sm" style={{flex:1}} onClick={()=>set("min")}>Solo necesarias</button><button className="btn btn-p btn-sm" style={{flex:1}} onClick={()=>set("all")}>Aceptar</button></div>
+  </div>{priv&&<PrivacySheet onClose={()=>setPriv(false)}/>}</>;
+}
+
+/* ══════════ CAPTACIÓN: lista de contactos para conseguir los primeros usuarios (solo administradores) ══════════ */
+const PIPE_ST=[["contactado","📞 Contactado","var(--muted)"],["interesado","🙂 Interesado","var(--warn)"],["probo","👀 Probó la app","#3de8b5"],["publico","📢 Publicó o se registró","var(--teal)"],["firmo","✍️ Firmó acuerdo","var(--ok)"],["descartado","✖ Descartado","var(--err)"]];
+const PIPE_KIND=[["marca","🏢 Marca"],["evento","🎪 Evento"],["club","🏟️ Club"],["deportista","🏅 Deportista"],["creador","📱 Creador"],["inversor","💼 Inversor"]];
+const PIPE_WHO=["Cristóbal","José"];
+const pipeLoad=async()=>REAL?(await FS.collection("pipeline").get()).docs.map(d=>d.data()):load("gs_pipeline",[]);
+const pipeSave=async x=>{if(REAL)await FS.collection("pipeline").doc(x.id).set(x);else save("gs_pipeline",[...load("gs_pipeline",[]).filter(y=>y.id!==x.id),x])};
+const pipeDel=async id=>{if(REAL)await FS.collection("pipeline").doc(id).delete();else save("gs_pipeline",load("gs_pipeline",[]).filter(y=>y.id!==id))};
+function PipelineTab(){
+  const {toast,confirm}=useApp();
+  const [list,setList]=useState(null),[err,setErr]=useState(""),[who,setWho]=useState("todos"),[st,setSt]=useState("todos"),[q,setQ]=useState("");
+  const E0={name:"",kind:"marca",contact:"",who:"Cristóbal",status:"contactado",next:"",note:""};
+  const [f,setF]=useState(null);
+  const reload=()=>pipeLoad().then(setList).catch(e=>setErr("No se pudo cargar. ¿Publicaste las reglas nuevas de Firebase? ("+e.message+")"));
+  useEffect(()=>{reload()},[]);
+  if(err)return <div className="hint e">⚠️ {err}</div>;
+  if(!list)return <div className="tsm cmu">Cargando…</div>;
+  const save_=async()=>{if(!f.name.trim()){toast("Escribe el nombre","⚠️");return}const x={...f,name:f.name.trim(),id:f.id||uid("p"),created:f.created||new Date().toISOString(),updated:new Date().toISOString()};
+    try{await pipeSave(x);setF(null);reload();toast("Guardado","✅")}catch(e){toast("No se pudo guardar","⚠️",e.message)}};
+  const quick=async(x,status)=>{await pipeSave({...x,status,updated:new Date().toISOString()});reload()};
+  const shown=list.filter(x=>(who==="todos"||x.who===who)&&(st==="todos"||x.status===st)&&(!q||(x.name+" "+(x.contact||"")+" "+(x.note||"")).toLowerCase().includes(q.toLowerCase()))).sort((a,b)=>(b.updated||"").localeCompare(a.updated||""));
+  const cnt=k=>list.filter(x=>x.status===k).length;
+  const stInfo=k=>PIPE_ST.find(s=>s[0]===k)||PIPE_ST[0];
+  return <div>
+    <div className="hint mb12">🎯 <div>Lista para conseguir los primeros usuarios a mano. Anota a quién contactaron, quién lo trae y en qué va. Solo la ven los administradores.</div></div>
+    <div className="g3 mb12" style={{gridTemplateColumns:"repeat(3,1fr)",gap:8}}>{PIPE_ST.filter(s=>s[0]!=="descartado").slice(0,5).map(([k,l,c])=><button key={k} className="st" style={{textAlign:"left",borderColor:st===k?"var(--teal)":undefined}} onClick={()=>setSt(st===k?"todos":k)}><div className="stv" style={{fontSize:18,color:c}}>{cnt(k)}</div><div className="stl">{l.replace(/^\S+\s/,"")}</div></button>)}<div className="st"><div className="stv" style={{fontSize:18}}>{list.length}</div><div className="stl">Total</div></div></div>
+    <div style={{display:"flex",gap:8,marginBottom:10}}><button className="btn btn-p btn-sm" style={{flex:2}} onClick={()=>setF(E0)}>➕ Agregar contacto</button><button className="btn btn-g btn-sm" style={{flex:1}} onClick={()=>download("captacion-getsponzo.csv",toCSV(list.map(x=>({Nombre:x.name,Tipo:x.kind,Contacto:x.contact||"",Responsable:x.who,Estado:stInfo(x.status)[1].replace(/^\S+\s/,""),"Próximo paso":x.next||"",Nota:x.note||"",Actualizado:(x.updated||"").slice(0,10)}))))}>⬇️ Excel</button></div>
+    <div className="seg">{[["todos","Todos"],...PIPE_WHO.map(w=>[w,w])].map(([k,l])=><button key={k} className={who===k?"on":""} onClick={()=>setWho(k)}>{l} ({k==="todos"?list.length:list.filter(x=>x.who===k).length})</button>)}</div>
+    <input className="inp mb12" value={q} onChange={e=>setQ(e.target.value)} placeholder="🔍 Buscar por nombre o nota…"/>
+    {shown.length===0?<div className="hint">{list.length?"No hay contactos con ese filtro.":"Aún no hay contactos. Agrega el primero."}</div>
+    :shown.map(x=>{const s=stInfo(x.status);return <div key={x.id} className="mcard">
+      <div className="row" style={{gap:8,justifyContent:"space-between"}}><div style={{minWidth:0}}><div className="fw7 tmd ellip">{(PIPE_KIND.find(k=>k[0]===x.kind)||["","📇"])[1].split(" ")[0]} {x.name}</div><div className="txs cmu ellip">{x.who}{x.contact?" · "+x.contact:""}</div></div><span className="pill" style={{background:"rgba(255,255,255,.06)",color:s[2],flexShrink:0}}>{s[1]}</span></div>
+      {x.next&&<div className="txs mt8" style={{color:"var(--warn)"}}>👉 {x.next}</div>}
+      {x.note&&<div className="txs cmu mt8">{x.note}</div>}
+      <div className="row mt8" style={{gap:6,flexWrap:"wrap"}}>
+        <select className="inp" style={{flex:1,minWidth:150,padding:"7px 10px",fontSize:13}} value={x.status} onChange={e=>quick(x,e.target.value)}>{PIPE_ST.map(([k,l])=><option key={k} value={k}>{l}</option>)}</select>
+        <button className="btn btn-g btn-sm" onClick={()=>setF(x)}>✏️</button>
+        <button className="btn btn-d btn-sm" onClick={()=>confirm({title:"¿Borrar contacto?",text:x.name,ok:"Borrar",danger:true,onOk:async()=>{await pipeDel(x.id);reload()}})}>🗑️</button>
+      </div></div>})}
+    {f&&<Sheet title={f.id?"Editar contacto":"Nuevo contacto"} icon="🎯" onClose={()=>setF(null)} footer={<><button className="btn btn-g" onClick={()=>setF(null)}>Cancelar</button><button className="btn btn-p" onClick={save_}>Guardar</button></>}>
+      <Field label="Nombre (marca, club, evento o persona)"><input className="inp" value={f.name} onChange={e=>setF({...f,name:e.target.value})} placeholder="Ej: Club de Triatlón Ñuñoa"/></Field>
+      <Field label="Tipo"><div className="chips" style={{flexWrap:"wrap"}}>{PIPE_KIND.map(([k,l])=><button key={k} className={"chip"+(f.kind===k?" on":"")} onClick={()=>setF({...f,kind:k})}>{l}</button>)}</div></Field>
+      <Field label="Contacto (nombre, teléfono, correo o Instagram)"><input className="inp" value={f.contact} onChange={e=>setF({...f,contact:e.target.value})} placeholder="Ej: Juan Pérez · @triatlonnunoa"/></Field>
+      <Field label="¿Quién lo trae?"><div className="seg" style={{maxWidth:300}}>{PIPE_WHO.map(w=><button key={w} className={f.who===w?"on":""} onClick={()=>setF({...f,who:w})}>{w}</button>)}</div></Field>
+      <Field label="Estado"><select className="inp" value={f.status} onChange={e=>setF({...f,status:e.target.value})}>{PIPE_ST.map(([k,l])=><option key={k} value={k}>{l}</option>)}</select></Field>
+      <Field label="Próximo paso (opcional)"><input className="inp" value={f.next} onChange={e=>setF({...f,next:e.target.value})} placeholder="Ej: llamar el jueves para mostrar la demo"/></Field>
+      <Field label="Nota (opcional)"><textarea className="inp" style={{minHeight:60}} value={f.note} onChange={e=>setF({...f,note:e.target.value})} placeholder="Ej: tienen 300 socios, patrocinio actual con una bebida"/></Field>
+    </Sheet>}
+  </div>;
+}
 /* ══════════ PÁGINA DE INICIO PÚBLICA ══════════ */
 function Landing({onLogin,onRegister,user,onPanel}){
   const [contact,setContact]=useState(false),[vid,setVid]=useState(false),[privacy,setPrivacy]=useState(false);
@@ -2852,6 +2987,7 @@ async function openDoc(c,kind){
 ${(()=>{const e=DB.events().find(x=>x.id===c.eventId)||{},so=e.social||{},att=numIn(so.attendees),fol=numIn(so.ig)+numIn(so.tt),paid=cPaid(c),ps=photoSummary(c.milestones.flatMap(m=>m.photoIds||[])),pct=c.amount?Math.round(c.milestones.filter(msDone).reduce((s,m)=>s+m.amount,0)/c.amount*100):0;
   return `<h2>Retorno de la inversión</h2><div class="kpis"><div><b>${pct}%</b><span>Del valor del acuerdo entregado y aprobado</span></div>${att?`<div><b>${$m(Math.round(paid/att))}</b><span>Costo por asistente (${esc(so.attendees)})</span></div>`:""}${fol?`<div><b>${$m(Math.round(paid/fol*1000))}</b><span>Costo por cada 1.000 seguidores en redes</span></div>`:""}<div><b>${ps.verified} de ${ps.total}</b><span>Fotos de evidencia verificadas (fecha, hora y ubicación)</span></div></div>
 <p class="sub">${e.audVerified?"Audiencia verificada por GetSponzo.":"Audiencia declarada por el organizador (no verificada)."} Los costos usan lo pagado hasta hoy (${$m(paid)}).</p>`})()}
+${metricsReportHtml(c)}
 <h2>Detalle de entregas</h2><table><thead><tr>${head}</tr></thead><tbody>${rows}</tbody></table>
 ${ds.length?`<h2>Disputas</h2>${ds.map(d=>`<p><b>${esc(d.title)}</b>: ${esc(d.reason)}. ${d.verdict?`Resolución: ${d.verdict.pct}% al patrocinado.`:"En curso."}</p>`).join("")}`:""}
 ${(()=>{const ph=c.milestones.flatMap(m=>(m.photoIds||[]).map(id=>({m,p:photoById(id)}))).filter(x=>x.p);return ph.length?`<h2>Evidencia fotográfica</h2><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px">${ph.map(({m,p})=>`<figure style="margin:0"><img src="${p.data}" style="width:100%;border-radius:8px"><figcaption style="font-size:11px;color:${isVerifiedPhoto(p)?"#0a8f6c":"#a36b00"}">${esc(m.title)} · ${esc(vfCaption(p.vf))}</figcaption></figure>`).join("")}</div>`:""})()}
@@ -3035,6 +3171,7 @@ function DealDetail({id}){
 
     {next&&<div className="hint mb12">👉 <div><b>¿Qué sigue?</b> {next.status==="pending"?(isS?`${c.sponsoredName} debe cumplir “${next.title}” y subir la evidencia. Te avisaremos.`:`Cumple “${next.title}” y sube fotos o documentos con el botón “📤 Subir evidencia”.`):(isS?`Revisa la evidencia de “${next.title}”. Si está bien, apruébala.`:`La marca está revisando “${next.title}”. Cuando apruebe, ${P?"sigue el pago según lo acordado":"recibes el pago"}.`)}</div></div>}
 
+    <MetricsCard c={c} isS={isS}/>
     <div className="sec-t" style={{marginTop:8}}>📦 Entregas ({c.milestones.filter(msDone).length} de {c.milestones.length} listas)</div>
     {c.milestones.map((m,i)=>{
       const d=DB.disputes().find(x=>x.contractId===c.id&&x.milestoneId===m.id);
@@ -3577,7 +3714,8 @@ function AdminView(){
   return <div>
     <Back onClick={()=>go("perfil",{})} label="Perfil"/>
     <Head title="Panel de administrador" sub={REAL?"Datos reales de la plataforma":"Datos de la demo"} right={<button className="btn btn-g btn-sm" onClick={loadAll}>🔄</button>}/>
-    <div className="seg">{[["metricas","📊 Métricas"],["espera",`📝 Espera (${W.length})`],["revisar",`🛡️ Revisar (${Rp.length+pendingV.length+pendingA.length})`],["mensajes",`✉️ Mensajes (${S.length+L.length+PL.length})`],["ajustes","⚙️ Ajustes"]].map(([k,l])=><button key={k} className={tab===k?"on":""} onClick={()=>setTab(k)}>{l}</button>)}</div>
+    <div className="seg">{[["metricas","📊 Métricas"],["espera",`📝 Espera (${W.length})`],["revisar",`🛡️ Revisar (${Rp.length+pendingV.length+pendingA.length})`],["mensajes",`✉️ Mensajes (${S.length+L.length+PL.length})`],["captacion","🎯 Captación"],["ajustes","⚙️ Ajustes"]].map(([k,l])=><button key={k} className={tab===k?"on":""} onClick={()=>setTab(k)}>{l}</button>)}</div>
+    {tab==="captacion"&&<PipelineTab/>}
 
     {tab==="metricas"&&<div>
       <div className="g4 mb12">{kpi(U.length,"Usuarios")}{kpi(byRole("patrocinado"),"Eventos/creadores")}{kpi(byRole("patrocinador"),"Marcas")}{kpi(W.length,"En lista de espera")}</div>
@@ -4207,6 +4345,7 @@ function App(){
     {notif&&user&&<NotifSheet onClose={()=>setNotif(false)}/>}
     {conf&&<Sheet title={conf.title} icon={conf.danger?"⚠️":"✋"} onClose={()=>setConf(null)} footer={<><button className="btn btn-g" onClick={()=>setConf(null)}>Cancelar</button><button className={"btn "+(conf.danger?"btn-d":"btn-p")} onClick={()=>{const f=conf.onOk;setConf(null);f&&f()}}>{conf.ok||"Confirmar"}</button></>}><p className="tmd" style={{lineHeight:1.6}}>{conf.text}</p></Sheet>}
     {call&&user&&<CallSheet peer={call} onClose={()=>setCall(null)}/>}
+    <CookieBanner/>
     {toastS&&<div className="toast"><span style={{fontSize:19,flexShrink:0}}>{toastS.icon}</span><div style={{minWidth:0}}><div style={{fontWeight:700,fontSize:14}}>{toastS.msg}</div>{toastS.sub&&<div style={{fontSize:12,color:"var(--muted)",marginTop:2}}>{toastS.sub}</div>}</div></div>}
   </Ctx.Provider>;
 }
