@@ -1776,6 +1776,7 @@ function payRep(brandId){
 function PayRepPill({id}){const r=payRep(id);if(!r)return null;return <span className="pill" style={{background:r.pct>=90?"var(--obg)":"var(--wbg)",color:r.pct>=90?"var(--ok)":"var(--warn)"}}>💰 Paga a tiempo {r.pct}% ({r.n})</span>}
 function addPayrec(c,key,due,paidAt){
   const late=due?Date.parse(paidAt)>Date.parse(due)+DAY:false;
+  if(c.test)return late; // los acuerdos de prueba no cuentan para la reputación
   const rec={id:c.id+"_"+key,contractId:c.id,fromId:c.sponsoredId,toId:c.sponsorId,due:due||"",paidAt,onTime:!late,ts:new Date().toISOString()};
   DB.setPayrecs([...DB.payrecs().filter(r=>r.id!==rec.id),rec]);
   return late;
@@ -1962,7 +1963,11 @@ function openSupplierSheet(c,uid_){
 <div style="font-weight:800;color:#0a8f6c">GetSponzo</div><h1>Ficha de proveedor</h1><p class="sub">Para inscribir al proveedor en ${esc(c.sponsorName)} · Acuerdo ${esc(c.id)} · ${esc(c.eventName)}</p>
 <h2>${emp?"Empresa":"Proveedor (persona natural)"}</h2><table>${row(emp?"Razón social":"Nombre",l.name||u.name)}${row("RUT",l.rut)}${emp?row("Giro",l.giro):row("Profesión u oficio",l.prof)}${row("Dirección",[l.addr,l.comuna,l.city].filter(Boolean).join(", "))}</table>
 ${emp?`<h2>Representante legal</h2><table>${row("Nombre",l.repName)}${row("RUT",l.repRut)}</table>`:""}
-<h2>Contacto</h2><table>${row("Correo",l.email||u.email)}${row("Correo para facturas y comprobantes",l.payEmail||l.email||u.email)}</table>
+<h2>Contacto</h2><table>${row("Correo",l.email||u.email)}${row("Teléfono",(c.supInfo||{}).phone)}${row("Contacto de cobranza",(c.supInfo||{}).payName)}${row("Correo para facturas y cobranza",(c.supInfo||{}).payMail||l.payEmail||l.email||u.email)}</table>
+<h2>Datos tributarios</h2><table>${row("Documento que emite",(c.supInfo||{}).docType)}${row("Código de actividad SII",(c.supInfo||{}).acteco)}${row("Tiene trabajadores",(c.supInfo||{}).hasWorkers==="si"?"Sí":(c.supInfo?"No":""))}</table>
+<h2>Documentos entregados en GetSponzo</h2><table>${SUP_DOCS.map(([k,t])=>row(t,(c.supDocs||{})[k]?"✔ "+c.supDocs[k].name:"—")).join("")}</table>
+<h2>Declaraciones</h2><table>${SUP_DECL.map(([k,t])=>row(t,((c.supInfo||{}).decl||{})[k]?"✔ Aceptada":"—")).join("")}</table>
+${c.ref?`<h2>Referencia interna de la marca</h2><table>${row("Referencia",c.ref)}</table>`:""}
 <h2>Datos bancarios para pagos</h2><table>${row("Banco",l.bank)}${row("Tipo de cuenta",l.accType)}${row("Número de cuenta",l.accNo)}${row("Titular",l.name||u.name)}${row("RUT del titular",l.rut)}</table>
 <p class="sub" style="margin-top:18px">Datos declarados por el proveedor en GetSponzo. La empresa puede pedir documentos adicionales (por ejemplo, certificado de cuenta o de inicio de actividades).</p></body></html>`;
   w.document.open();w.document.write(trDocHtml?trDocHtml(html):html);w.document.close();
@@ -2147,6 +2152,239 @@ function PipelineTab(){
       <Field label="Próximo paso (opcional)"><input className="inp" value={f.next} onChange={e=>setF({...f,next:e.target.value})} placeholder="Ej: llamar el jueves para mostrar la demo"/></Field>
       <Field label="Nota (opcional)"><textarea className="inp" style={{minHeight:60}} value={f.note} onChange={e=>setF({...f,note:e.target.value})} placeholder="Ej: tienen 300 socios, patrocinio actual con una bebida"/></Field>
     </Sheet>}
+  </div>;
+}
+
+/* ══════════ v13.2 · PRUEBA REAL CON EMPRESAS: perfil de proveedor, requisitos de la marca, acuerdos de prueba y opinión ══════════ */
+
+/* ── Perfil de proveedor: se completa una sola vez y queda listo para cualquier marca ── */
+const SUP_DOCS=[
+  ["sii","Carpeta tributaria o inicio de actividades (SII)","Se descarga gratis en sii.cl → Servicios online → Carpeta tributaria electrónica."],
+  ["bank","Certificado de la cuenta bancaria","Lo entrega tu banco en su web o app (certificado de cuenta)."],
+  ["vig","Certificado de vigencia de la empresa y poderes del representante","Solo empresas. En registrodeempresasysociedades.cl o en el Conservador de Comercio."],
+  ["f30","Certificado F30 (antecedentes laborales)","Solo si tienes trabajadores. Gratis en dt.gob.cl."]];
+const SUP_DECL=[
+  ["true","Los datos y documentos que entrego son verdaderos y están vigentes."],
+  ["licit","Los fondos y servicios tienen origen lícito y no ofreceré ni recibiré pagos indebidos (Ley 20.393)."],
+  ["coi","No tengo conflicto de interés con personas de las marcas con que trabaje; si lo tengo, lo informaré."]];
+const DOC_TYPES=["Factura electrónica (afecta a IVA)","Factura exenta","Boleta de honorarios"];
+const EMPTY_SUP={phone:"",payName:"",payMail:"",docType:"",acteco:"",hasWorkers:"no",docs:{},decl:{}};
+const supOf=l=>({...EMPTY_SUP,...((l&&l.sup)||{}),docs:{...((l&&l.sup&&l.sup.docs)||{})},decl:{...((l&&l.sup&&l.sup.decl)||{})}});
+function supplierStatus(l){
+  const s=supOf(l),miss=[];
+  if(!l||legalMissing(l))miss.push("Datos para el contrato (razón social, RUT, dirección)");
+  if(!(l&&l.bank&&l.accNo))miss.push("Banco y número de cuenta");
+  if(!s.phone)miss.push("Teléfono de contacto");
+  if(!s.payMail&&!(l&&l.payEmail))miss.push("Correo de cobranza");
+  if(!s.docType)miss.push("Tipo de documento que emites");
+  if(!s.docs.sii)miss.push("Carpeta tributaria o inicio de actividades");
+  if(!s.docs.bank)miss.push("Certificado bancario");
+  if(l&&l.kind==="empresa"&&!s.docs.vig)miss.push("Certificado de vigencia y poderes");
+  if(s.hasWorkers==="si"&&!s.docs.f30)miss.push("Certificado F30");
+  if(!SUP_DECL.every(([k])=>s.decl[k]))miss.push("Declaraciones");
+  const total=9+(l&&l.kind==="empresa"?1:0)+(s.hasWorkers==="si"?1:0);
+  return {miss,ready:!miss.length,pct:Math.round((total-miss.length)/total*100)};
+}
+function SupplierSheet({onClose}){
+  const {user,setUser,toast}=useApp();
+  const [l,setL]=useState(null),[busy,setBusy]=useState(false),[legalOpen,setLegalOpen]=useState(false);
+  useEffect(()=>{loadMyLegal(user.id).then(x=>setL(x||null))},[]);
+  if(l===null&&!legalOpen)return <Sheet title="Perfil de proveedor" icon="📋" onClose={onClose}><div className="hint w">📄 <div>Primero completa tus datos para el contrato (nombre o razón social, RUT, dirección y banco).</div></div><button className="btn btn-p mt12" style={{width:"100%"}} onClick={()=>setLegalOpen(true)}>Completar datos</button>{legalOpen&&<LegalSheet user={user} onClose={()=>setLegalOpen(false)} onDone={x=>{setL(x);setLegalOpen(false)}}/>}</Sheet>;
+  if(!l)return legalOpen?<LegalSheet user={user} onClose={()=>{setLegalOpen(false);onClose()}} onDone={x=>{setL(x);setLegalOpen(false)}}/>:null;
+  const s=supOf(l);const setS=(k,v)=>setL(p=>({...p,sup:{...supOf(p),[k]:v}}));
+  const st=supplierStatus(l);
+  const save_=async()=>{setBusy(true);try{await saveMyLegal(user.id,l);const r=supplierStatus(l).ready;if(!!user.supReady!==r)setUser({...user,supReady:r,supAt:new Date().toISOString()});toast(r?"¡Proveedor listo!":"Guardado","📋",r?"Las marcas ven que pueden pagarte rápido":"Te faltan "+supplierStatus(l).miss.length+" datos");onClose()}catch(e){toast("No se pudo guardar","⚠️",e.message)}setBusy(false)};
+  return <Sheet title="Perfil de proveedor" icon="📋" onClose={onClose} footer={<><button className="btn btn-g" onClick={onClose}>Cancelar</button><button className="btn btn-p" disabled={busy} onClick={save_}>{busy?"Guardando…":"Guardar"}</button></>}>
+    <div className="hint mb12">💡 <div>Las empresas te inscriben como <b>proveedor</b> antes de pagarte. Si lo dejas listo aquí una sola vez, la marca lo recibe al firmar y <b>te paga antes</b>.</div></div>
+    <div className="mcard"><div className="row" style={{justifyContent:"space-between"}}><b>{st.ready?"✅ Proveedor listo":"Avance "+st.pct+"%"}</b><button className="btn btn-g btn-sm" onClick={()=>setLegalOpen(true)}>✏️ Datos y banco</button></div><Bar v={st.pct} h={6}/>{!st.ready&&<div className="txs cmu mt8">Falta: {st.miss.join(" · ")}</div>}</div>
+    <div className="sec-t">☎️ Contacto y cobranza</div>
+    <div className="g2" style={{gap:10}}>
+      <Field label="Teléfono"><input className="inp" value={s.phone} onChange={e=>setS("phone",e.target.value)} placeholder="+56 9 1234 5678"/></Field>
+      <Field label="Nombre de quien cobra"><input className="inp" value={s.payName} onChange={e=>setS("payName",e.target.value)} placeholder="Ej: Ana Pérez, finanzas"/></Field>
+      <Field label="Correo de cobranza"><input className="inp" value={s.payMail} onChange={e=>setS("payMail",e.target.value)} placeholder="cobranza@tuevento.cl"/></Field>
+      <Field label="Código de actividad SII (opcional)"><input className="inp" value={s.acteco} onChange={e=>setS("acteco",e.target.value)} placeholder="Ej: 931909"/></Field>
+    </div>
+    <Field label="¿Qué documento emites?"><div className="chips" style={{flexWrap:"wrap"}}>{DOC_TYPES.map(d=><button key={d} className={"chip"+(s.docType===d?" on":"")} onClick={()=>setS("docType",d)}>{d}</button>)}</div></Field>
+    <Field label="¿Tienes trabajadores con contrato?"><div className="seg" style={{maxWidth:240}}>{[["no","No"],["si","Sí"]].map(([k,t])=><button key={k} className={s.hasWorkers===k?"on":""} onClick={()=>setS("hasWorkers",k)}>{t}</button>)}</div></Field>
+    <div className="sec-t">📎 Documentos</div>
+    {SUP_DOCS.filter(([k])=>k!=="vig"||l.kind==="empresa").filter(([k])=>k!=="f30"||s.hasWorkers==="si").map(([k,t,h])=><Field key={k} label={(s.docs[k]?"✅ ":"")+t} hint={h}><FileAttach value={s.docs[k]?[s.docs[k]]:[]} onChange={v=>setS("docs",{...s.docs,[k]:v[0]||null})} parties={[user.id]} max={1} label="📎 Subir PDF o foto"/></Field>)}
+    <div className="sec-t">✍️ Declaraciones</div>
+    {SUP_DECL.map(([k,t])=><label key={k} className="row mb8" style={{gap:10,cursor:"pointer",alignItems:"flex-start"}}><input type="checkbox" checked={!!s.decl[k]} onChange={e=>setS("decl",{...s.decl,[k]:e.target.checked})} style={{width:20,height:20,accentColor:"#17d4a0",appearance:"auto",flexShrink:0,marginTop:2}}/><span className="tsm">{t}</span></label>)}
+    <div className="txs cmu mt8">🔒 Solo lo ve la marca con la que firmas un acuerdo.</div>
+    {legalOpen&&<LegalSheet user={user} onClose={()=>setLegalOpen(false)} onDone={x=>{setL(p=>({...x,sup:p.sup}));setLegalOpen(false)}}/>}
+  </Sheet>;
+}
+function SupplierCard(){
+  const {user}=useApp();const [open,setOpen]=useState(false),[l,setL]=useState(undefined);
+  useEffect(()=>{loadMyLegal(user.id).then(setL)},[open]);
+  if(user.role!=="patrocinado")return null;
+  const st=supplierStatus(l);
+  return <><div className="sec-t">📋 Perfil de proveedor</div>
+    <div className="card mb12" style={{borderColor:st.ready?"rgba(23,212,160,.35)":"rgba(245,200,66,.35)"}}>
+      <div className="row mb8" style={{justifyContent:"space-between"}}><b>{l===undefined?"Cargando…":st.ready?"✅ Proveedor listo":"Avance "+st.pct+"%"}</b>{st.ready&&<span className="pill" style={{background:"var(--obg)",color:"var(--ok)"}}>Visible para marcas</span>}</div>
+      <Bar v={st.pct} h={6}/>
+      <div className="tsm cmu mt8 mb12" style={{lineHeight:1.5}}>{st.ready?"Tus datos y documentos de proveedor están completos. Se envían a la marca al firmar.":"Déjalo listo una vez y las empresas te podrán pagar sin pedirte papeles después."}</div>
+      <button className="btn btn-p btn-sm" style={{width:"100%"}} onClick={()=>setOpen(true)}>{st.ready?"✏️ Revisar perfil de proveedor":"📋 Completar perfil de proveedor"}</button>
+    </div>{open&&<SupplierSheet onClose={()=>setOpen(false)}/>}</>;
+}
+const SupReadyPill=({u})=>u&&u.supReady?<span className="pill" style={{background:"var(--obg)",color:"var(--ok)"}}>📋 Proveedor listo</span>:null;
+/* compartir los documentos del proveedor con la marca de un acuerdo (se copian con permisos del acuerdo) */
+async function shareSupplierDocs(c,uid_){
+  const l=await loadMyLegal(uid_);const s=supOf(l);const out={};
+  for(const [k] of SUP_DOCS){const f=s.docs[k];if(!f)continue;
+    try{const d=await loadFile(f);if(!d)continue;const blob=dataToBlob(d);const file=new File([blob],f.name,{type:f.type});out[k]=await saveFile(file,c.parties,uid_)}catch(e){}}
+  return {docs:out,info:{phone:s.phone,payName:s.payName,payMail:s.payMail||(l&&l.payEmail)||"",docType:s.docType,acteco:s.acteco,hasWorkers:s.hasWorkers,decl:s.decl,ready:supplierStatus(l).ready,at:new Date().toISOString()}};
+}
+
+/* ── Requisitos de proveedor que pide la marca ── */
+const BRAND_REQS=[["sii","Carpeta tributaria o inicio de actividades"],["bank","Certificado bancario"],["vig","Vigencia y poderes (empresas)"],["f30","Certificado F30 (si tiene trabajadores)"],["decl","Declaración anticorrupción y conflicto de interés"],["oc","Trabajamos con orden de compra (OC)"],["hes","Trabajamos con HES"],["form","Tenemos formulario propio de proveedores"]];
+function reqCheck(brand,l){
+  const s=supOf(l);const r=brand&&brand.reqs||[];
+  return r.filter(k=>!["oc","hes","form"].includes(k)).map(k=>({k,l:(BRAND_REQS.find(x=>x[0]===k)||[k,k])[1],ok:k==="decl"?SUP_DECL.every(([d])=>s.decl[d]):k==="vig"?(!l||l.kind!=="empresa"||!!s.docs.vig):k==="f30"?(s.hasWorkers!=="si"||!!s.docs.f30):!!s.docs[k]}));
+}
+function BrandReqsCard(){
+  const {user,setUser,toast}=useApp();const [r,setR]=useState(user.reqs||[]),[days,setDays]=useState(user.payDays||30);
+  if(user.role!=="patrocinador")return null;
+  const tg=k=>setR(p=>p.includes(k)?p.filter(x=>x!==k):[...p,k]);
+  return <><div className="sec-t">🏢 Cómo trabaja tu empresa con proveedores</div>
+    <div className="card mb12">
+      <div className="tsm cmu mb12" style={{lineHeight:1.5}}>Marca lo que pide tu área de compras. Los eventos y creadores lo ven antes de proponerte un acuerdo y llegan con todo listo.</div>
+      {BRAND_REQS.map(([k,t])=><label key={k} className="row mb8" style={{gap:10,cursor:"pointer"}}><input type="checkbox" checked={r.includes(k)} onChange={()=>tg(k)} style={{width:20,height:20,accentColor:"#17d4a0",appearance:"auto",flexShrink:0}}/><span className="tsm">{t}</span></label>)}
+      <Field label="Plazo de pago habitual"><div className="chips">{[15,30,45,60].map(n=><button key={n} className={"chip"+(days===n?" on":"")} onClick={()=>setDays(n)}>{n} días</button>)}</div></Field>
+      <button className="btn btn-p btn-sm" style={{width:"100%"}} onClick={()=>{setUser({...user,reqs:r,payDays:days});toast("Guardado","✅","Se usará en tus próximos acuerdos")}}>Guardar</button>
+    </div></>;
+}
+function ReqsHint({brand,me}){
+  const [l,setL]=useState(undefined);useEffect(()=>{loadMyLegal(me.id).then(setL)},[]);
+  if(!brand||!(brand.reqs||[]).length)return null;
+  const list=reqCheck(brand,l);const flags=(brand.reqs||[]).filter(k=>["oc","hes","form"].includes(k));
+  return <div className="mcard"><div className="txs fw7 cmu mb8">📋 LO QUE PIDE {dispName(brand).toUpperCase()} A SUS PROVEEDORES</div>
+    {list.map(x=><div key={x.k} className="tsm mb8">{x.ok?"✅":"⬜"} {x.l}</div>)}
+    {flags.map(k=><div key={k} className="tsm mb8">ℹ️ {(BRAND_REQS.find(y=>y[0]===k)||[])[1]}</div>)}
+    {brand.payDays&&<div className="txs cmu">Plazo de pago habitual: {brand.payDays} días.</div>}
+    {list.some(x=>!x.ok)&&<div className="txs mt8" style={{color:"var(--warn)"}}>Complétalo en Perfil → Perfil de proveedor para cobrar más rápido.</div>}
+  </div>;
+}
+
+/* ── Acuerdos de prueba (empresas que prueban la plataforma real sin compromiso) ── */
+const TESTER_Q=(()=>{try{const q=new URLSearchParams(location.search).get("prueba");if(q==="1")localStorage.setItem("gs_tester","1");return localStorage.getItem("gs_tester")==="1"}catch(e){return false}})();
+const isTester=u=>!!(u&&(u.tester||TESTER_Q));
+const TestPill=({c})=>c&&c.test?<span className="pill" style={{background:"var(--pbg)",color:"var(--pur)"}}>🧪 Acuerdo de prueba</span>:null;
+
+/* ── Guía de prueba para empresas (aparece en Inicio si entraste con el enlace de prueba) ── */
+function TesterCard(){
+  const {user,setUser,go}=useApp();const [fb,setFb]=useState(false);
+  if(!isTester(user)||user.role!=="patrocinador"||user.testerDone)return null;
+  const cs=DB.contracts().filter(c=>c.sponsorId===user.id);
+  const steps=[
+    ["Completa tu perfil: qué buscas patrocinar y tu rubro",!!((user.kinds||[]).length||(user.cats||[]).length)&&!!user.sector,()=>go("perfil",{edit:1})],
+    ["Marca qué le pide tu empresa a los proveedores",!!(user.reqs||[]).length,()=>go("perfil",{})],
+    ["Busca un evento o creador y revisa su ficha",DB.flag("explored_"+user.id),()=>go("buscar",{})],
+    ["Propón un acuerdo con entregas detalladas y pago contra factura",cs.some(c=>c.pay&&c.pay.mode==="factura"&&c.milestones.some(m=>m.spec)),()=>go("nuevo",{})],
+    ["Sube la orden de compra y aprueba una entrega",cs.some(c=>c.oc||c.milestones.some(msDone)),()=>go("acuerdos",{})],
+    ["Revisa el contrato, la ficha de proveedor y el informe de retorno",DB.flag("report_"+user.id),()=>go("acuerdos",{})],
+    ["Cuéntanos qué te pareció",!!user.fbSent,()=>setFb(true)]];
+  const n=steps.filter(s=>s[1]).length;
+  return <div className="card mb12" style={{borderColor:"rgba(167,139,250,.45)",background:"var(--pbg)"}}>
+    <div className="row mb8" style={{justifyContent:"space-between"}}><b>🧪 Prueba para empresas</b><span className="txs cmu">{n} de {steps.length}</span></div>
+    <div className="tsm cmu mb12" style={{lineHeight:1.5}}>Gracias por probar GetSponzo. Úsalo como lo harías de verdad con un patrocinio: sigue estos pasos y dinos qué cambiarías.</div>
+    <Bar v={n/steps.length*100} h={6}/>
+    <div className="mt12">{steps.map(([t,ok,fn],i)=><button key={i} className="task" style={{marginBottom:6,opacity:ok?.6:1}} onClick={fn}><div className="ti" style={{background:ok?"var(--obg)":"rgba(255,255,255,.05)",color:ok?"var(--ok)":"var(--white)"}}>{ok?"✓":i+1}</div><div className="tsm" style={{flex:1,textAlign:"left",textDecoration:ok?"line-through":"none"}}>{t}</div><span className="cte">›</span></button>)}</div>
+    {n===steps.length&&<button className="btn btn-g btn-sm mt8" style={{width:"100%"}} onClick={()=>setUser({...user,testerDone:true})}>Ocultar guía</button>}
+    {fb&&<FeedbackSheet onClose={()=>setFb(false)}/>}
+  </div>;
+}
+
+/* ── Opinión en cualquier pantalla ── */
+function FeedbackSheet({onClose}){
+  const {user,setUser,route,toast}=useApp();
+  const [f,setF]=useState({stars:0,good:"",bad:"",need:"",price:""}),[busy,setBusy]=useState(false);
+  const send=async()=>{
+    if(!f.stars&&!f.good.trim()&&!f.bad.trim()&&!f.need.trim()){toast("Cuéntanos algo","⚠️");return}
+    setBusy(true);
+    const screen=(route&&route.tab)||location.hash||"";
+    const msg=`[OPINIÓN ${f.stars||"-"}/5] Pantalla: ${screen}\nLe gustó: ${f.good}\nLo frenó o confundió: ${f.bad}\nLe falta para usarlo en su empresa: ${f.need}\nSobre el precio: ${f.price}`.slice(0,1990);
+    const doc={id:uid("fb"),kind:"feedback",msg,stars:f.stars,uid:user.id,name:dispName(user),role:user.role,tester:isTester(user),ts:new Date().toISOString()};
+    try{await addPublic("support",doc);
+      if(REAL)mailNotify(MAIL_CONTACTO,"💬 Opinión de "+dispName(user)+(isTester(user)?" (prueba empresa)":""),{"Quién":dispName(user)+" · "+ROLE[user.role].l,"Nota":(f.stars||"-")+"/5","Pantalla":screen,"Le gustó":f.good,"Lo frenó":f.bad,"Le falta":f.need,"Precio":f.price});
+      if(!user.fbSent)setUser({...user,fbSent:true});toast("¡Gracias por tu opinión!","💬");onClose()}catch(e){toast("No se pudo enviar","⚠️",e.message)}
+    setBusy(false);
+  };
+  return <Sheet title="¿Qué te pareció?" icon="💬" onClose={onClose} footer={<><button className="btn btn-g" onClick={onClose}>Cancelar</button><button className="btn btn-p" disabled={busy} onClick={send}>{busy?"Enviando…":"Enviar opinión"}</button></>}>
+    <Field label="Nota general"><div className="row" style={{gap:4}}>{[1,2,3,4,5].map(n=><button key={n} onClick={()=>setF(p=>({...p,stars:n}))} style={{fontSize:30,color:n<=f.stars?"var(--warn)":"rgba(255,255,255,.2)",lineHeight:1}} aria-label={n+" estrellas"}>★</button>)}</div></Field>
+    <Field label="¿Qué te gustó?"><textarea className="inp" style={{minHeight:56}} value={f.good} onChange={e=>setF(p=>({...p,good:e.target.value}))}/></Field>
+    <Field label="¿Qué te frenó o confundió?"><textarea className="inp" style={{minHeight:56}} value={f.bad} onChange={e=>setF(p=>({...p,bad:e.target.value}))}/></Field>
+    <Field label="¿Qué le falta para usarlo en tu empresa?"><textarea className="inp" style={{minHeight:56}} value={f.need} onChange={e=>setF(p=>({...p,need:e.target.value}))} placeholder="Ej: aprobación de mi jefe, integración con SAP, otro formato de contrato…"/></Field>
+    <Field label="¿Te parece bien el precio? (opcional)"><input className="inp" value={f.price} onChange={e=>setF(p=>({...p,price:e.target.value}))} placeholder="Ej: 8% está bien / preferimos un plan fijo"/></Field>
+  </Sheet>;
+}
+function FeedbackFab(){
+  const {user,setUser}=useApp();const [o,setO]=useState(false);
+  useEffect(()=>{if(user&&TESTER_Q&&!user.tester)setUser({...user,tester:true})},[user&&user.id]);
+  if(!user||!isTester(user))return null;
+  return <><button onClick={()=>setO(true)} style={{position:"fixed",right:14,bottom:84,zIndex:350,background:"var(--pur)",color:"#fff",fontWeight:800,borderRadius:99,padding:"10px 14px",boxShadow:"0 6px 24px rgba(0,0,0,.45)",fontSize:13.5}}>💬 Opinión</button>{o&&<FeedbackSheet onClose={()=>setO(false)}/>}</>;
+}
+
+/* ── Borrar usuarios de prueba y todos sus datos (solo administrador). La cuenta de acceso se borra en Firebase → Authentication. ── */
+async function purgeUser(uidv){
+  if(!REAL){
+    DB.setEvents(DB.events().filter(e=>e.ownerId!==uidv));DB.setContracts(DB.contracts().filter(c=>!(c.parties||[]).includes(uidv)));
+    DB.setDisputes(DB.disputes().filter(d=>!(d.parties||[]).includes(uidv)));DB.setChats(DB.chats().filter(c=>!(c.participants||[]).includes(uidv)));
+    DB.setReviews(DB.reviews().filter(r=>r.fromId!==uidv&&r.toId!==uidv));DB.setPayrecs(DB.payrecs().filter(r=>r.fromId!==uidv&&r.toId!==uidv));
+    DB.setUsers(DB.users().filter(u=>u.id!==uidv));return;
+  }
+  const del=async(q)=>{const s=await q.get().catch(()=>null);if(s)await Promise.all(s.docs.map(d=>d.ref.delete().catch(()=>{})))};
+  const F=FS;
+  const evs=await F.collection("events").where("ownerId","==",uidv).get().catch(()=>null);
+  if(evs)for(const d of evs.docs){await F.collection("share").doc(d.id).delete().catch(()=>{});await d.ref.delete().catch(()=>{})}
+  await del(F.collection("contracts").where("parties","array-contains",uidv));
+  await del(F.collection("disputes").where("parties","array-contains",uidv));
+  await del(F.collection("chats").where("participants","array-contains",uidv));
+  await del(F.collection("photos").where("parties","array-contains",uidv));
+  await del(F.collection("files").where("by","==",uidv));
+  await del(F.collection("reviews").where("fromId","==",uidv));await del(F.collection("reviews").where("toId","==",uidv));
+  await del(F.collection("payrecs").where("fromId","==",uidv));await del(F.collection("payrecs").where("toId","==",uidv));
+  await del(F.collection("ruts").where("uid","==",uidv));
+  await F.collection("verifications").doc(uidv).delete().catch(()=>{});
+  await F.collection("users").doc(uidv).delete();
+}
+function PurgeUsers({U,reload}){
+  const {toast,confirm,user:me}=useApp();const [sel,setSel]=useState([]),[busy,setBusy]=useState(false),[open,setOpen]=useState(false);
+  const list=(U||[]).filter(u=>u.id!==me.id).sort((a,b)=>(b.tester?1:0)-(a.tester?1:0)||(b.created||"").localeCompare(a.created||""));
+  const run=()=>confirm({title:`¿Borrar ${sel.length} usuario${sel.length>1?"s":""}?`,text:"Se borran su perfil, eventos, acuerdos, mensajes, disputas, archivos y reseñas. No se puede deshacer. Después borra su acceso en Firebase → Authentication.",ok:"🗑️ Sí, borrar todo",danger:true,onOk:async()=>{
+    setBusy(true);let n=0;for(const id of sel){try{await purgeUser(id);n++}catch(e){toast("Error con un usuario","⚠️",e.message)}}
+    setBusy(false);setSel([]);toast(`${n} usuario${n!==1?"s":""} borrado${n!==1?"s":""}`,"🗑️","Recuerda borrar su acceso en Firebase → Authentication");reload&&reload()}});
+  return <div className="card mb12">
+    <button className="row" style={{width:"100%",justifyContent:"space-between"}} onClick={()=>setOpen(!open)}><b>🧹 Borrar usuarios de prueba</b><span className="cmu">{open?"▲":"▼"}</span></button>
+    {open&&<div className="mt12">
+      <div className="tsm cmu mb12" style={{lineHeight:1.5}}>Elige las cuentas que quieres eliminar con todos sus datos. Las que entraron con el enlace de prueba aparecen primero (🧪).</div>
+      {list.length===0?<div className="tsm cmu">No hay otros usuarios.</div>:list.map(u=><label key={u.id} className="row mb8" style={{gap:10,cursor:"pointer"}}><input type="checkbox" checked={sel.includes(u.id)} onChange={e=>setSel(p=>e.target.checked?[...p,u.id]:p.filter(x=>x!==u.id))} style={{width:20,height:20,accentColor:"#f0604a",appearance:"auto",flexShrink:0}}/><span className="tsm" style={{flex:1,minWidth:0}}>{u.tester?"🧪 ":""}{dispName(u)} <span className="cmu">· {ROLE[u.role]?ROLE[u.role].l:u.role} · {fdate(u.created)}</span></span></label>)}
+      <button className="btn btn-d btn-sm mt8" style={{width:"100%"}} disabled={!sel.length||busy} onClick={run}>{busy?"Borrando…":`🗑️ Borrar ${sel.length||""} seleccionado${sel.length!==1?"s":""}`}</button>
+    </div>}
+  </div>;
+}
+
+/* ── Reiniciar reseñas y reputación de pago (solo administrador, para limpiar pruebas) ── */
+function ResetReviews({U}){
+  const {toast,confirm,bump}=useApp();const [open,setOpen]=useState(false),[pay,setPay]=useState(true),[,force]=useState(0);
+  if(!isAdmin())return null;
+  const R=DB.reviews(),P=DB.payrecs();
+  const rows=(U||[]).map(u=>({u,rin:R.filter(r=>r.toId===u.id).length,rout:R.filter(r=>r.fromId===u.id).length,p:P.filter(r=>r.toId===u.id||r.fromId===u.id).length})).filter(x=>x.rin||x.rout||x.p).sort((a,b)=>(b.rin+b.rout)-(a.rin+a.rout));
+  const doReset=(ids,label)=>confirm({title:"¿Reiniciar reseñas de "+label+"?",text:"Se borran las reseñas que recibió y las que escribió"+(pay?", y su historial de \"Paga a tiempo\"":"")+". En esos acuerdos se podrá volver a calificar. No se puede deshacer.",ok:"⭐ Sí, reiniciar",danger:true,onOk:()=>{
+    const all=ids==="all";const has=id=>all||ids.includes(id);
+    const nR=R.filter(r=>has(r.toId)||has(r.fromId)).length,nP=pay?P.filter(r=>has(r.toId)||has(r.fromId)).length:0;
+    DB.setReviews(R.filter(r=>!(has(r.toId)||has(r.fromId))));if(pay)DB.setPayrecs(P.filter(r=>!(has(r.toId)||has(r.fromId))));
+    toast("Reseñas reiniciadas","⭐",`${nR} reseña${nR!==1?"s":""}${pay?` y ${nP} registro${nP!==1?"s":""} de pago`:""} borrados`);force(x=>x+1);bump&&bump()}});
+  return <div className="card mb12">
+    <button className="row" style={{width:"100%",justifyContent:"space-between"}} onClick={()=>setOpen(!open)}><b>⭐ Reiniciar reseñas</b><span className="cmu">{open?"▲":"▼"}</span></button>
+    {open&&<div className="mt12">
+      <div className="tsm cmu mb12" style={{lineHeight:1.5}}>Para limpiar las calificaciones de tus pruebas. Solo tú, como administrador, ves esta opción.</div>
+      <label className="row mb12" style={{gap:10,cursor:"pointer"}}><input type="checkbox" checked={pay} onChange={e=>setPay(e.target.checked)} style={{width:20,height:20,accentColor:"#17d4a0",appearance:"auto",flexShrink:0}}/><span className="tsm">Borrar también el historial de "💰 Paga a tiempo"</span></label>
+      {rows.length===0?<div className="tsm cmu">No hay reseñas ni registros de pago.</div>:rows.map(({u,rin,rout,p})=><div key={u.id} className="row mb8" style={{gap:8,justifyContent:"space-between"}}>
+        <div style={{minWidth:0}}><div className="tsm fw7 ellip">{dispName(u)}</div><div className="txs cmu">{repTxt(u.id)} · recibió {rin} · escribió {rout}{p?` · ${p} pagos`:""}</div></div>
+        <button className="btn btn-g btn-sm" style={{flexShrink:0}} onClick={()=>doReset([u.id],dispName(u))}>Reiniciar</button></div>)}
+      {rows.length>0&&<button className="btn btn-d btn-sm mt8" style={{width:"100%"}} onClick={()=>doReset("all","todos los usuarios")}>⭐ Reiniciar todas las reseñas</button>}
+    </div>}
   </div>;
 }
 /* ══════════ PÁGINA DE INICIO PÚBLICA ══════════ */
@@ -2539,6 +2777,7 @@ function HomeView(){
               :[["🔍","Buscar eventos",["buscar",{}]],["🤝","Nuevo acuerdo",["nuevo",{}]],["📋","Mis acuerdos",["acuerdos",{}]],["💬","Mensajes",["mensajes",{}]]];
   const h=new Date().getHours();
   return <div>
+    <TesterCard/>
     <div className="fu">
       <div className="greet">{h<12?"Buenos días":h<20?"Buenas tardes":"Buenas noches"}, {first(user.name)} 👋</div>
       <p className="cmu tmd">{isP?"Aquí ves lo que tienes que hacer para conseguir y cobrar tus patrocinios.":"Aquí ves todo para patrocinar con tu dinero protegido."}</p>
@@ -2683,7 +2922,7 @@ function EventCard({e,children,onClick,score}){
       <span className="pill" style={{background:"rgba(255,255,255,.06)",color:"var(--white)"}}>{repTxt(e.ownerId)}</span>
       {evConfirmed(e)&&<span className="pill" style={{background:"var(--obg)",color:"var(--ok)"}}>✔ Datos confirmados</span>}
       {e.audVerified&&<span className="pill" style={{background:"var(--obg)",color:"var(--ok)"}}>📊 Audiencia verificada</span>}
-      {ow&&ow.verified&&<span className="pill" style={{background:"var(--obg)",color:"var(--ok)"}}>🪪 Identidad verificada</span>}<FounderPill u={ow}/>{ow&&isProUser(ow)&&<span className="pill" style={{background:"rgba(23,212,160,.12)",color:"var(--teal)"}}>⭐ Destacado</span>}
+      {ow&&ow.verified&&<span className="pill" style={{background:"var(--obg)",color:"var(--ok)"}}>🪪 Identidad verificada</span>}<FounderPill u={ow}/><SupReadyPill u={ow}/>{ow&&isProUser(ow)&&<span className="pill" style={{background:"rgba(23,212,160,.12)",color:"var(--teal)"}}>⭐ Destacado</span>}
       {e.packages&&e.packages.length>0&&<span className="pill" style={{background:"rgba(255,255,255,.06)",color:"var(--muted)"}}>📦 {e.packages.length} paquete{e.packages.length>1?"s":""}</span>}
     </div>
     <div className="tsm"><span className="cmu">Busca: </span><b className="cte">{money(e.budgetMin,curOf(e))} – {money(e.budgetMax,curOf(e))}</b></div>
@@ -2822,7 +3061,7 @@ async function sha256(txt){
   catch(e){return "h"+hash(txt)}
 }
 const termsOf=c=>JSON.stringify({v:CONTRACT_V,id:c.id,event:c.eventName,sponsor:c.sponsorId,sponsored:c.sponsoredId,cur:curOf(c),amount:c.amount,fee:c.feePct||FEE,ai:!!c.aiClause,
-  ms:(c.milestones||[]).map(m=>{const b=[m.title,m.amount,m.due||""];if(m.spec||m.proof||(m.refs||[]).length)b.push({spec:m.spec||"",proof:m.proof||"",prod:m.prod||"",refs:(m.refs||[]).map(f=>f.id+":"+f.name)});return b}),...(c.pay?{pay:[c.pay.mode,c.pay.days,c.pay.adv,!!c.pay.oc,!!c.pay.hes,!!c.pay.prov]}:{}),...(c.feeAmt!=null?{feeAmt:c.feeAmt,feePlan:c.feePlan,tarifa:c.tarifaV,...(c.feeRenew?{renew:c.feeRenew}:{})}:{})});
+  ms:(c.milestones||[]).map(m=>{const b=[m.title,m.amount,m.due||""];if(m.spec||m.proof||(m.refs||[]).length)b.push({spec:m.spec||"",proof:m.proof||"",prod:m.prod||"",refs:(m.refs||[]).map(f=>f.id+":"+f.name)});return b}),...(c.test?{test:true}:{}),...(c.pay?{pay:[c.pay.mode,c.pay.days,c.pay.adv,!!c.pay.oc,!!c.pay.hes,!!c.pay.prov]}:{}),...(c.feeAmt!=null?{feeAmt:c.feeAmt,feePlan:c.feePlan,tarifa:c.tarifaV,...(c.feeRenew?{renew:c.feeRenew}:{})}:{})});
 const EMPTY_LEGAL={kind:"persona",name:"",rut:"",nat:"chilena",civil:"",prof:"",giro:"",repName:"",repRut:"",addr:"",comuna:"",city:"Santiago",email:"",bank:"",accType:"",accNo:"",payEmail:""};
 const DEMO_LEGAL={
   u1:{kind:"persona",name:"Cristóbal Torretti",rut:"12.345.678-5",nat:"chilena",civil:"casado",prof:"ingeniero comercial",addr:"Av. Irarrázaval 1234",comuna:"Ñuñoa",city:"Santiago",email:"cristobal@demo.com",bank:"BancoEstado",accType:"Cuenta corriente",accNo:"000123456789"},
@@ -2930,6 +3169,7 @@ function contractBody(c,h){
   let k=0;const cl=(t,body)=>`<h2>${n(k++)}: ${t}.</h2><p>${body}</p>`;
   const sigRow=(id,l,name)=>{const t=sg[id],s=sig[id]||{};return `<tr><td><b>${esc(l?l.name:name)}</b><br>${l?(l.kind==="empresa"?"RUT "+esc(l.rut)+"<br>p.p. "+esc(l.repName)+", C.I. "+esc(l.repRut):"C.I. "+esc(l.rut)):"[datos pendientes]"}</td><td>${t?"✔ Firmado electrónicamente el "+ft(t)+(s.email?"<br>Cuenta: "+esc(s.email):"")+(s.hash?"<br>Huella firmada: "+esc(s.hash.slice(0,16))+"…"+(s.hash===h?" ✔ coincide":" ⚠ no coincide con la versión actual"):""):"Pendiente de firma"}</td></tr>`};
   return `
+${c.test?`<div style="border:2px dashed #7c3aed;color:#5b21b6;background:#f5f0ff;padding:10px 12px;border-radius:8px;font-family:Arial,sans-serif;font-size:13px;margin-bottom:14px"><b>ACUERDO DE PRUEBA.</b> Este documento se generó para probar la Plataforma. No produce efectos legales, no obliga a las partes y no genera comisiones.</div>`:""}
 <h1>CONTRATO DE PATROCINIO</h1>
 <p class="sub">N° ${esc(c.id)} · Versión ${CONTRACT_V} · ${c.status==="pending"?"PROPUESTA (pendiente de firma)":"Celebrado mediante firma electrónica"}</p>
 <p>En ${esc(place)}, Chile, a ${fd(dts[dts.length-1]||c.created)}, comparecen: por una parte, ${partyTxt(ls,"s")}; y por la otra, ${partyTxt(lp,"p")}; ambos mayores de edad o debidamente representados, quienes exponen que han convenido el siguiente contrato de patrocinio, que se celebra a través de la plataforma digital GetSponzo (en adelante, la “Plataforma”):</p>
@@ -3065,8 +3305,9 @@ function DealDetail({id}){
   const doSign=(lg)=>confirm({title:"¿Firmar este acuerdo?",text:`Aceptas ${c.milestones.length} entrega${c.milestones.length>1?"s":""} por un total de ${$m(c.amount)}${P?", con pago "+payInfo(P.mode).l.toLowerCase():""}${c.aiClause?" y la "+RES_NAME.toLowerCase():""}. Desde ahora el acuerdo queda activo. Firmas electrónicamente según la Ley 19.799 y declaras que tus datos son verdaderos.`,ok:"✍️ Sí, firmar",onOk:async()=>{
     const now=new Date().toISOString(),hh=await sha256(termsOf(c));const em=(REAL&&AUTH&&AUTH.currentUser&&AUTH.currentUser.email)||user.email||"";
     updC({status:"active",signed:{...(c.signed||{}),[user.id]:now},legal:{...(c.legal||{}),[user.id]:lg},sigs:{...(c.sigs||{}),[user.id]:{ts:now,email:em,hash:hh,v:CONTRACT_V}}});track("sign_contract",{amount:c.amount,cur:curOf(c)});
-    if(user.id===c.sponsorId&&c.feePlan==="fundador"&&!(user.fdeals||[]).includes(c.id))setUser({...user,fdeals:[...(user.fdeals||[]),c.id]});
-    if(REAL&&feeOf(c)>0)mailNotify(MAIL_CONTACTO,"🧾 Comisión por facturar: "+c.sponsorName,{"Acuerdo":c.eventName+" ("+c.id+")","Marca (se le factura)":c.sponsorName,"RUT marca":((c.legal||{})[c.sponsorId]||(c.sponsorId===user.id?lg:{})||{}).rut||"ver contrato","Monto del acuerdo":money(c.amount,curOf(c)),"Comisión":money(feeOf(c),curOf(c))+" ("+feeLabel(c)+")","IVA":money(ivaOf(feeOf(c),curOf(c)),curOf(c)),"Total a facturar":money(feeOf(c)+ivaOf(feeOf(c),curOf(c)),curOf(c))});sysMsg(user.id,otherId,`✍️ ${dispName(user)} firmó el acuerdo de “${c.eventName}”. ¡Está activo!`,c.eventName);toast("¡Acuerdo firmado!","✍️","Ya está activo");bump()}});
+    if(user.id===c.sponsorId&&c.feePlan==="fundador"&&!c.test&&!(user.fdeals||[]).includes(c.id))setUser({...user,fdeals:[...(user.fdeals||[]),c.id]});
+    if(user.id===c.sponsoredId)shareSupplierDocs(c,user.id).then(r=>{if(Object.keys(r.docs).length||r.info.phone)DB.setContracts(DB.contracts().map(x=>x.id!==c.id?x:{...x,supDocs:r.docs,supInfo:r.info}))}).catch(()=>{});
+    if(REAL&&feeOf(c)>0&&!c.test)mailNotify(MAIL_CONTACTO,"🧾 Comisión por facturar: "+c.sponsorName,{"Acuerdo":c.eventName+" ("+c.id+")","Marca (se le factura)":c.sponsorName,"RUT marca":((c.legal||{})[c.sponsorId]||(c.sponsorId===user.id?lg:{})||{}).rut||"ver contrato","Monto del acuerdo":money(c.amount,curOf(c)),"Comisión":money(feeOf(c),curOf(c))+" ("+feeLabel(c)+")","IVA":money(ivaOf(feeOf(c),curOf(c)),curOf(c)),"Total a facturar":money(feeOf(c)+ivaOf(feeOf(c),curOf(c)),curOf(c))});sysMsg(user.id,otherId,`✍️ ${dispName(user)} firmó el acuerdo de “${c.eventName}”. ¡Está activo!`,c.eventName);toast("¡Acuerdo firmado!","✍️","Ya está activo");bump()}});
   const sign=async()=>{const lg=(c.legal||{})[user.id]||await loadMyLegal(user.id);if(!lg||legalMissing(lg)){setLegalOpen(true);return}signWith(lg)};
   const signWith=async lg=>{
     if(user.id===c.sponsorId&&c.feePlan==="fundador"&&!(await founderRutMatches(user,lg))){toast("El contrato debe ir a nombre de tu RUT validado","⚠️","Para usar tu 3% de Fundador, corrige tus datos del contrato o valida ese RUT en Perfil");setLegalOpen(true);return}
@@ -3081,7 +3322,7 @@ function DealDetail({id}){
     const now=new Date().toISOString();
     if(k==="oc"){updC({oc:{no:v.no,file:v.file,at:now}});sysMsg(user.id,otherId,`📄 ${c.sponsorName} subió la orden de compra ${v.no||""} de “${c.eventName}”. Úsala al facturar.`,c.eventName)}
     if(k==="provForm"){updC({provForm:v.file,provAt:now});sysMsg(user.id,otherId,`📋 ${c.sponsorName} subió su formulario de inscripción de proveedor. Complétalo y súbelo en Acuerdos.`,c.eventName)}
-    if(k==="provDone"){updC({provDone:{file:v.file,at:now}});sysMsg(user.id,otherId,`📋 ${c.sponsoredName} envió sus datos de proveedor para “${c.eventName}”.`,c.eventName)}
+    if(k==="provDone"){updC({provDone:{file:v.file,at:now}});shareSupplierDocs(c,user.id).then(r=>DB.setContracts(DB.contracts().map(x=>x.id!==c.id?x:{...x,supDocs:r.docs,supInfo:r.info}))).catch(()=>{});sysMsg(user.id,otherId,`📋 ${c.sponsoredName} envió sus datos de proveedor para “${c.eventName}”.`,c.eventName)}
     if(k==="advInv"){updC({advInv:{no:v.no,file:v.file,at:now}});sysMsg(user.id,otherId,`🧾 ${c.sponsoredName} subió la factura del anticipo (${$m(advAmt(c))}). Vence en 5 días hábiles.`,c.eventName)}
     if(k==="advPaid"){updC({advPaidAt:now,advProof:v.file||null});sysMsg(user.id,otherId,`💰 ${c.sponsorName} informó el pago del anticipo de ${$m(advAmt(c))}. Confírmalo cuando lo veas en tu cuenta.`,c.eventName)}
     if(k==="hes"){updMs(mid,{hes:{no:v.no,file:v.file,at:now}});sysMsg(user.id,otherId,`📋 ${c.sponsorName} emitió la HES ${v.no||""}. Ya puedes subir la factura.`,c.eventName)}
@@ -3103,6 +3344,7 @@ function DealDetail({id}){
     <div className="card mb12" style={{borderColor:"var(--border)"}}>
       <div className="txs cmu fw7 mb8">ACUERDO DE PATROCINIO</div>
       <div style={{fontSize:20,fontWeight:800,fontFamily:"'Sora',sans-serif",marginBottom:4}}>{c.eventName}</div>
+      {(c.test||c.ref)&&<div className="row mb8" style={{gap:6,flexWrap:"wrap"}}><TestPill c={c}/>{c.ref&&<span className="pill" style={{background:"rgba(255,255,255,.06)",color:"var(--white)"}}>🏷️ {c.ref}</span>}</div>}
       <div className="row mb16" style={{gap:8,flexWrap:"wrap"}}><Av u={other} size={26}/><span className="tsm cmu">{isS?"Patrocinado: ":"Marca: "}<b className="cwh">{isS?c.sponsoredName:c.sponsorName}</b></span>{!isS&&<PayRepPill id={c.sponsorId}/>}</div>
       {P?<Stepper steps={advAmt(c)?["Propuesta","Firmado","Anticipo","Entregas","Completado"]:["Propuesta","Firmado","Entregas","Completado"]} cur={st==="pending"||st==="rejected"?0:st==="done"&&c.milestones.every(m=>m.paidAt||msNet(c,m)<=0)?(advAmt(c)?5:4):advAmt(c)?(c.advPaidAt?3:2):2}/>
       :<Stepper steps={["Propuesta","Firmado","Depositado","Entregas","Completado"]} cur={st==="pending"||st==="rejected"?0:!funded?2:st==="done"?5:3}/>}
@@ -3113,13 +3355,13 @@ function DealDetail({id}){
       <Bar v={paid/c.amount*100}/>
       {P?<div className="txs cmu mt8">💳 Forma de pago: <b className="cwh">{payInfo(P.mode).l}</b>{P.mode==="anticipo"?` · ${P.adv}% al firmar (${$m(advAmt(c))})`:""}{P.mode!=="protegido"?` · plazo ${P.days} días`:""}{P.oc?" · con OC":""}{P.hes?" · con HES":""}. Pago directo entre las partes; GetSponzo registra plazos y puntualidad.</div>
       :live&&<div className="txs cmu mt8">🔒 {$m(c.milestones.filter(m=>!msDone(m)).reduce((s,m)=>s+m.amount,0))} siguen protegidos por GetSponzo hasta que se cumplan las entregas.</div>}
-      <div className="txs cmu mt8">💶 Comisión GetSponzo {feeLabel(c)} ({$m(feeAmt)}{curOf(c)==="CLP"&&feeAmt?" + IVA":""}) la paga la marca. El patrocinado recibe el 100% de cada entrega.{feeAmt>0&&!PAYMENTS_LIVE?" Durante el piloto, GetSponzo le emite la factura de la comisión a la marca cuando ambos firman.":""}</div>
+      <div className="txs cmu mt8">💶 Comisión GetSponzo {feeLabel(c)} ({$m(feeAmt)}{curOf(c)==="CLP"&&feeAmt?" + IVA":""}) la paga la marca. El patrocinado recibe el 100% de cada entrega.{c.test?" 🧪 Acuerdo de prueba: no se cobra comisión.":feeAmt>0&&!PAYMENTS_LIVE?" Durante el piloto, GetSponzo le emite la factura de la comisión a la marca cuando ambos firman.":""}</div>
       <div style={{display:"flex",gap:8,marginTop:14}}>
         <button className="btn btn-g btn-sm" style={{flex:1}} onClick={()=>chatWith(otherId,c.eventName)}>💬 Chat</button>
         <button className="btn btn-g btn-sm" style={{flex:1}} onClick={()=>startCall(other)}>📹 Llamar</button>
-        <button className="btn btn-g btn-sm" style={{flex:1}} onClick={()=>openDoc(c,"contract")}>📄 Contrato</button>
+        <button className="btn btn-g btn-sm" style={{flex:1}} onClick={()=>{DB.setFlag("report_"+user.id);openDoc(c,"contract")}}>📄 Contrato</button>
       </div>
-      {(st==="done"||(isS&&isProUser(user)&&st!=="pending"&&st!=="rejected"))&&<button className="btn btn-p btn-sm mt8" style={{width:"100%"}} onClick={()=>openDoc(c,"report")}>{st==="done"?"📊 Ver informe de retorno":"📊 Informe de retorno parcial (Pro)"}</button>}
+      {(st==="done"||(isS&&isProUser(user)&&st!=="pending"&&st!=="rejected"))&&<button className="btn btn-p btn-sm mt8" style={{width:"100%"}} onClick={()=>{DB.setFlag("report_"+user.id);openDoc(c,"report")}}>{st==="done"?"📊 Ver informe de retorno":"📊 Informe de retorno parcial (Pro)"}</button>}
     </div>
 
     {st==="pending"&&(iSigned?<div className="hint w mb12">⏳ <div><b>Propuesta enviada.</b> Falta que {isS?c.sponsoredName:c.sponsorName} la revise y firme. Mientras tanto no se mueve dinero.</div></div>
@@ -3136,6 +3378,10 @@ function DealDetail({id}){
       </div>:<div className="hint w mb12">⏳ <div><b>Acuerdo firmado.</b> Esperando que {c.sponsorName} deposite el pago protegido. Cuando lo haga, podrás empezar las entregas.</div></div>)}
     {st==="rejected"&&<div className="hint e mb12">✖ <div>Esta propuesta fue rechazada. Conversen por chat y creen una nueva si llegan a acuerdo.</div></div>}
 
+    {!isS&&st!=="rejected"&&<ReqsHint brand={userById(c.sponsorId)} me={user}/>}
+    {(c.supDocs&&Object.keys(c.supDocs).length>0||c.supInfo)&&st!=="pending"&&<div className="mcard"><div className="txs fw7 cmu mb8">📋 PERFIL DE PROVEEDOR DE {c.sponsoredName.toUpperCase()} {c.supInfo&&c.supInfo.ready?"· ✅ COMPLETO":""}</div>
+      <FilesView files={Object.values(c.supDocs||{}).filter(Boolean)}/>
+      <button className="btn btn-g btn-sm mt8" style={{width:"100%"}} onClick={()=>openSupplierSheet(c,c.sponsoredId)}>📋 Ver ficha de proveedor</button></div>}
     {P&&st!=="pending"&&st!=="rejected"&&(P.oc||P.prov||as)&&<div className="card mb12">
       <div className="fw7 mb8">🗂️ Trámites de pago</div>
       {as&&<div className="mcard">
@@ -3427,7 +3673,8 @@ function NewDeal(){
     return p.items.map((t,i)=>{const sp=specOf(t);return {title:t,amount:String(i===n-1?p.price-base*(n-1):base),due:"",...(sp?{spec:sp[0],proof:sp[1],prod:"marca"}:{})}});
   });
   useEffect(()=>{if(route.pkg!=null&&route.ev)setStep(1)},[]);
-  const [ai,setAi]=useState(null),[pay,setPay]=useState(DEF_PAY),[cases,setCases]=useState(false);
+  const [ai,setAi]=useState(null),[pay,setPay]=useState(()=>{const b=isS?user:userById(route.to);const r=(b&&b.reqs)||[];return {...DEF_PAY,oc:r.includes("oc"),hes:r.includes("hes"),prov:r.includes("form")||r.includes("sii")}}),[cases,setCases]=useState(false);
+  const [isTest,setIsTest]=useState(false),[ref,setRef]=useState("");
   const [myLegal,setMyLegal]=useState(undefined),[legalOpen,setLegalOpen]=useState(false);
   useEffect(()=>{loadMyLegal(user.id).then(x=>setMyLegal(x&&!legalMissing(x)?x:null))},[]);
   const ev=DB.events().find(e=>e.id===evId);
@@ -3448,13 +3695,14 @@ function NewDeal(){
     if(isS&&fq.plan==="fundador"&&!(await founderRutMatches(user,myLegal))){toast("El contrato debe ir a nombre de tu RUT validado","⚠️","Para usar tu 3% de Fundador, corrige tus datos del contrato o valida ese RUT en Perfil");setLegalOpen(true);return}
     const owner=userById(ev.ownerId);
     const sponsor=isS?user:brand,sponsored=isS?owner:user;
-    const c={id:uid("c"),parties:[sponsor.id,sponsored.id],status:"pending",funded:pay.mode==="protegido"?false:true,pay:{...pay,days:Number(pay.days)||30,adv:Number(pay.adv)||0},cur:curOf(ev),feePct:Math.round(fq.pct*100)/100,feeAmt:fq.amt,feePlan:fq.plan,feeRenew:fq.renew||0,feeRates:fq.rates,feeTiers:fq.tiers,feeMin:fq.min,tarifaV:TARIFA_V,createdBy:user.id,signed:{[user.id]:new Date().toISOString()},eventId:ev.id,eventName:ev.name,sponsorId:sponsor.id,sponsorName:dispName(sponsor),sponsoredId:sponsored.id,sponsoredName:sponsored.name,amount:total,aiClause:!!ai,created:new Date().toISOString(),
+    const c={id:uid("c"),parties:[sponsor.id,sponsored.id],status:"pending",funded:pay.mode==="protegido"?false:true,pay:{...pay,days:Number(pay.days)||30,adv:Number(pay.adv)||0},cur:curOf(ev),feePct:Math.round(fq.pct*100)/100,feeAmt:fq.amt,feePlan:fq.plan,feeRenew:fq.renew||0,feeRates:fq.rates,feeTiers:fq.tiers,feeMin:fq.min,tarifaV:TARIFA_V,createdBy:user.id,signed:{[user.id]:new Date().toISOString()},eventId:ev.id,eventName:ev.name,sponsorId:sponsor.id,sponsorName:dispName(sponsor),sponsoredId:sponsored.id,sponsoredName:sponsored.name,amount:total,aiClause:!!ai,created:new Date().toISOString(),...(isTest?{test:true}:{}),...(isS&&ref.trim()?{ref:ref.trim()}:{}),
       milestones:ms.map((m,i)=>({id:i+1,title:m.title.trim(),amount:Number(m.amount),due:m.due,status:"pending",evidence:"",...(m.spec&&m.spec.trim()?{spec:m.spec.trim()}:{}),...(m.proof&&m.proof.trim()?{proof:m.proof.trim()}:{}),...(m.spec||m.proof?{prod:m.prod||"marca"}:{}),...((m.refs||[]).length?{refs:m.refs}:{})}))};
     c.legal={[user.id]:myLegal};
     {const hh=await sha256(termsOf(c));c.sigs={[user.id]:{ts:c.created,email:(REAL&&AUTH&&AUTH.currentUser&&AUTH.currentUser.email)||user.email||"",hash:hh,v:CONTRACT_V}}}
     track("propose_deal",{amount:total,cur:curOf(ev)});
     DB.setContracts([...DB.contracts(),c]);
-    if(isS&&fq.plan==="fundador")setUser({...user,fdeals:[...(user.fdeals||[]),c.id]});
+    if(isS&&fq.plan==="fundador"&&!c.test)setUser({...user,fdeals:[...(user.fdeals||[]),c.id]});
+    if(!isS)shareSupplierDocs(c,user.id).then(r=>{if(Object.keys(r.docs).length||r.info.phone)DB.setContracts(DB.contracts().map(x=>x.id!==c.id?x:{...x,supDocs:r.docs,supInfo:r.info}))}).catch(()=>{});
     sysMsg(user.id,isS?sponsored.id:sponsor.id,`🤝 ${dispName(user)} te envió una propuesta de ${$m(total)} para “${ev.name}” con ${ms.length} entrega${ms.length>1?"s":""}. Revísala y fírmala en Acuerdos.`,ev.name);
     toast("¡Propuesta enviada!","✍️","Falta la firma de "+(isS?sponsored.name:dispName(sponsor)));bump();go("acuerdos",{cid:c.id});
   };
@@ -3515,7 +3763,10 @@ function NewDeal(){
         <div className="txs cmu mt8">{fq.plan==="fundador"?`Marca Socia Fundadora: comisión de solo ${FOUNDER_RATE}% en este acuerdo (le quedan ${fq.left} de ${FOUNDER_FREE_DEALS} acuerdos con este beneficio).`:`${fq.renew?`Renovación n° ${fq.renew} con este evento: comisión con tope de ${fq.renew>=3?RENEW_CAP[1]:RENEW_CAP[0]}%. `:""}Comisión escalonada ${fq.rates.join("% / ")}% según el monto${fq.useMin?", con mínimo de 0,25 UF":""}. El evento no paga comisión.`}{fq.amt>0&&!PAYMENTS_LIVE?" Piloto: la comisión se factura a la marca cuando ambos firman.":""} <button className="cte" style={{textDecoration:"underline"}} onClick={()=>go("planes",{})}>Ver planes</button></div>
         {fq.needVerify&&<div className="hint w mt8">🪪 <div>{isS?<>Eres marca Fundadora, pero aún no validas tu RUT: por eso se aplica la tarifa normal. <button className="cte fw7" style={{textDecoration:"underline"}} onClick={()=>go("perfil",{})}>Valida tu RUT en Perfil</button> (toma segundos) antes de enviar la propuesta para pagar solo 3%.</>:<>La marca es Fundadora, pero aún no valida su RUT: se aplica la tarifa normal hasta que lo haga.</>}</div></div>}
       </div>
+      {!isS&&brand&&<ReqsHint brand={brand} me={user}/>}
       <PaySetup value={pay} onChange={setPay} isS={isS}/>
+      {isS&&<Field label="Referencia interna (opcional)" hint="Centro de costo, campaña o proyecto. Aparece en el acuerdo y en la ficha de proveedor."><input className="inp" value={ref} onChange={e=>setRef(e.target.value)} placeholder="Ej: CeCo 4510 · Campaña verano"/></Field>}
+      <label className="mcard" style={{display:"flex",gap:12,alignItems:"flex-start",cursor:"pointer"}}><input type="checkbox" checked={isTest} onChange={e=>setIsTest(e.target.checked)} style={{width:22,height:22,accentColor:"#a78bfa",flexShrink:0,marginTop:2,appearance:"auto"}}/><div><div className="fw7 tmd">🧪 Es un acuerdo de prueba</div><div className="tsm cmu" style={{lineHeight:1.5}}>Funciona igual que uno real, pero queda marcado como prueba: no tiene efectos legales, no genera comisión ni cuenta para la reputación.</div></div></label>
       <div className="card mb12">
         <div className="fw7 mb8">⚖️ Si hay un desacuerdo, ¿cómo lo resolvemos?</div>
         <div className="tsm cmu mb12" style={{lineHeight:1.5}}>Es opcional. La otra parte lo acepta al firmar. <button className="cte fw7" style={{textDecoration:"underline"}} onClick={()=>setCases(true)}>Ver cómo decide y casos de ejemplo</button></div>
@@ -3807,6 +4058,8 @@ function AdminView(){
     </div>}
 
     {tab==="ajustes"&&<div>
+      <PurgeUsers U={Uf} reload={loadAll}/>
+      <ResetReviews U={Uf}/>
       <div className="card mb12">
         <div className="fw7 mb8">📧 Avisos por correo a los usuarios</div>
         <div className="tsm cmu mb12" style={{lineHeight:1.55}}>Cuando alguien recibe un mensaje o una novedad en un acuerdo, GetSponzo le manda un correo. Usa <b data-notr="1">EmailJS</b> (gratis hasta 200 correos al mes). Pega aquí los 3 datos de tu cuenta de EmailJS.</div>
@@ -3877,6 +4130,7 @@ function ProfileExtras(){
   };
   const ps=proStatus(user);
   return <>
+    <SupplierCard/><BrandReqsCard/>
     {user.role!=="inversor"&&<><div className="sec-t">💎 Mi plan</div>
     <div className="card mb12" style={ps.pro?{borderColor:"rgba(245,200,66,.35)"}:{}}>
       <div className="rowb" style={{alignItems:"center",gap:10}}>
@@ -4346,6 +4600,7 @@ function App(){
     {conf&&<Sheet title={conf.title} icon={conf.danger?"⚠️":"✋"} onClose={()=>setConf(null)} footer={<><button className="btn btn-g" onClick={()=>setConf(null)}>Cancelar</button><button className={"btn "+(conf.danger?"btn-d":"btn-p")} onClick={()=>{const f=conf.onOk;setConf(null);f&&f()}}>{conf.ok||"Confirmar"}</button></>}><p className="tmd" style={{lineHeight:1.6}}>{conf.text}</p></Sheet>}
     {call&&user&&<CallSheet peer={call} onClose={()=>setCall(null)}/>}
     <CookieBanner/>
+    {screen==="app"&&<FeedbackFab/>}
     {toastS&&<div className="toast"><span style={{fontSize:19,flexShrink:0}}>{toastS.icon}</span><div style={{minWidth:0}}><div style={{fontWeight:700,fontSize:14}}>{toastS.msg}</div>{toastS.sub&&<div style={{fontSize:12,color:"var(--muted)",marginTop:2}}>{toastS.sub}</div>}</div></div>}
   </Ctx.Provider>;
 }
